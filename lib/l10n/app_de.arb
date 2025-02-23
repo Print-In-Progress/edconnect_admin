@@ -1,0 +1,1206 @@
+{
+    "@@locale": "de",
+    "language": "Deutsch",
+    "@language": {
+        "description": "The current language"
+    },
+    "authPagesWelcomeLabelOne": "Welcome!",
+    "@authPagesWelcomeLabelOne": {
+        "description": "Welcome label for login and register page"
+    },
+    "authPagesRegisterButtonLabel": "Register",
+    "@authPagesRegisterButtonLabel": {
+        "description": "label for register button"
+    },
+    "authPagesLoginButtonLabel": "Log in",
+    "@authPagesLoginButtonLabel": {
+        "description": "label for log in button"
+    },
+    "authPagesSelectOrganizationLabel": "Please select your Organization below",
+    "@authPagesSelectOrganizationLabel": {},
+    "authPagesForgotPasswordButtonLabel": "Forgot Password?",
+    "@authPagesForgotPasswordButtonLabel": {
+        "description": "label for the forgot password button"
+    },
+    "authPagesAccessDeniedErrorMessage": "You do not have the necessary permissions to access this site. If you should have those or need them contact the responsible Administrator of your Organization.",
+    "@authPagesAccessDeniedErrorMessage": {
+        "description": "displays this message if the user does not have the necessary permissions to view part of the site"
+    },
+    "authPagesRegisterAcceptToSAndPrivacyPolicyErrorMessage": "Please Accept the ToS and Privacy Policy",
+    "@authPagesRegisterAcceptToSAndPrivacyPolicyErrorMessage": {
+        "description": "message for pop up field if ToS and Privacy Policy is not accepted by the User"
+    },
+    "authPagesRegisterWelcomeLabelTwo": "Please register below",
+    "@authPagesRegisterWelcomeLabelTwo": {
+        "description": "Second welcome label for the register page"
+    },
+    "authPagesRegisterToSandPrivacyPolicyCheckbox": "I accept the {tos} and {privacyPolicy}",
+    "@authPagesRegisterToSandPrivacyPolicyCheckbox": {
+        "placeholders": {
+            "tos": {},
+            "privacyPolicy": {}
+        }
+    },
+    "authPagesOrgNotSelectedErrorLabel": "Please select an organization",
+    "@authPagesOrgNotSelectedErrorLabel": {},
+    "authPagesAccountCreatedSuccesfully": "Account created successfully",
+    "@authPagesAccountCreatedSuccesfully": {},
+    "authPagesSignatureMissing": "Please sign all required fields",
+    "@authPagesSignatureMissing": {},
+    "authPagesFieldMissing": "Please fill in all required fields",
+    "@authPagesFieldMissing": {},
+    "authPagesRegisterConfirmPasswordTextFieldHintText": "Confirm Password",
+    "@authPagesRegisterConfirmPasswordTextFieldHintText": {
+        "description": "hint text for confirm user password field only necessesary for register page"
+    },
+    "authPagesRegisterSuccessSnackbarLabel": "Account created successfully!",
+    "@authPagesRegisterSuccessSnackbarLabel": {
+        "description": "Snackbar label for successful registration"
+    },
+    "authPagesLoginWelcomeLabelTwo": "Welcome back, we missed you!",
+    "@authPagesLoginWelcomeLabelTwo": {
+        "description": "Second welcome label for the login page"
+    },
+    "authPagesConfirmPasswordErrorSnackbarLabel": "The password do not match. Please confirm that they are the same",
+    "@authPagesConfirmPasswordErrorSnackbarLabel": {
+        "description": ""
+    },
+    "authPagesUserNotFoundErrorMessage": "You might be on the wrong organization's page or your account might have been deleted by this organizations administrator. If you are not, please contact your organization's administrator or Print In Progress support.",
+    "@authPagesUserNotFoundErrorMessage": {},
+    "authPagesAccountAlreadyExistsWithOtherOrgErrorMessage": "You already have an account with another organization that uses NewsApp. Please log in to that account by filling out the forms below, and we will add you to this organization.",
+    "@authPagesAccountAlreadyExistsWithOtherOrgErrorMessage": {},
+    "authPagesVerifyEmailPageTitle": "Email Verification",
+    "@authPagesVerifyEmailPageTitle": {},
+    "authPagesVerifyEmailPageContent": "A verification link has been sent to your email. Please verify your email.",
+    "@authPagesVerifyEmailPageContent": {},
+    "forgotPasswordPageSuccessLinkSendSnackbarMessage": "Password reset link send! Check your Email!",
+    "@forgotPasswordPageSuccessLinkSendSnackbarMessage": {
+        "description": ""
+    },
+    "forgotPasswordPagePasswordResetLabel": "Please enter your Email and we will send you a password reset link",
+    "@forgotPasswordPagePasswordResetLabel": {
+        "description": ""
+    },
+    "forgotPasswordPageResetPasswordButtonLabel": "Reset Password",
+    "@forgotPasswordPageResetPasswordButtonLabel": {},
+    "settingsPageManageAccountCardLabel": "Manage my PIP Account",
+    "@settingsPageManageAccountCardLabel": {},
+    "settingsPageNewEmailHintText": "New Email",
+    "settingsPageChangeNameButtonLabel": "Name",
+    "@settingsPageChangeNameButtonLabel": {
+        "description": ""
+    },
+    "settingsPageCurrentPasswordHintText": "Current Password",
+    "@settingsPageCurrentPasswordHintText": {},
+    "settingsPageNewPasswordHintText": "New Password",
+    "@settingsPageNewPasswordHintText": {},
+    "@settingsPageNewEmailHintText": {
+        "description": ""
+    },
+    "settingsPagePersonalDataCardLabel": "Personal Data",
+    "@settingsPagePersonalDataCardLabel": {
+        "description": ""
+    },
+    "settingsPageAppearanceCardLabel": "Appearance",
+    "@settingsPageAppearanceCardLabel": {
+        "description": ""
+    },
+    "settingsPageDeletePIPAccountButtonLabel": "Delete my PIP Account",
+    "@settingsPageDeletePIPAccountButtonLabel": {
+        "description": ""
+    },
+    "settingsPageEnableDarkModeSwitchTileLabel": "Dark Mode",
+    "@settingsPageEnableDarkModeSwitchTileLabel": {
+        "description": ""
+    },
+    "settingsPageSuccessOnPersonalDataChangedSnackbarContent": "Your personal data was changed successfully",
+    "@settingsPageSuccessOnPersonalDataChangedSnackbarContent": {
+        "description": ""
+    },
+    "settingsPageSuccessOnEmailChangedSnackbarContent": "Your Email was changed succesfully",
+    "@settingsPageSuccessOnEmailChangedSnackbarContent": {
+        "description": ""
+    },
+    "settingsPageActionRequiresReauthentification": "This operation is sensitive and requires recent reauthentification",
+    "@settingsPageActionRequiresReauthentification": {},
+    "settingsPageSuccessOnPasswordChangedSnackbarLabel": "Password changed successfully",
+    "@settingsPageSuccessOnPasswordChangedSnackbarLabel": {
+        "description": ""
+    },
+    "settingsPageSuccessOnDeleteAccountSnackbarLabel": "Account deleted successfully. We're sad to see you go.",
+    "@settingsPageSuccessOnDeleteAccountSnackbarLabel": {
+        "description": ""
+    },
+    "settingsPageAccountDeleteDialogContent": "We're sad to see you go!",
+    "@settingsPageAccountDeleteDialogContent": {
+        "description": ""
+    },
+    "settingsPageMyActivityCardLabel": "My Activity",
+    "@settingsPageMyActivityCardLabel": {
+        "description": ""
+    },
+    "settingsPageMyLikesAndDislikesButtonLabel": "My Likes/Dislikes",
+    "@settingsPageMyLikesAndDislikesButtonLabel": {
+        "description": ""
+    },
+    "settingsPageResubmitQuestionaire": "Resubmit Questionnaire",
+    "@settingsPageResubmitQuestionaire": {},
+    "settingsPageMyCommentsButtonLabel": "My Comments",
+    "@settingsPageMyCommentsButtonLabel": {
+        "description": ""
+    },
+    "settingsPageOnSuccessCommentDeleted": "Comment deleted successfully",
+    "@settingsPageOnSuccessCommentDeleted": {
+        "description": ""
+    },
+    "settingsPageCommmentDeletionConfirmationDialogContent": "The comment can not be restored after deletion",
+    "@settingsPageCommmentDeletionConfirmationDialogContent": {
+        "description": ""
+    },
+    "settingsPageMyCommentsPageTitle": "My Comments",
+    "@settingsPageMyCommentsPageTitle": {
+        "description": ""
+    },
+    "settingsPageMyLikesTabbarTitle": "My Likes",
+    "@settingsPageMyLikesTabbarTitle": {
+        "description": ""
+    },
+    "settingsPageErrorDeletingUserFolder": "Error deleting User Folder: {error}",
+    "@settingsPageErrorDeletingUserFolder": {
+        "placeholders": {
+            "error": {}
+        }
+    },
+    "settingsPageChangeOrganizationButtonLabel": "Change Organization",
+    "@settingsPageChangeOrganizationButtonLabel": {},
+    "settingsPageMyDislikesTabbarTitle": "My Dislikes",
+    "@settingsPageMyDislikesTabbarTitle": {
+        "description": ""
+    },
+    "homePageBlogNavbarButtonLabel": "Blog",
+    "@homePageBlogNavbarButtonLabel": {},
+    "homePageEventsNavbarButtonLabel": "Events",
+    "@homePageEventsNavbarButtonLabel": {},
+    "homePageMessagingNavbarButtonLabel": "Messaging",
+    "@homePageMessagingNavbarButtonLabel": {},
+    "filtersSearchBarHintText": "Search",
+    "@filtersSearchBarHintText": {
+        "description": ""
+    },
+    "filtersAllChipLabel": "All",
+    "@filtersAllChipLabel": {
+        "description": ""
+    },
+    "filtersNewestChipLabel": "Newest",
+    "@filtersNewestChipLabel": {},
+    "filtersOldestChipLabel": "Oldest",
+    "@filtersOldestChipLabel": {
+        "description": ""
+    },
+    "filtersTopChipLabel": "Top",
+    "@filtersTopChipLabel": {
+        "description": ""
+    },
+    "filtersUpcomingEventsChipLabel": "Upcoming",
+    "@filtersUpcomingEventsChipLabel": {
+        "description": ""
+    },
+    "filtersPastEventsChipLabel": "Past",
+    "@filtersPastEventsChipLabel": {
+        "description": ""
+    },
+    "blogPageMoreArticlesButtonLabel": "Load More Articles...",
+    "@blogPageMoreArticlesButtonLabel": {},
+    "blogPageWasNotAbleToLoadArticleErrorLabel": "Error, could not load article",
+    "@blogPageWasNotAbleToLoadArticleErrorLabel": {},
+    "blogPageWasNotAbleToLaunchURLErrorLabel": "Error, could not launch URL",
+    "@blogPageWasNotAbleToLaunchURLErrorLabel": {},
+    "blogPagesNoArticlesPublishedSoFarLabel": "No articles  have been published so far",
+    "@blogPagesNoArticlesPublishedSoFarLabel": {},
+    "eventsPageMoreInfoButtonLabel": "More Info",
+    "@eventsPageMoreInfoButtonLabel": {},
+    "eventsPagesNoEventsPublishedSoFarLabel": "No events  have been published so far",
+    "@eventsPagesNoEventsPublishedSoFarLabel": {},
+    "eventsPagesPublicEvent": "Public event (can be seen by anyone)",
+    "@eventsPagesPublicEvent": {},
+    "eventsPagesCreateEvent": "Create Event",
+    "@eventsPagesCreateEvent": {},
+    "eventsPagesSelectDateErrorLabel": "Please select a date",
+    "@eventsPagesSelectDateErrorLabel": {},
+    "eventsPagesTimeValidator": "Start time must be before end time",
+    "@eventsPagesTimeValidator": {},
+    "eventTitle": "Event Title",
+    "@eventTitle": {},
+    "eventsPagesStartDateLabel": "Start Date",
+    "@eventsPagesStartDateLabel": {},
+    "eventsPagesEndDateLabel": "End Date",
+    "@eventsPagesEndDateLabel": {},
+    "eventsPagesStartTime": "Start Time",
+    "@eventsPagesStartTime": {},
+    "eventsPagesEndTime": "End Time",
+    "@eventsPagesEndTime": {},
+    "eventsPagesFullDayEvent": "Full Day Event",
+    "@eventsPagesFullDayEvent": {},
+    "eventsPagesEventDescriptionLabel": "Event Description",
+    "@eventsPagesEventDescriptionLabel": {},
+    "eventsPagesEventCreatedSnackbarMessage": "Event created successfully",
+    "@eventsPagesEventCreatedSnackbarMessage": {},
+    "eventsPagesSelectGroupsLabel": "Select Groups",
+    "@eventsPagesSelectGroupsLabel": {},
+    "commentSectionAppbarTitle": "Comment Section",
+    "@commentSectionAppbarTitle": {},
+    "commentSectionRepliesTitle": "Replies",
+    "@commentSectionRepliesTitle": {},
+    "commentSectionAddCommentHintTextLabel": "Add a comment...",
+    "@commentSectionAddCommentHintTextLabel": {},
+    "commentSectionAddReplyHintTextLabel": "Add a reply...",
+    "@commentSectionAddReplyHintTextLabel": {},
+    "commentSectionReadMoreTextButtonLabel": "Read More",
+    "@commentSectionReadMoreTextButtonLabel": {},
+    "commentSectionShowLessTextButtonLabel": " Less",
+    "@commentSectionShowLessTextButtonLabel": {},
+    "surveysPagesNavbarButtonLabel": "Surveys",
+    "@surveysPagesNavbarButtonLabel": {},
+    "surveysPagesTakeSurveyButtonLabel": "Take Survey",
+    "@surveysPagesTakeSurveyButtonLabel": {},
+    "firebaseAuthErrorMessageEmailAlreadyInUse": "Email is already in use by another account.",
+    "@firebaseAuthErrorMessageEmailAlreadyInUse": {},
+    "aboutPageLicenceLabel": "License",
+    "@aboutPageLicenceLabel": {},
+    "aboutPageToSLabel": "NewsApp Terms of Service",
+    "@aboutPageToSLabel": {},
+    "aboutPagePrivacyPolicyLabel": "Print In Progress Privacy Policy",
+    "@aboutPagePrivacyPolicyLabel": {},
+    "aboutPageOpenSourceLicencesLabel": "Open source licenses",
+    "@aboutPageOpenSourceLicencesLabel": {},
+    "aboutPageLegalNoticeLabel": "Legal Notice",
+    "@aboutPageLegalNoticeLabel": {},
+    "aboutPageAppDescription": "For more information about the NewsApp System visit us at https://printinprogress.net",
+    "@aboutPageAppDescription": {},
+    "termsAndConditionsPrefix": "I accept the",
+    "@termsAndConditionsPrefix": {},
+    "termsAndConditionsLinkText": " ToS ",
+    "@termsAndConditionsLinkText": {},
+    "termsAndConditionsMiddle": "and ",
+    "@termsAndConditionsMiddle": {},
+    "privacyPolicyLinkText": "Privacy Policy",
+    "@privacyPolicyLinkText": {},
+    "termsAndConditionsSuffix": "",
+    "@termsAndConditionsSuffix": {},
+    "globalAboutUsLabel": "About",
+    "@globalAboutUsLabel": {},
+    "globalSettingsLabel": "Settings",
+    "@globalSettingsLabel": {},
+    "globalEmptyFormFieldErrorLabel": "Field can't be empty!",
+    "@globalEmptyFormFieldErrorLabel": {
+        "description": ""
+    },
+    "globalCancelButtonLabel": "Cancel",
+    "@globalCancelButtonLabel": {
+        "description": "label for all cancel buttons"
+    },
+    "globalNoButtonLabel": "No",
+    "@globalNoButtonLabel": {},
+    "globalYesButtonLabel": "Yes",
+    "@globalYesButtonLabel": {},
+    "globalConfirmationDialogLabel": "Are you sure?",
+    "@globalConfirmationDialogLabel": {
+        "description": "title for all confirmation dialogs of the application"
+    },
+    "globalSaveChangesButtonLabel": "Save changes",
+    "@globalSaveChangesButtonLabel": {},
+    "globalSaveSuccessChangesSnackbarMessage": "Changes saved successfully",
+    "@globalSaveSuccessChangesSnackbarMessage": {},
+    "globalBackToLoginLabel": "Back to Login",
+    "@globalBackToLoginLabel": {},
+    "globalFirstNameTextFieldHintText": "First name",
+    "@globalFirstNameTextFieldHintText": {
+        "description": "hint text for first name of user"
+    },
+    "globalLastNameTextFieldHintText": "Last name",
+    "@globalLastNameTextFieldHintText": {
+        "description": "hint text for last name of user"
+    },
+    "globalImgCouldNotBeFound": "Image could not be found or loaded",
+    "@globalImgCouldNotBeFound": {
+        "description": ""
+    },
+    "globalLogoutButtonLabel": "Logout",
+    "@globalLogoutButtonLabel": {
+        "description": ""
+    },
+    "globalSuccessSnackbarLabel": "Success!",
+    "@globalSuccessSnackbarLabel": {
+        "description": ""
+    },
+    "globalPrivacyPolicyLabel": "Privacy Policy",
+    "@globalPrivacyPolicyLabel": {
+        "description": ""
+    },
+    "globalToSLabel": "Terms of Service",
+    "@globalToSLabel": {
+        "description": ""
+    },
+    "globalApplyChangesButtonLabel": "Apply Changes",
+    "@globalApplyChangesButtonLabel": {
+        "description": ""
+    },
+    "globalGreetingOne": "Hello {userName}!",
+    "@globalGreetingOne": {
+        "description": "",
+        "placeholders": {
+            "userName": {}
+        }
+    },
+    "globalGreetingTwo": "Welcome, {userName}!",
+    "@globalGreetingTwo": {
+        "description": "",
+        "placeholders": {
+            "userName": {}
+        }
+    },
+    "globalPasswordLabel": "Password",
+    "@globalPasswordLabel": {
+        "description": "label for all password field and cards"
+    },
+    "globalEmailLabel": "Email",
+    "@globalEmailLabel": {
+        "description": ""
+    },
+    "globalReauthenticateLabel": "Please Authenticate yourself",
+    "@globalReauthenticateLabel": {
+        "description": ""
+    },
+    "globalUnexpectedErrorLabel": "An Unexpected Error Has Occurred!",
+    "@globalUnexpectedErrorLabel": {
+        "description": ""
+    },
+    "globalNoInternetConnectionErrorLabel": "No Internet Connection",
+    "@globalNoInternetConnectionErrorLabel": {},
+    "globalOfflineBannerLabel": "You are offline. Some functionality may be limited. All changes will be submitted once you're online again.",
+    "@globalOfflineBannerLabel": {},
+    "globalSubmitLabel": "Submit",
+    "@globalSubmitLabel": {},
+    "globalResendEmailButtonLabel": "Resend Email",
+    "@globalResendEmailButtonLabel": {},
+    "globalContinueButtonLabel": "Continue",
+    "@globalContinueButtonLabel": {},
+    "globalLabelWeek": "Week",
+    "@globalLabelWeek": {},
+    "globalLabelMonth": "Month",
+    "@globalLabelMonth": {},
+    "globalLabelOverview": "Overview",
+    "@globalLabelOverview": {},
+    "globalSearchGroups": "Search Groups",
+    "@globalSearchGroups": {},
+    "globalSelectGroups": "Select Groups",
+    "@globalSelectGroups": {},
+    "globalGoBackLabel": "Go Back",
+    "@globalGoBackLabel": {},
+    "settingsPageManageAccountButtonLabel": "Manage PIP Account",
+    "@settingsPageManageAccountButtonLabel": {
+        "description": ""
+    },
+    "settingsPageManageAccountSettingsNavbarLabel": "PIP Account Settings",
+    "@settingsPageManageAccountSettingsNavbarLabel": {
+        "description": ""
+    },
+    "filtersLatestChipLabel": "Newest",
+    "@filtersLatestChipLabel": {
+        "description": ""
+    },
+    "filtersAdminUsersChipLabel": "Admin",
+    "@filtersAdminUsersChipLabel": {},
+    "filtersAuthorUsersChipLabel": "Author",
+    "@filtersAuthorUsersChipLabel": {},
+    "filtersUsersChipLabel": "Users",
+    "@filtersUsersChipLabel": {},
+    "filtersMoreFiltersButtonLabel": "More Filters",
+    "@filtersMoreFiltersButtonLabel": {
+        "description": ""
+    },
+    "filtersCategoryAddedSuccessSnackbarMessage": "Categories were changed successfully",
+    "@filtersCategoryAddedSuccessSnackbarMessage": {
+        "description": ""
+    },
+    "filtersSelectCategoryDialogTitle": "Category Selection",
+    "@filtersSelectCategoryDialogTitle": {
+        "description": ""
+    },
+    "filtersAddCategoriesButtonLabel": "Add Categories",
+    "@filtersAddCategoriesButtonLabel": {
+        "description": ""
+    },
+    "filtersManageCategoriesButtonLabel": "Manage Categories",
+    "@filtersManageCategoriesButtonLabel": {
+        "description": ""
+    },
+    "filtersCreateCategoryButtonLabel": "Create",
+    "@filtersCreateCategoryButtonLabel": {
+        "description": ""
+    },
+    "filtersCreateTextFieldHintText": "Category Name",
+    "@filtersCreateTextFieldHintText": {
+        "description": ""
+    },
+    "textEditorHintText": "Start typing...",
+    "@textEditorHintText": {},
+    "textEditorTooltipStyles": "Styles",
+    "@textEditorTooltipStyles": {},
+    "textEditorStyleMenuItemNormal": "Normal",
+    "@textEditorStyleMenuItemNormal": {},
+    "textEditorStyleMenuItemHeader1": "Header 1",
+    "@textEditorStyleMenuItemHeader1": {},
+    "textEditorStyleMenuItemHeader2": "Header 2",
+    "@textEditorStyleMenuItemHeader2": {},
+    "textEditorStyleMenuItemHeader3": "Header 3",
+    "@textEditorStyleMenuItemHeader3": {},
+    "textEditorStyleMenuItemHeader4": "Header 4",
+    "@textEditorStyleMenuItemHeader4": {},
+    "textEditorStyleMenuItemHeader5": "Header 5",
+    "@textEditorStyleMenuItemHeader5": {},
+    "textEditorStyleMenuItemHeader6": "Header 6",
+    "@textEditorStyleMenuItemHeader6": {},
+    "textEditorTooltipChangeFontFamily": "Change font family",
+    "@textEditorTooltipChangeFontFamily": {},
+    "textEditorTooltipChangeFontSize": "Change font size",
+    "@textEditorTooltipChangeFontSize": {},
+    "textEditorTooltipBold": "Bold (Ctrl+B)",
+    "@textEditorTooltipBold": {},
+    "textEditorTooltipItalic": "Italic (Ctrl+I)",
+    "@textEditorTooltipItalic": {},
+    "textEditorTooltipUnderline": "Underline (Ctrl+U)",
+    "@textEditorTooltipUnderline": {},
+    "textEditorTooltipRemoveFormat": "Remove Format",
+    "@textEditorTooltipRemoveFormat": {},
+    "textEditorTooltipStrikethrough": "Strikethrough Alt+Shift+5",
+    "@textEditorTooltipStrikethrough": {},
+    "textEditorTooltipSuperscript": "Superscript (Ctrl+.)",
+    "@textEditorTooltipSuperscript": {},
+    "textEditorTooltipSubscript": "Subscript (Ctrl+,)",
+    "@textEditorTooltipSubscript": {},
+    "textEditorTooltipChangeFontColor": "Change Text Color",
+    "@textEditorTooltipChangeFontColor": {},
+    "textEditorTooltipChangeBackgroundColor": "Change Background Color",
+    "@textEditorTooltipChangeBackgroundColor": {},
+    "textEditorTooltipInsertBulletedList": "Insert Bulleted List (Ctrl+Shift+8)",
+    "@textEditorTooltipInsertBulletedList": {},
+    "textEditorTooltipInsertNumberedList": "Insert Numbered List (Ctrl+Shift+7)",
+    "@textEditorTooltipInsertNumberedList": {},
+    "textEditorChangeListStyleButtonLabel": "Change List Style",
+    "@textEditorChangeListStyleButtonLabel": {},
+    "textEditorListStyleMenuItemDisc": "Disc",
+    "@textEditorListStyleMenuItemDisc": {},
+    "textEditorListStyleMenuItemDecimal": "Decimal",
+    "@textEditorListStyleMenuItemDecimal": {},
+    "textEditorListStyleMenuItemSquare": "Square",
+    "@textEditorListStyleMenuItemSquare": {},
+    "textEditorListStyleMenuItemCircle": "Circle",
+    "@textEditorListStyleMenuItemCircle": {},
+    "textEditorListStyleMenuItemUpperRomanNumerals": "Upper Roman Numerals",
+    "@textEditorListStyleMenuItemUpperRomanNumerals": {},
+    "textEditorListStyleMenuItemLowerRomanNumerals": "Lower Roman Numerals",
+    "@textEditorListStyleMenuItemLowerRomanNumerals": {},
+    "textEditorListStyleMenuItemUppercaseLetters": "Uppercase Letters",
+    "@textEditorListStyleMenuItemUppercaseLetters": {},
+    "textEditorListStyleMenuItemLowercaseLetters": "Lowercase Letters",
+    "@textEditorListStyleMenuItemLowercaseLetters": {},
+    "textEditorListStyleMenuItemLowercaseClassicalGreek": "Lowercase Classical Greek",
+    "@textEditorListStyleMenuItemLowercaseClassicalGreek": {},
+    "textEditorTooltipLeftAlign": "Left Align (Ctrl+Shift+L)",
+    "textEditorTooltipCenterAlign": "Center Align (Ctrl+Shift+E)",
+    "@textEditorTooltipCenterAlign": {},
+    "textEditorTooltipRightAlign": "Right Align (Ctrl+Shift+R)",
+    "@textEditorTooltipRightAlign": {},
+    "@textEditorTooltipLeftAlign": {},
+    "textEditorTooltipJustifyAlign": "Justify (Ctrl+Shift+J)",
+    "@textEditorTooltipJustifyAlign": {},
+    "textEditorTooltipIncreaseIndent": "Increase Indent",
+    "@textEditorTooltipIncreaseIndent": {},
+    "textEditorTooltipDeacreaseIndent": "Deacrease Indent",
+    "@textEditorTooltipDeacreaseIndent": {},
+    "textEditorTooltipChangeLineSpacing": "Change line & paragraph spacing",
+    "@textEditorTooltipChangeLineSpacing": {},
+    "textEditorTooltipInsertTable": "Insert Table",
+    "@textEditorTooltipInsertTable": {},
+    "textEditorTooltipInsertLink": "Insert Link",
+    "@textEditorTooltipInsertLink": {},
+    "textEditorTooltipInsertImage": "Insert Image",
+    "@textEditorTooltipInsertImage": {},
+    "textEditorTooltipInsertInsertVideo": "Insert Video",
+    "@textEditorTooltipInsertInsertVideo": {},
+    "textEditorSelectedImageLabel": "Selected Image: {fileName}",
+    "@textEditorSelectedImageLabel": {
+        "placeholders": {
+            "fileName": {}
+        }
+    },
+    "textEditorTooltipInsertInsertAudio": "Insert Audio",
+    "@textEditorTooltipInsertInsertAudio": {},
+    "textEditorChooseColorDialogTitle": "Choose a Color",
+    "@textEditorChooseColorDialogTitle": {},
+    "textEditorResetColorButtonLabel": "Reset to default color",
+    "@textEditorResetColorButtonLabel": {},
+    "textEditorSetColorButtonLabel": "Set color",
+    "@textEditorSetColorButtonLabel": {},
+    "textEditorInsertImageDialogTitle": "Insert Image",
+    "@textEditorInsertImageDialogTitle": {},
+    "textEditorFromComputerSegmentLabel": "From Computer",
+    "@textEditorFromComputerSegmentLabel": {},
+    "textEditorFromWebSegmentLabel": "From Web",
+    "@textEditorFromWebSegmentLabel": {},
+    "textEditorFromYouTubeSegmentLabel": "From YouTube",
+    "@textEditorFromYouTubeSegmentLabel": {},
+    "textEditorFromFilesModuleSegmentLabel": "From Files Module",
+    "@textEditorFromFilesModuleSegmentLabel": {},
+    "textEditorErrorMessageImage": "Please provide a valid image link, select or upload an image",
+    "@textEditorErrorMessageImage": {},
+    "textEditorInsertVideoDialogTitle": "Insert Video",
+    "@textEditorInsertVideoDialogTitle": {},
+    "textEditorSelectedVideoLabel": "Selected Video: {fileName}",
+    "@textEditorSelectedVideoLabel": {
+        "placeholders": {
+            "fileName": {}
+        }
+    },
+    "textEditorErrorMessageVideo": "Please provide a valid video web or youtube link or select or upload an video",
+    "@textEditorErrorMessageVideo": {},
+    "textEditorInsertAudioDialogTitle": "Insert Audio",
+    "@textEditorInsertAudioDialogTitle": {},
+    "textEditorSelectedAudioLabel": "Selected Audio: {fileName}",
+    "@textEditorSelectedAudioLabel": {
+        "placeholders": {
+            "fileName": {}
+        }
+    },
+    "textEditorErrorMessageAudio": "Please provide a valid audio link, select or upload an audio",
+    "@textEditorErrorMessageAudio": {},
+    "textEditorInsertLinkDialogTitle": "Insert Link",
+    "@textEditorInsertLinkDialogTitle": {},
+    "textEditorTextToDisplayTextFieldLabel": "Text to display",
+    "@textEditorTextToDisplayTextFieldLabel": {},
+    "userManagementPagesUserManagmentPanelScaffoldLabel": "User Managment Panel of {firstName} {lastName}",
+    "@userManagementPagesUserManagmentPanelScaffoldLabel": {
+        "description": "",
+        "placeholders": {
+            "firstName": {},
+            "lastName": {}
+        }
+    },
+    "userManagementPagesManagePermissionsSectionLabel": "Manage Permissions",
+    "@userManagementPagesManagePermissionsSectionLabel": {},
+    "userManagementPagesManageUserButtonLabel": "Manage User",
+    "@userManagementPagesManageUserButtonLabel": {},
+    "userManagementPagesDeleteUserButtonLabel": "Delete User",
+    "@userManagementPagesDeleteUserButtonLabel": {
+        "description": ""
+    },
+    "userManagementPagesNumberOfUsersScaffoldTitle": "{userCount, plural, one{1 User} other{{userCount} Users}}",
+    "@userManagementPagesNumberOfUsersScaffoldTitle": {
+        "placeholders": {
+            "userCount": {}
+        }
+    },
+    "userManagementPagesManageUsersCommentsButtonLabel": "Manage comments made by user",
+    "@userManagementPagesManageUsersCommentsButtonLabel": {
+        "description": ""
+    },
+    "userManagementSuccessPagesUserDataChangedSnackbarMessage": "User data was changed succesfully",
+    "@userManagementSuccessPagesUserDataChangedSnackbarMessage": {
+        "description": ""
+    },
+    "userManagementCommentManagementTitle": "Comments by {userName}",
+    "@userManagementCommentManagementTitle": {
+        "description": "",
+        "placeholders": {
+            "userName": {}
+        }
+    },
+    "usersPagesManageGroupsLabel": "Manage Groups",
+    "@usersPagesManageGroupsLabel": {},
+    "usersPagesGroupNameHintText": "Group Name",
+    "@usersPagesGroupNameHintText": {},
+    "usersPageseOnSuccessGroupDeletedSnackbarMessage": "Group was deleted successfully",
+    "@usersPageseOnSuccessGroupDeletedSnackbarMessage": {},
+    "usersPagesManagementPanelTitle": "{groupName} Management Panel",
+    "@usersPagesManagementPanelTitle": {
+        "placeholders": {
+            "groupName": {}
+        }
+    },
+    "usersPagesDeleteGroupDialogContent": "The group will be deleted permanently. You can not recover it after deletion",
+    "@usersPagesDeleteGroupDialogContent": {},
+    "usersPagesManageGroupMemebersLabel": "Manage Members of {groupName}",
+    "@usersPagesManageGroupMemebersLabel": {
+        "placeholders": {
+            "groupName": {}
+        }
+    },
+    "usersPagesClearUserSelection": "Clear",
+    "@usersPagesClearUserSelection": {},
+    "usersPagesOnSuccessGroupsUpdated": "Users groups updated succesfully",
+    "@usersPagesOnSuccessGroupsUpdated": {},
+    "usersPagesOnSuccessPermissionsUpdated": "Users permissions updated succesfully",
+    "@usersPagesOnSuccessPermissionsUpdated": {},
+    "usersPagesPermissionsLabelEditArticles": "Edit Articles",
+    "@usersPagesPermissionsLabelEditArticles": {},
+    "usersPagesPermissionsLabelCreateArticles": "Create Articles",
+    "@usersPagesPermissionsLabelCreateArticles": {},
+    "usersPagesPermissionsLabelEditEvents": "Edit Events",
+    "@usersPagesPermissionsLabelEditEvents": {},
+    "usersPagesPermissionsLabelCreateEvents": "Create Events",
+    "@usersPagesPermissionsLabelCreateEvents": {},
+    "usersPagesPermissionsLabelEditSurveys": "Edit Surveys",
+    "@usersPagesPermissionsLabelEditSurveys": {},
+    "usersPagesPermissionsLabelCreateSurveys": "Create Surveys",
+    "@usersPagesPermissionsLabelCreateSurveys": {},
+    "usersPagesPermissionsLabelPushNot": "Push Notifications",
+    "@usersPagesPermissionsLabelPushNot": {},
+    "usersPagesPermissionsLabelFileManagement": "File Management",
+    "@usersPagesPermissionsLabelFileManagement": {},
+    "usersPagesPermissionsLabelUserManagement": "User Management",
+    "@usersPagesPermissionsLabelUserManagement": {},
+    "articlesPagesCreateArticleButtonLabel": "Create Article",
+    "@articlesPagesCreateArticleButtonLabel": {
+        "description": "Label for the create article button"
+    },
+    "articlesPagesPublishedArticlesSectionButtonLabel": "Published Articles",
+    "@articlesPagesPublishedArticlesSectionButtonLabel": {
+        "description": "label for the tab view button that switches to the section were the user can view all published articles"
+    },
+    "articlesPagesSavedArticlesSectionButtonLabel": "Saved Articles",
+    "@articlesPagesSavedArticlesSectionButtonLabel": {
+        "description": "label for the tab view button that switches to the section were the user can view all saved articles"
+    },
+    "articlesPagesCreateNewArticleDialogTitle": "Create New Article",
+    "@articlesPagesCreateNewArticleDialogTitle": {
+        "description": "Title for the pop up window that pops up when you  click on the create new article button"
+    },
+    "articlesPagesChooseCoverImageLabel": "Choose Cover Image",
+    "@articlesPagesChooseCoverImageLabel": {
+        "description": "Label for the button with which you can choose and change the cover image of an article"
+    },
+    "articlesPagesNoCoverImageCheckboxLabel": "No Cover Image",
+    "@articlesPagesNoCoverImageCheckboxLabel": {
+        "description": "Label for the checkbox which enables the user to create an article wihtout a cover image or change an existing article with a cover image to one without a cover image"
+    },
+    "articlesPagesArticleTitleTextFieldHintText": "Article Title",
+    "@articlesPagesArticleTitleTextFieldHintText": {
+        "description": "hint text for the text field were you put in the article title when the user create a new article or changes the title of an existing one"
+    },
+    "articlesPagesArticleAuthorsTextFieldHintText": "Names of the articles authors",
+    "@articlesPagesArticleAuthorsTextFieldHintText": {
+        "description": "hint text were the user enters the name of the authors when creating a new article or changing the authors of an existing one"
+    },
+    "articlesPagesArticleCreationSuccessSnackbarMessage": "Article was create successfully",
+    "@articlesPagesArticleCreationSuccessSnackbarMessage": {
+        "description": "message that pops up as a snackbar when the article is created successfully"
+    },
+    "articlesPagesEditArticleButtonLabel": "Edit Article",
+    "@articlesPagesEditArticleButtonLabel": {
+        "description": "label for the button that opens the article editor"
+    },
+    "articlesPagesDeleteArticleButtonLabel": "Delete Article",
+    "articlesPagesDeleteCommentButtonLabel": "Delete Comment",
+    "@articlesPagesDeleteCommentButtonLabel": {
+        "description": "label for the button that deletes article permanently"
+    },
+    "articlesPagesReadMoreCommentButtonLabel": "read more",
+    "@articlesPagesReadMoreCommentButtonLabel": {
+        "description": "label for the button that deletes article permanently"
+    },
+    "articlesPagesDeleteArticleDialogContent": "The article will be deleted permanently. You can not recover it after deletion.",
+    "@articlesPagesDeleteArticleDialogContent": {},
+    "@articlesPagesDeleteArticleButtonLabel": {
+        "description": "content of the confirmation dialog if the user tries to delete an article"
+    },
+    "articlesPagesDeleteCommentDialogContent": "The comment will be deleted permanently. You can not recover it after deletion.",
+    "@articlesPagesDeleteCommentDialogContent": {
+        "description": "content of the confirmation dialog if the user tries to delete an article"
+    },
+    "articlesPagesSuccessArticleDeletedSnackbarMessage": "Article was deleted successfully",
+    "@articlesPagesSuccessArticleDeletedSnackbarMessage": {
+        "description": "snackbar message content after article deletion"
+    },
+    "articlesPagesSuccessCommentDeletedSnackbarMessage": "Comment was deleted successfully",
+    "@articlesPagesSuccessCommentDeletedSnackbarMessage": {
+        "description": "snackbar message content after article deletion"
+    },
+    "articlesPagesSuccessArticlePublishedSnackbarMessage": "Article was published successfully",
+    "@articlesPagesSuccessArticlePublishedSnackbarMessage": {
+        "description": "snackbar message content after article publication"
+    },
+    "articlesPagesEmbedYoutubeVideoDialogLabel": "Embed Youtube Video",
+    "@articlesPagesEmbedYoutubeVideoDialogLabel": {
+        "description": ""
+    },
+    "articlesPagesEmbedYoutubeVideoLinkHintText": "Youtube Video Link or embed code",
+    "@articlesPagesEmbedYoutubeVideoLinkHintText": {
+        "description": ""
+    },
+    "articlesPagesEmbedYoutubeVideoLinkNotValidSnackbarErrorMessage": "Please provide a valid YouTube link",
+    "@articlesPagesEmbedYoutubeVideoLinkNotValidSnackbarErrorMessage": {
+        "description": ""
+    },
+    "articlesPagesArticleEditorTitle": "Article Editor of {articleName}",
+    "@articlesPagesArticleEditorTitle": {
+        "description": "title of article editor scaffold",
+        "placeholders": {
+            "articleName": {}
+        }
+    },
+    "articlesPagesChangeArticleTitleButtonLabel": "Change article title",
+    "@articlesPagesChangeArticleTitleButtonLabel": {
+        "description": "lable of the button that changes the articles title"
+    },
+    "articlesPagesChangeArticleAuthorButtonLabel": "Change article author",
+    "@articlesPagesChangeArticleAuthorButtonLabel": {
+        "description": "label of the button that changes the article title"
+    },
+    "articlesPagesSuccessArticleAuthorChangedSnackbarMessage": "Article author was changed successfully",
+    "@articlesPagesSuccessArticleAuthorChangedSnackbarMessage": {
+        "description": "snackbar message after article author was changed"
+    },
+    "articlesPagesEditCoverImageButtonLabel": "Edit Cover Image",
+    "@articlesPagesEditCoverImageButtonLabel": {
+        "description": "button that edits the cover image"
+    },
+    "articlesPagesEditorPlaceholder": "Here you can create your article...",
+    "@articlesPagesEditorPlaceholder": {
+        "description": ""
+    },
+    "articlesPagesNoCoverImgPlaceholder": "The article does not have a cover image yet",
+    "@articlesPagesNoCoverImgPlaceholder": {
+        "description": ""
+    },
+    "articlesPagesCurrentCoverImgLabel": "Current Cover Image",
+    "@articlesPagesCurrentCoverImgLabel": {
+        "description": ""
+    },
+    "articlesPagesPublishArticleButtonLabel": "Publish Article",
+    "@articlesPagesPublishArticleButtonLabel": {
+        "description": ""
+    },
+    "articlesPagesSuccessChangeCoverImageSnackbarMessage": "Cover Image was changed successfully. Close and open the article editor again to see the changes",
+    "@articlesPagesSuccessChangeCoverImageSnackbarMessage": {
+        "description": ""
+    },
+    "articlesPagesCommentManagmentPageHeader": "Comment managment of {articleTitle}",
+    "@articlesPagesCommentManagmentPageHeader": {
+        "description": "",
+        "placeholders": {
+            "articleTitle": {}
+        }
+    },
+    "eventPagesSucccessDateChangedSnackbarMessage": "Date changed successfully to {month}/{day}/{year} {hour}:{minute}",
+    "@eventPagesSucccessDateChangedSnackbarMessage": {
+        "placeholders": {
+            "month": {},
+            "day": {},
+            "year": {},
+            "hour": {},
+            "minute": {}
+        }
+    },
+    "eventPagesLongDescrEventEditorScaffoldTitle": "Long event description of {eventTitle}",
+    "@eventPagesLongDescrEventEditorScaffoldTitle": {
+        "placeholders": {
+            "eventTitle": {}
+        }
+    },
+    "eventPagesChangeEventTitleButtonAndDialogLabel": "Change Event Title",
+    "@eventPagesChangeEventTitleButtonAndDialogLabel": {},
+    "eventPagesChangeShortDescriptionButtonAndDialogLabel": "Change short event description",
+    "@eventPagesChangeShortDescriptionButtonAndDialogLabel": {},
+    "eventPagesSuccessChangedEventShortDescrSnackbarMessage": "Short description of event changed successfully",
+    "@eventPagesSuccessChangedEventShortDescrSnackbarMessage": {
+        "description": ""
+    },
+    "eventPagesChangeDateButtonLabel": "Change Date",
+    "@eventPagesChangeDateButtonLabel": {
+        "description": ""
+    },
+    "eventPagesPublishEventButtonLabel": "Publish Event",
+    "@eventPagesPublishEventButtonLabel": {
+        "description": ""
+    },
+    "eventPagesSuccessEventPublishedSnackbarMessage": "Event was published successfully",
+    "@eventPagesSuccessEventPublishedSnackbarMessage": {
+        "description": ""
+    },
+    "eventPagesLongEventDescrHintText": "Here you can compose the long description of the event...",
+    "@eventPagesLongEventDescrHintText": {
+        "description": ""
+    },
+    "eventPagesShortEventDescrHintText": "New description",
+    "@eventPagesShortEventDescrHintText": {
+        "description": ""
+    },
+    "eventPagesChangeLongDescrButtonLabel": "Change long description",
+    "@eventPagesChangeLongDescrButtonLabel": {
+        "description": ""
+    },
+    "eventPagesDeleteEventButtonLabel": "Delete Event",
+    "@eventPagesDeleteEventButtonLabel": {
+        "description": ""
+    },
+    "eventPagesSuccessDeleteEventSnackbarMessage": "Event was deleted successfully",
+    "@eventPagesSuccessDeleteEventSnackbarMessage": {
+        "description": ""
+    },
+    "eventPagesDeleteEventConfirmationDialogContent": "The event will be deleted permanently. You can not recover it after deletion. ",
+    "@eventPagesDeleteEventConfirmationDialogContent": {
+        "description": ""
+    },
+    "eventPagesCreateEventButtonLabel": "Create Event",
+    "@eventPagesCreateEventButtonLabel": {
+        "description": ""
+    },
+    "eventPagesPublishedEventsButtonLabel": "Published Events",
+    "@eventPagesPublishedEventsButtonLabel": {
+        "description": ""
+    },
+    "eventPagesSavedEventsButtonLabel": "Saved Events",
+    "@eventPagesSavedEventsButtonLabel": {
+        "description": ""
+    },
+    "eventPagesEventTitleTextFieldHintText": "Event Title",
+    "@eventPagesEventTitleTextFieldHintText": {
+        "description": ""
+    },
+    "eventPagesShortEventDescrTextFieldHintText": "Short event description",
+    "@eventPagesShortEventDescrTextFieldHintText": {
+        "description": ""
+    },
+    "eventPagesDateAndTimeOfEventButtonLabel": "Date and Time of the event",
+    "@eventPagesDateAndTimeOfEventButtonLabel": {
+        "description": ""
+    },
+    "eventPagesSuccessEventCreatedSnackbarMessage": "Event was created successfully",
+    "@eventPagesSuccessEventCreatedSnackbarMessage": {
+        "description": ""
+    },
+    "homePageManageArticlesAdminMenuButton": "Articles",
+    "@homePageManageArticlesAdminMenuButton": {
+        "description": ""
+    },
+    "homePageManageEventsAdminMenuButton": "Events",
+    "@homePageManageEventsAdminMenuButton": {
+        "description": ""
+    },
+    "homePageManageManageUsersAdminMenuButton": "Users",
+    "@homePageManageManageUsersAdminMenuButton": {},
+    "homePageManageCommentsAdminMenuButton": "Comments",
+    "@homePageManageCommentsAdminMenuButton": {
+        "description": ""
+    },
+    "homePageManagCommentsDeleteSubAdminMenuButton": "Delete Comments",
+    "@homePageManagCommentsDeleteSubAdminMenuButton": {},
+    "homePageManageCommentsApproveSubAdminMenuButton": "Approve Comments",
+    "@homePageManageCommentsApproveSubAdminMenuButton": {
+        "description": ""
+    },
+    "homePageSavedMediaAdminMenuButton": "Files",
+    "@homePageSavedMediaAdminMenuButton": {
+        "description": ""
+    },
+    "homePageSendPushNotificationsAdminMenuButton": " Notifications",
+    "@homePageSendPushNotificationsAdminMenuButton": {
+        "description": ""
+    },
+    "homePageDashboardAdminMenuButton": "Dashboard",
+    "@homePageDashboardAdminMenuButton": {
+        "description": ""
+    },
+    "homePageLegalNoticeButtonLabel": "Legal Notice",
+    "@homePageLegalNoticeButtonLabel": {
+        "description": ""
+    },
+    "homePagedigitalLibraryButtonLabel": "Digital Library",
+    "@homePagedigitalLibraryButtonLabel": {},
+    "homePageAdminSettingsButtonLabel": "Admin Settings",
+    "@homePageAdminSettingsButtonLabel": {
+        "description": ""
+    },
+    "homePageSorterButtonLabel": "Sorting Surveys",
+    "@homePageSorterButtonLabel": {
+        "description": ""
+    },
+    "homePageSurveyButtonLabel": "Surveys",
+    "@homePageSurveyButtonLabel": {
+        "description": ""
+    },
+    "homePageWelcomeLabel": "Welcome to the NewsApp Admin Panel!",
+    "@homePageWelcomeLabel": {},
+    "homePageWelcomeSubLabel": "Navigate to a Section and start creating!",
+    "@homePageWelcomeSubLabel": {},
+    "manageMediaPagesDownloadFileButtonLabel": "Download File",
+    "@manageMediaPagesDownloadFileButtonLabel": {
+        "description": ""
+    },
+    "manageMediaPagesDeleteButtonLabel": "Delete File",
+    "@manageMediaPagesDeleteButtonLabel": {
+        "description": ""
+    },
+    "manageMediaPagesImagesButtonLabel": "Images",
+    "@manageMediaPagesImagesButtonLabel": {
+        "description": ""
+    },
+    "manageMediaPagesVideosButtonLabel": "Videos",
+    "@manageMediaPagesVideosButtonLabel": {
+        "description": ""
+    },
+    "manageMediaPagesAudioButtonLabel": "Audio",
+    "@manageMediaPagesAudioButtonLabel": {
+        "description": ""
+    },
+    "manageMediaPagesImagesPageLabel": "Images",
+    "@manageMediaPagesImagesPageLabel": {},
+    "manageMediaPagesVideosPageLabel": "Videos",
+    "@manageMediaPagesVideosPageLabel": {
+        "description": ""
+    },
+    "manageMediaPagesAudioPageLabel": "Audio",
+    "@manageMediaPagesAudioPageLabel": {
+        "description": ""
+    },
+    "manageMediaPagesDeleteFileConfirmationDialogContent": "You can not revocer the file after deletion.",
+    "@manageMediaPagesDeleteFileConfirmationDialogContent": {
+        "description": ""
+    },
+    "manageMediaPagesSuccessFileDeletedSnackbarMessage": "File was deleted successfully. Reload the page to see changes.",
+    "@manageMediaPagesSuccessFileDeletedSnackbarMessage": {
+        "description": ""
+    },
+    "manageMediaPagesFileNumberLabel": "{fileNumber, plural, zero{0 Files} one{1 File} other{{fileNumber} Files}}",
+    "@manageMediaPagesFileNumberLabel": {
+        "description": "",
+        "placeholders": {
+            "fileNumber": {}
+        }
+    },
+    "pushNotificationPageAllUsersDropdownButtonLabel": "All Users",
+    "@pushNotificationPageAllUsersDropdownButtonLabel": {},
+    "pushNotificationPageASpecificUserDropdownButtonLabel": "One or more specific users",
+    "@pushNotificationPageASpecificUserDropdownButtonLabel": {},
+    "pushNotificationPageASpecificGroupDropdownButtonLabel": "A specific user group",
+    "@pushNotificationPageASpecificGroupDropdownButtonLabel": {},
+    "pushNotificationPageSendToDropdownButtonLabel": "Send To: ",
+    "@pushNotificationPageSendToDropdownButtonLabel": {},
+    "pushNotificationPagesSendNotificationButtonLabel": "Send Push Notification",
+    "@pushNotificationPagesSendNotificationButtonLabel": {},
+    "pushNotificationPagesNotificationTitleTextFieldHintText": "Notification Title",
+    "@pushNotificationPagesNotificationTitleTextFieldHintText": {},
+    "pushNotificationPagesNotificationBodyTextFieldHintText": "Notification Body",
+    "@pushNotificationPagesNotificationBodyTextFieldHintText": {},
+    "pushNotificationPagesSelectRecipientsDialogLabel": "Select message recipients",
+    "@pushNotificationPagesSelectRecipientsDialogLabel": {},
+    "pushNotificationPagesSelectAtLeastOneRecipientInfoSnackbarMessage": "Please select at least one message recipient",
+    "@pushNotificationPagesSelectAtLeastOneRecipientInfoSnackbarMessage": {},
+    "pushNotificationPagesSelectAValidDropdownOptionInfoSnackbarMessage": "Please select a valid dropdown option",
+    "@pushNotificationPagesSelectAValidDropdownOptionInfoSnackbarMessage": {},
+    "pushNotificationPagesOnSuccessNotificationSendSnackbarMessage": "Push Notification sent successfully. It might take a few minutes until it reaches all users",
+    "@pushNotificationPagesOnSuccessNotificationSendSnackbarMessage": {},
+    "pushNotificationPagesOnErrorUnableToSendPushNotificationSnackbarMessage": "Could not sent push notification. HTTP Error {errorCode}",
+    "@pushNotificationPagesOnErrorUnableToSendPushNotificationSnackbarMessage": {
+        "placeholders": {
+            "errorCode": {}
+        }
+    },
+    "pushNotificationsSelectGroupsButtonLabel": "Select Groups",
+    "@pushNotificationsSelectGroupsButtonLabel": {},
+    "surveysPagesEditSurveyButton": "Edit Survey",
+    "@surveysPagesEditSurveyButton": {},
+    "surveysPagesDeleteSurveyButton": "Delete Survey",
+    "@surveysPagesDeleteSurveyButton": {},
+    "surveysPagesViewResponsesButton": "Results",
+    "@surveysPagesViewResponsesButton": {},
+    "surveysPagesCreateSurveyButton": "Create Survey",
+    "@surveysPagesCreateSurveyButton": {},
+    "surveysPagesCreateSurveyDialogTitle": "Create a new Survey",
+    "@surveysPagesCreateSurveyDialogTitle": {},
+    "surveysPagesDeleteSurveyDialogContent": "You can not recover the survey after deletion.",
+    "@surveysPagesDeleteSurveyDialogContent": {},
+    "surveysPagesCreateQuestionDialogTitle": "Create a new question",
+    "@surveysPagesCreateQuestionDialogTitle": {},
+    "surveysPagesCreateQuestionButton": "Create Question",
+    "@surveysPagesCreateQuestionButton": {},
+    "surveysPagesQuestionTexFieldHintText": "Question",
+    "@surveysPagesQuestionTexFieldHintText": {},
+    "surveysPagesQuestionTypeLabel": "Question Type",
+    "@surveysPagesQuestionTypeLabel": {},
+    "surveysPagesPreviewSurveyButtonLabel": "Preview",
+    "@surveysPagesPreviewSurveyButtonLabel": {},
+    "surveysPagesAddOptionButtonLabel": "Add Option",
+    "@surveysPagesAddOptionButtonLabel": {},
+    "surveysPagesNumberOfResponses": "{responseCount, plural, one{1 Response} other{{responseCount} Responses}}",
+    "@surveysPagesNumberOfResponses": {
+        "placeholders": {
+            "responseCount": {}
+        }
+    },
+    "surveysPagesSliderSelectRangeLabel": "Please Select a Range (has to be a positive integer)",
+    "@surveysPagesSliderSelectRangeLabel": {},
+    "surveysPagesSliderSelectRangeStartHintText": "Start",
+    "@surveysPagesSliderSelectRangeStartHintText": {},
+    "surveysPagesSliderSelectRangeEndHintText": "End",
+    "@surveysPagesSliderSelectRangeEndHintText": {},
+    "surveysPagesSliderSelectRangeToLabel": "To",
+    "@surveysPagesSliderSelectRangeToLabel": {},
+    "surveysPagesSliderStartAndEndLabel": "Start and End Label (Optional)",
+    "@surveysPagesSliderStartAndEndLabel": {},
+    "surveysPagesSliderSelectRangeStartLabelHintText": "Start Label",
+    "globalSuccessTitleChangedSnackbarMessage": "Title was changed successfully",
+    "@globalSuccessTitleChangedSnackbarMessage": {
+        "description": "snackbar message after the title of an element was changed"
+    },
+    "globalTitleTextFieldHintText": "Title",
+    "@globalTitleTextFieldHintText": {
+        "description": ""
+    },
+    "globalDescriptionTextFieldHintText": "Description",
+    "@globalDescriptionTextFieldHintText": {
+        "description": ""
+    },
+    "globalTitleLabel": "Title",
+    "@globalTitleLabel": {
+        "description": ""
+    },
+    "@surveysPagesSliderSelectRangeStartLabelHintText": {},
+    "surveysPagesSliderSelectRangeEndLabelHintText": "End Label",
+    "@surveysPagesSliderSelectRangeEndLabelHintText": {},
+    "surveysPagesWordLimitLabel": "Word Limit (Optional). Leave Blank if there is no limit",
+    "@surveysPagesWordLimitLabel": {},
+    "surveysPagesWordLimitTextFieldHintText": "Word Limit",
+    "@surveysPagesWordLimitTextFieldHintText": {},
+    "surveysPagesSurveyPublishedOnSuccessSnackbarMessage": "Survey published successfully",
+    "@surveysPagesSurveyPublishedOnSuccessSnackbarMessage": {},
+    "surveysPagesSurveyDeletedOnSuccessSnackbarMessage": "Survey deleted successfully",
+    "@surveysPagesSurveyDeletedOnSuccessSnackbarMessage": {},
+    "surveysPagesAverageResponse": "Average Response: {averageResponse}",
+    "@surveysPagesAverageResponse": {
+        "placeholders": {
+            "averageResponse": {}
+        }
+    },
+    "surveysPagesManageEditorAccessButtonLabel": "Manage Editor Access",
+    "@surveysPagesManageEditorAccessButtonLabel": {},
+    "surveysPagesManageRespondentsAccessButtonLabel": "Manage Respondents Access",
+    "@surveysPagesManageRespondentsAccessButtonLabel": {},
+    "surveysPagesManageSurveyEditAccessDialogTitle": "Manage Survey Edit Access",
+    "@surveysPagesManageSurveyEditAccessDialogTitle": {},
+    "surveysPagesManageSurveyRespondentAccessDialogTitle": "Manage who can respond to your survey",
+    "@surveysPagesManageSurveyRespondentAccessDialogTitle": {},
+    "surveysPagesMakeSurveyAccessibleToEveryoneCheckboxLabel": "Make Survey Accessible to everyone",
+    "@surveysPagesMakeSurveyAccessibleToEveryoneCheckboxLabel": {},
+    "surveysPagesOnSuccessEditAccessChangesSnackbarContent": "Edit access updated successfully",
+    "@surveysPagesOnSuccessEditAccessChangesSnackbarContent": {},
+    "surveysPagesOnSuccessRespondentsAccessChangesSnackbarContent": "Survey respondents access updated successfully",
+    "@surveysPagesOnSuccessRespondentsAccessChangesSnackbarContent": {},
+    "adminSettingsPagesRegistrationBuilderPanelTitle": "Registration Page Builder",
+    "@adminSettingsPagesRegistrationBuilderPanelTitle": {},
+    "adminSettingsPagesRegistrationBuilderScaffoldTitle": "Registration Page Layout Builder",
+    "@adminSettingsPagesRegistrationBuilderScaffoldTitle": {},
+    "adminSettingsPagesLogoAndThemePanelTitle": "Logo and Theme Settings",
+    "@adminSettingsPagesLogoAndThemePanelTitle": {},
+    "adminSettingsPagesRegistrationBuilderExpansionSectionFieldCategoryTitle": "Expansion Section",
+    "@adminSettingsPagesRegistrationBuilderExpansionSectionFieldCategoryTitle": {},
+    "adminSettingsPagesRegistrationBuilderExpansionSectionFieldCategoryDescr": "A list tile that expands to show more questions when clicked",
+    "@adminSettingsPagesRegistrationBuilderExpansionSectionFieldCategoryDescr": {},
+    "adminSettingsPagesRegistrationBuilderInfoboxFieldCategoryTitle": "Infobox",
+    "@adminSettingsPagesRegistrationBuilderInfoboxFieldCategoryTitle": {},
+    "adminSettingsPagesRegistrationBuilderInfoboxFieldCategoryDescr": "A box displaying informational text",
+    "@adminSettingsPagesRegistrationBuilderInfoboxFieldCategoryDescr": {},
+    "adminSettingsPagesRegistrationBuilderDropdownFieldCategoryTitle": "Dropdown",
+    "@adminSettingsPagesRegistrationBuilderDropdownFieldCategoryTitle": {},
+    "adminSettingsPagesRegistrationBuilderDropdownFieldCategoryDescr": "A dropdown menu for selecting one option from a list",
+    "@adminSettingsPagesRegistrationBuilderDropdownFieldCategoryDescr": {},
+    "adminSettingsPagesRegistrationBuilderSignatureFieldCategoryTitle": "Signature",
+    "@adminSettingsPagesRegistrationBuilderSignatureFieldCategoryTitle": {},
+    "adminSettingsPagesRegistrationBuilderSignatureFieldCategoryDescr": "A field for capturing an advanced digital signature according to eIDAS and DSS standards",
+    "@adminSettingsPagesRegistrationBuilderSignatureFieldCategoryDescr": {},
+    "adminSettingsPagesRegistrationBuilderCheckboxFieldCategoryTitle": "Checkbox",
+    "@adminSettingsPagesRegistrationBuilderCheckboxFieldCategoryTitle": {},
+    "adminSettingsPagesRegistrationBuilderCheckboxFieldCategoryDescr": "A single checkbox for binary choices",
+    "@adminSettingsPagesRegistrationBuilderCheckboxFieldCategoryDescr": {},
+    "adminSettingsPagesRegistrationBuilderFileUploadFieldCategoryTitle": "File Upload",
+    "@adminSettingsPagesRegistrationBuilderFileUploadFieldCategoryTitle": {},
+    "adminSettingsPagesRegistrationBuilderFileUploadFieldCategoryDescr": "A field for uploading files",
+    "@adminSettingsPagesRegistrationBuilderFileUploadFieldCategoryDescr": {},
+    "adminSettingsPagesRegistrationBuilderDateFieldCategoryTitle": "Date Picker",
+    "@adminSettingsPagesRegistrationBuilderDateFieldCategoryTitle": {},
+    "adminSettingsPagesRegistrationBuilderDateFieldCategoryDescr": "A field for selecting a date",
+    "@adminSettingsPagesRegistrationBuilderDateFieldCategoryDescr": {},
+    "adminSettingsPagesRegistrationBuilderCheckboxGroupFieldCategoryTitle": "Checkbox Assign Group",
+    "@adminSettingsPagesRegistrationBuilderCheckboxGroupFieldCategoryTitle": {},
+    "adminSettingsPagesRegistrationBuilderCheckboxGroupFieldCategoryDescr": "A checkbox for automatically assigning users to a group",
+    "@adminSettingsPagesRegistrationBuilderCheckboxGroupFieldCategoryDescr": {},
+    "adminSettingsPagesRegistrationBuilderFreeResponseFieldCategoryTitle": "Free Response",
+    "@adminSettingsPagesRegistrationBuilderFreeResponseFieldCategoryTitle": {},
+    "adminSettingsPagesRegistrationBuilderFreeResponseFieldCategoryDescr": "A field for entering free-form text responses",
+    "@adminSettingsPagesRegistrationBuilderFreeResponseFieldCategoryDescr": {},
+    "adminSettingsPagesRegistrationBuilderRequiredFields": "The first/last name fields, email and password fields are required by default. You can add more fields by dragging them from the right side to the left side. You can also reorder the fields by dragging them up or down.",
+    "@adminSettingsPagesRegistrationBuilderRequiredFields": {},
+    "adminSettingsPagesRegistrationMaxFileUploadsLabel": "Max File Uploads (1-6)",
+    "@adminSettingsPagesRegistrationMaxFileUploadsLabel": {},
+    "adminSettingsPagesRegistrationCheckboxLabel": "Checkbox Label (Optional)",
+    "@adminSettingsPagesRegistrationCheckboxLabel": {},
+    "adminSettingsErrorTitleEmptySnackbarMessage": "Title is empty for a field",
+    "@adminSettingsErrorTitleEmptySnackbarMessage": {},
+    "adminSettingsErrorMaxFileEmptySnackbarMessage": "Max file uploads is empty",
+    "@adminSettingsErrorMaxFileEmptySnackbarMessage": {},
+    "adminSettingsErrorDropdownEmptySnackbarMessage": "Dropdown options are empty",
+    "@adminSettingsErrorDropdownEmptySnackbarMessage": {},
+    "adminSettingsThemePanelTitle": "Logo and Theme Settings",
+    "@adminSettingsThemePanelTitle": {},
+    "adminSettingsPagesThemeFailedToUpdateColorSnackbarMessage": "Failed to update theme color",
+    "@adminSettingsPagesThemeFailedToUpdateColorSnackbarMessage": {},
+    "adminSettingsPagesThemeSuccessColorSnackbarMessage": "Theme color updated successfully",
+    "@adminSettingsPagesThemeSuccessColorSnackbarMessage": {},
+    "adminSettingsPagesThemeChageLogoLabel": "Change Logo",
+    "@adminSettingsPagesThemeChageLogoLabel": {},
+    "adminSettingsPagesSelectLogoButtonLabel": "Select new Logo",
+    "@adminSettingsPagesSelectLogoButtonLabel": {},
+    "adminSettingsPagesThemeChangePrimaryColorLabel": "Change Primary Color",
+    "@adminSettingsPagesThemeChangePrimaryColorLabel": {},
+    "adminSettingsPagesThemeChangeSecondaryColorLabel": "Change Secondary Color",
+    "@adminSettingsPagesThemeChangeSecondaryColorLabel": {},
+    "adminSettingsPagesSelectAColor": "Select a color",
+    "@adminSettingsPagesSelectAColor": {},
+    "adminSettingsPagesSelectShade": "Select a color shade",
+    "@adminSettingsPagesSelectShade": {},
+    "adminSettingsPagesColorHexCode": "Color Hex Code",
+    "@adminSettingsPagesColorHexCode": {},
+    "globalSuccessfullyUploadedFileSnackbarMessage": "File was Uploaded Successfully. You can delete it from the storage of your organization under the \"Files\" section of the site.",
+    "@globalSuccessfullyUploadedFileSnackbarMessage": {
+        "description": "shows text in snackbar on successfull file upload"
+    },
+    "globalSaveButtonLabel": "Save",
+    "@globalSaveButtonLabel": {
+        "description": "label for all save buttons"
+    },
+    "globalDeleteEverythingButtonLabel": "Delete Everything",
+    "@globalDeleteEverythingButtonLabel": {
+        "description": ""
+    },
+    "globalOptionalTextFieldLabel": "Text (Optional)",
+    "@globalOptionalTextFieldLabel": {
+        "description": ""
+    },
+    "globalManageCommentsLabel": "Comments",
+    "@globalManageCommentsLabel": {
+        "description": ""
+    },
+    "globaFeatureNotAvailable": "This feature is not yet available",
+    "@globaFeatureNotAvailable": {
+        "description": ""
+    },
+    "globalSelectAnOptionDropdownMenuHintText": "Select an Option",
+    "@globalSelectAnOptionDropdownMenuHintText": {
+        "description": ""
+    },
+    "globalSubmitButtonLabel": "Submit",
+    "@globalSubmitButtonLabel": {},
+    "globalUploadLabel": "Upload",
+    "@globalUploadLabel": {}
+}
