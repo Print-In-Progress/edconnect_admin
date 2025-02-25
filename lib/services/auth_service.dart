@@ -93,7 +93,7 @@ class AuthService {
       await Future.delayed(cooldown);
       onCooldownChange(true);
     } catch (e) {
-      rethrow; // Let the UI handle the error
+      rethrow;
     }
   }
 
@@ -111,7 +111,6 @@ class AuthService {
     }
     // Create User
     try {
-      // Filter out fields of type 'checkbox_section' whose 'checked' parameter is not true
       List<BaseRegistrationField> filteredFields =
           registrationFields.where((field) {
         return !(field.type == 'checkbox_section' && field.checked != true);
@@ -584,6 +583,52 @@ class AuthService {
       // Log the event
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  Future<void> updatePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmedPassword,
+  }) async {
+    final currentUser = _auth.currentUser;
+    if (!passwordConfirmed(newPassword, confirmedPassword)) {
+      throw FirebaseAuthException(
+        code: 'passwords-do-not-match',
+        message: 'Passwords do not match.',
+      );
+    }
+    if (currentUser == null || currentUser.email == null) {
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No user is currently signed in.',
+      );
+    }
+
+    // Reauthenticate user
+    final credential = EmailAuthProvider.credential(
+      email: currentUser.email!,
+      password: currentPassword,
+    );
+    await currentUser.reauthenticateWithCredential(credential);
+
+    // Update password
+    await currentUser.updatePassword(newPassword);
+  }
+
+  Future<String> updateEmail(newEmail) async {
+    try {
+      await FirebaseAuth.instance.currentUser!
+          .verifyBeforeUpdateEmail(newEmail);
+
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+      var userCollection = FirebaseFirestore.instance
+          .collection(customerSpecificCollectionUsers);
+
+      await userCollection.doc(uid).update({'email': newEmail});
+      return 'Success';
+    } catch (e) {
+      return 'UnexpectedError';
     }
   }
 }

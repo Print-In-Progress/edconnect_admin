@@ -3,7 +3,7 @@ import 'package:edconnect_admin/components/forms.dart';
 import 'package:edconnect_admin/components/snackbars.dart';
 import 'package:edconnect_admin/models/providers/themeprovider.dart';
 import 'package:edconnect_admin/pages/auth_pages/forgot_password_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:edconnect_admin/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,16 +22,29 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
 
   final _formKey = GlobalKey<FormState>();
 
+  final _auth = AuthService();
+
   bool _newPasswordVisible = false;
   bool _currentPasswordVisible = false;
   bool _confirmNewPasswordVisible = false;
 
-  bool passwordConfirmed() {
-    if (_newPasswordController.text.trim() ==
-        _confirmNewPasswordController.text.trim()) {
-      return true;
-    } else {
-      return false;
+  Future<void> _updatePassword() async {
+    try {
+      await _auth.updatePassword(
+        currentPassword: _currentPasswordController.text,
+        newPassword: _newPasswordController.text,
+        confirmedPassword: _confirmNewPasswordController.text,
+      );
+
+      if (!mounted) return;
+      successMessage(
+        context,
+        AppLocalizations.of(context)!
+            .settingsPageSuccessOnPasswordChangedSnackbarLabel,
+      );
+    } on Exception catch (e) {
+      if (!mounted) return;
+      errorMessage(context, e.toString());
     }
   }
 
@@ -179,42 +192,7 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
                                   fontWeight: FontWeight.w600,
                                   label: AppLocalizations.of(context)!
                                       .globalApplyChangesButtonLabel,
-                                  onPressed: () async {
-                                    if (passwordConfirmed()) {
-                                      try {
-                                        var currentUser =
-                                            FirebaseAuth.instance.currentUser!;
-                                        final cred =
-                                            EmailAuthProvider.credential(
-                                                email: currentUser.email!,
-                                                password:
-                                                    _currentPasswordController
-                                                        .text);
-                                        await currentUser
-                                            .reauthenticateWithCredential(cred)
-                                            .then((value) async {
-                                          await currentUser
-                                              .updatePassword(
-                                                  _newPasswordController.text)
-                                              .then((value) {
-                                            successMessage(
-                                                context,
-                                                AppLocalizations.of(context)!
-                                                    .settingsPageSuccessOnPasswordChangedSnackbarLabel);
-                                          });
-                                        });
-                                      } on FirebaseAuthException catch (e) {
-                                        if (!context.mounted) return;
-                                        errorMessage(
-                                            context, e.message.toString());
-                                      }
-                                    } else {
-                                      errorMessage(
-                                          context,
-                                          AppLocalizations.of(context)!
-                                              .authPagesConfirmPasswordErrorSnackbarLabel);
-                                    }
-                                  },
+                                  onPressed: _updatePassword,
                                   width: MediaQuery.of(context).size.width),
                             ),
 

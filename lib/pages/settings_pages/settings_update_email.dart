@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edconnect_admin/components/buttons.dart';
 import 'package:edconnect_admin/components/snackbars.dart';
-import 'package:edconnect_admin/constants/database_constants.dart';
 import 'package:edconnect_admin/models/providers/themeprovider.dart';
+import 'package:edconnect_admin/services/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,8 +15,7 @@ class ChangeEmail extends ConsumerStatefulWidget {
 
 class _ChangeEmailState extends ConsumerState<ChangeEmail> {
   final _userEmailController = TextEditingController();
-
-  final _formKey = GlobalKey<FormState>();
+  final _authServce = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -65,78 +62,60 @@ class _ChangeEmailState extends ConsumerState<ChangeEmail> {
                         ? MediaQuery.of(context).size.width
                         : MediaQuery.of(context).size.width / 2,
                     child: Card(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 10),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: TextFormField(
-                                controller: _userEmailController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return AppLocalizations.of(context)!
-                                        .globalEmptyFormFieldErrorLabel;
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  hintText: AppLocalizations.of(context)!
-                                      .globalEmailLabel,
-                                  prefixIcon: const Icon(Icons.person),
-                                ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: TextFormField(
+                              controller: _userEmailController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return AppLocalizations.of(context)!
+                                      .globalEmptyFormFieldErrorLabel;
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                filled: true,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12)),
+                                hintText: AppLocalizations.of(context)!
+                                    .globalEmailLabel,
+                                prefixIcon: const Icon(Icons.person),
                               ),
                             ),
-                            const SizedBox(height: 10),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25.0),
-                              child: PIPResponsiveRaisedButton(
-                                  fontWeight: FontWeight.w600,
-                                  label: AppLocalizations.of(context)!
-                                      .globalSaveChangesButtonLabel,
-                                  onPressed: () async {
-                                    try {
-                                      if (_formKey.currentState!.validate()) {
-                                        await FirebaseAuth.instance.currentUser!
-                                            .verifyBeforeUpdateEmail(
-                                                _userEmailController.text)
-                                            .then((value) {
-                                          successMessage(
-                                              context,
-                                              AppLocalizations.of(context)!
-                                                  .settingsPageSuccessOnPersonalDataChangedSnackbarContent);
-                                        });
-
-                                        final uid = FirebaseAuth
-                                            .instance.currentUser!.uid;
-                                        var userCollection = FirebaseFirestore
-                                            .instance
-                                            .collection(
-                                                customerSpecificCollectionUsers);
-                                        await userCollection.doc(uid).update({
-                                          'email': _userEmailController.text
-                                        });
-                                      }
-                                    } catch (e) {
-                                      if (!context.mounted) return;
-                                      errorMessage(
-                                          context,
-                                          AppLocalizations.of(context)!
-                                              .globalUnexpectedErrorLabel);
-                                    }
-                                  },
-                                  width: MediaQuery.of(context).size.width),
-                            ),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 25.0),
+                            child: PIPResponsiveRaisedButton(
+                                fontWeight: FontWeight.w600,
+                                label: AppLocalizations.of(context)!
+                                    .globalSaveChangesButtonLabel,
+                                onPressed: () async {
+                                  final returnValue = await _authServce
+                                      .updateEmail(_userEmailController.text);
+                                  if (!context.mounted) return;
+                                  if (returnValue == 'Success') {
+                                    successMessage(
+                                        context,
+                                        AppLocalizations.of(context)!
+                                            .globalSuccessSnackbarLabel);
+                                  } else {
+                                    errorMessage(
+                                        context,
+                                        AppLocalizations.of(context)!
+                                            .globalUnexpectedErrorLabel);
+                                  }
+                                },
+                                width: MediaQuery.of(context).size.width),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
                       ),
                     ),
                   ),

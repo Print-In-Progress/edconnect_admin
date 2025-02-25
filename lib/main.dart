@@ -92,14 +92,10 @@ class _EdConnectAdminState extends ConsumerState<EdConnectAdmin> {
           labelColor: Color.fromRGBO(202, 196, 208, 1),
         ),
         navigationRailTheme: const NavigationRailThemeData(
-            selectedIconTheme:
-                IconThemeData(color: Color.fromRGBO(202, 196, 208, 1)),
-            unselectedIconTheme:
-                IconThemeData(color: Color.fromRGBO(202, 196, 208, 1)),
-            unselectedLabelTextStyle:
-                TextStyle(color: Color.fromRGBO(202, 196, 208, 1)),
-            selectedLabelTextStyle:
-                TextStyle(color: Color.fromRGBO(202, 196, 208, 1))),
+            selectedIconTheme: IconThemeData(color: Colors.white),
+            unselectedIconTheme: IconThemeData(color: Colors.white),
+            unselectedLabelTextStyle: TextStyle(color: Colors.white),
+            selectedLabelTextStyle: TextStyle(color: Colors.white)),
         primaryColor: colorState.primaryColor,
       ),
       theme: ThemeData(
