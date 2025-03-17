@@ -1,6 +1,6 @@
 import 'package:edconnect_admin/constants/screen_access.dart';
-import 'package:edconnect_admin/pages/auth_pages/access_denied_page.dart';
-import 'package:edconnect_admin/pages/sample_page.dart';
+import 'package:edconnect_admin/presentation/pages/auth_pages/access_denied_page.dart';
+import 'package:edconnect_admin/presentation/pages/sample_page.dart';
 import 'package:flutter/material.dart';
 
 class NavigationService {

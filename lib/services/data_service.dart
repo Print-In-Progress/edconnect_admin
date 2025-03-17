@@ -51,7 +51,7 @@ class DataService {
 
     SettableMetadata metadata = SettableMetadata(
       customMetadata: {
-        'uploaded_by': uid, // Replace with actual user UID or other metadata
+        'uploaded_by': uid,
         'origin': fileOrigin,
       },
     );

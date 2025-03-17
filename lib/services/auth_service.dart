@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edconnect_admin/constants/app_permissions.dart';
 import 'package:edconnect_admin/constants/database_constants.dart';
 import 'package:edconnect_admin/models/registration_fields.dart';
-import 'package:edconnect_admin/models/user.dart';
+import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/services/pdf_service.dart';
 import 'package:edconnect_admin/services/data_service.dart';
 import 'package:edconnect_admin/utils/crypto_utils.dart';
@@ -59,11 +59,6 @@ class AuthService {
   // Send email verification
   Future<void> sendEmailVerification() async {
     await _auth.currentUser?.sendEmailVerification();
-  }
-
-  // Reload user
-  Future<void> reloadUser() async {
-    await _auth.currentUser?.reload();
   }
 
   // Sign out

@@ -8,7 +8,7 @@ class AppUser {
   final List<String> fcmToken;
   final List<String> groups;
   final List<String> permissions;
-  final List? publicIdentityKey; // Make it nullable
+  final List? publicIdentityKey;
   final int? registrationId;
   final Map<String, Map<String, dynamic>> deviceIds;
 
@@ -20,12 +20,11 @@ class AppUser {
     required this.email,
     required this.groups,
     required this.permissions,
-    this.publicIdentityKey, // Nullable
+    this.publicIdentityKey,
     this.registrationId,
     required this.deviceIds,
   });
 
-  // Convert a User object into a map for Firestore
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -72,3 +71,6 @@ class AppUser {
 
   String get initials => '${firstName[0]}${lastName[0]}';
 }
+
+
+// String get initials => '${firstName[0]}${lastName[0]}';

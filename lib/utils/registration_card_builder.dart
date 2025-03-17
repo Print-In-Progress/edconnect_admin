@@ -1,7 +1,7 @@
-import 'package:edconnect_admin/components/forms.dart';
-import 'package:edconnect_admin/components/signature_button.dart';
-import 'package:edconnect_admin/components/snackbars.dart';
 import 'package:edconnect_admin/models/registration_fields.dart';
+import 'package:edconnect_admin/presentation/widgets/common/forms.dart';
+import 'package:edconnect_admin/presentation/widgets/common/signature_button.dart';
+import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
