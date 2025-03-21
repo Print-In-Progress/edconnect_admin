@@ -19,4 +19,10 @@ abstract class AuthRepository {
 
   /// Sign in with email and password
   Future<String?> signInWithEmailAndPassword(String email, String password);
+
+  /// Reset password
+  Future<String?> resetPassword(String email);
+
+  /// Change email
+  Future<String?> changeEmail(String email);
 }

@@ -259,6 +259,16 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       String email, String password) async {
     return await _authDataSource.signInWithEmailAndPassword(email, password);
   }
+
+  @override
+  Future<String?> resetPassword(String email) async {
+    return await _authDataSource.resetPassword(email);
+  }
+
+  @override
+  Future<String?> changeEmail(String email) async {
+    return await _authDataSource.changeEmail(email);
+  }
 }
 
 // Helper function

@@ -62,4 +62,28 @@ class FirebaseAuthDataSource implements AuthDataSource {
     }
     return null;
   }
+
+  @override
+  Future<String?> resetPassword(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } on Exception catch (e) {
+      return 'AuthError: $e';
+    } catch (e) {
+      return 'UnexpectedError: $e';
+    }
+    return null;
+  }
+
+  @override
+  Future<String?> changeEmail(String email) async {
+    try {
+      await _firebaseAuth.currentUser!.verifyBeforeUpdateEmail(email);
+    } on Exception catch (e) {
+      return 'AuthError: $e';
+    } catch (e) {
+      return 'UnexpectedError: $e';
+    }
+    return null;
+  }
 }

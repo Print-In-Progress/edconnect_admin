@@ -11,4 +11,6 @@ abstract class UserDataSource {
     String? publicKeyPem,
     Uint8List? signatureBytes,
   });
+
+  Future<void> changeName(String uid, String firstName, String lastName);
 }

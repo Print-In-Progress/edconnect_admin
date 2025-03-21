@@ -48,4 +48,9 @@ class FirebaseUserRepositoryImpl implements UserRepository {
       return null;
     });
   }
+
+  @override
+  Future<void> changeName(String uid, String firstName, String lastName) {
+    return _userDataSource.changeName(uid, firstName, lastName);
+  }
 }
