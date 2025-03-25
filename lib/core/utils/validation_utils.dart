@@ -34,17 +34,3 @@ String validateCustomRegistrationFields(flattenedRegistrationList) {
   }
   return '';
 }
-
-List<BaseRegistrationField> flattenRegistrationFields(
-    List<BaseRegistrationField> fields) {
-  List<BaseRegistrationField> flattenedList = [];
-
-  for (var field in fields) {
-    flattenedList.add(field);
-    if (field.childWidgets != null && field.childWidgets!.isNotEmpty) {
-      flattenedList.addAll(flattenRegistrationFields(field.childWidgets!));
-    }
-  }
-
-  return flattenedList;
-}

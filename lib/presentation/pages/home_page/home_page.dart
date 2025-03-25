@@ -1,5 +1,5 @@
-import 'package:edconnect_admin/presentation/providers/auth_provider.dart';
 import 'package:edconnect_admin/presentation/providers/navigation_providers.dart';
+import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:flutter/material.dart';

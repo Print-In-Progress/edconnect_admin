@@ -1,6 +1,6 @@
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/presentation/pages/settings_pages/settings_main_page.dart';
-import 'package:edconnect_admin/presentation/providers/auth_provider.dart';
+import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/card.dart';
 import 'package:edconnect_admin/services/url_service.dart';

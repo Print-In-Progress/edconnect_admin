@@ -1,4 +1,4 @@
-import 'package:edconnect_admin/presentation/providers/user_providers.dart';
+import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../auth_pages/auth_page.dart';

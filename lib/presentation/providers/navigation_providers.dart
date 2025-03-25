@@ -1,21 +1,21 @@
+import 'package:edconnect_admin/core/interfaces/navigation_repository.dart';
+import 'package:edconnect_admin/data/repositories/navigation_repository_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/interfaces/navigation_repository.dart';
-import '../../data/repositories/navigation_repository_impl.dart';
 import '../../domain/entities/navigation_item.dart';
 import '../../domain/services/permission_service.dart';
-import 'auth_provider.dart';
+import 'state_providers.dart'; // Import the new state providers
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Create a singleton repository for better performance
 final _navigationRepository = NavigationRepositoryImpl();
 
-// Repository provider using the singleton
+// Repository provider using the singleton - keep using the existing implementation
 final navigationRepositoryProvider = Provider<NavigationRepository>((ref) {
   return _navigationRepository;
 });
 
-// Permission service provider
+// Permission service provider - keep using the existing implementation
 final permissionServiceProvider = Provider<PermissionService>((ref) {
   return PermissionService();
 });
@@ -25,23 +25,31 @@ class NavigationStateNotifier extends StateNotifier<_NavigationState> {
   final Ref _ref;
 
   NavigationStateNotifier(this._ref) : super(_initialState(_ref)) {
-    // Only rebuild when permissions change
-    _ref.listen(
-        authStateProvider.select((state) => state.valueOrNull?.permissions),
-        (prev, next) {
-      if (prev != next) _updateState();
+    // Listen to the userWithGroupsProvider - this provider contains both user data and groups
+    _ref.listen(userWithGroupsProvider(null), (_, __) {
+      _updateState();
     });
   }
 
   static _NavigationState _initialState(Ref ref) {
-    // Get user permissions
-    final userPermissions =
-        ref.read(authStateProvider).valueOrNull?.permissions ?? [];
+    // Get user permissions by combining direct permissions with group permissions
+    final user = ref.read(userWithGroupsProvider(null)).valueOrNull;
+    final userPermissions = <String>[];
+
+    if (user != null) {
+      // Add direct permissions
+      userPermissions.addAll(user.permissions);
+
+      // Add permissions from groups
+      for (final group in user.groups) {
+        userPermissions.addAll(group.permissions);
+      }
+    }
 
     // Get all items
     final allItems = _navigationRepository.getNavigationItems();
 
-    // Filter available items
+    // Filter available items based on permissions
     final availableItems = allItems
         .where((item) => _navigationRepository.checkAccess(
             item.requiredPermissionIds, userPermissions))
@@ -70,6 +78,7 @@ class NavigationStateNotifier extends StateNotifier<_NavigationState> {
         ? _navigationRepository.getScreenForNavigationItem(
             selectedId, userPermissions)
         : const SizedBox.shrink();
+
     return _NavigationState(
       allItems: allItems,
       availableItems: availableItems,
@@ -81,8 +90,20 @@ class NavigationStateNotifier extends StateNotifier<_NavigationState> {
   }
 
   void _updateState() {
-    final userPermissions = _ref.watch(
-        authStateProvider.select((s) => s.valueOrNull?.permissions ?? []));
+    // Get user with groups from the new provider
+    final user = _ref.read(userWithGroupsProvider(null)).valueOrNull;
+    final userPermissions = <String>[];
+
+    if (user != null) {
+      // Add direct permissions
+      userPermissions.addAll(user.permissions);
+
+      // Add permissions from groups
+      for (final group in user.groups) {
+        userPermissions.addAll(group.permissions);
+      }
+    }
+
     final allItems = state.allItems;
 
     // Filter available items
@@ -104,7 +125,11 @@ class NavigationStateNotifier extends StateNotifier<_NavigationState> {
         .map((item) => NavigationRailDestination(
               icon: Icon(item.icon),
               selectedIcon: Icon(item.selectedIcon),
-              label: Text(item.titleKey),
+              label: Builder(
+                builder: (context) => Text(
+                  _getLocalizedLabel(context, item.titleKey),
+                ),
+              ),
             ))
         .toList();
 
@@ -130,8 +155,20 @@ class NavigationStateNotifier extends StateNotifier<_NavigationState> {
     final newId = state.availableItems[index].id;
     if (newId == state.selectedId) return;
 
-    final userPermissions =
-        _ref.read(authStateProvider).valueOrNull?.permissions ?? [];
+    // Get user permissions from the new provider
+    final user = _ref.read(userWithGroupsProvider(null)).valueOrNull;
+    final userPermissions = <String>[];
+
+    if (user != null) {
+      // Add direct permissions
+      userPermissions.addAll(user.permissions);
+
+      // Add permissions from groups
+      for (final group in user.groups) {
+        userPermissions.addAll(group.permissions);
+      }
+    }
+
     final screen = _navigationRepository.getScreenForNavigationItem(
         newId, userPermissions);
 
@@ -143,7 +180,7 @@ class NavigationStateNotifier extends StateNotifier<_NavigationState> {
   }
 }
 
-// Navigation state class
+// Navigation state class - unchanged
 class _NavigationState {
   final List<NavigationItem> allItems;
   final List<NavigationItem> availableItems;
@@ -180,13 +217,13 @@ class _NavigationState {
   }
 }
 
-// Main navigation state provider
+// Main navigation state provider - unchanged
 final navigationStateProvider =
     StateNotifierProvider<NavigationStateNotifier, _NavigationState>((ref) {
   return NavigationStateNotifier(ref);
 });
 
-/// Helper function to translate keys
+/// Helper function to translate keys - unchanged
 String _getLocalizedLabel(BuildContext context, String titleKey) {
   final l10n = AppLocalizations.of(context)!;
   switch (titleKey) {

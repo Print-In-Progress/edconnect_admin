@@ -1,6 +1,8 @@
 import 'package:edconnect_admin/core/interfaces/user_repository.dart';
+import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/domain/usecases/auth/user_credential_repository.dart';
 import 'package:edconnect_admin/domain/usecases/auth/user_profile_use_case.dart';
+import 'package:edconnect_admin/models/registration_fields.dart';
 
 class UserService {
   final UserCredentialsUseCase _credentialsUseCase;
@@ -23,7 +25,8 @@ class UserService {
     await _profileDataUseCase.changeName(uid, firstName, lastName);
   }
 
-  // Future<void> resubmitRegistration(RegistrationRequest data) async {
-  //   await _profileDataUseCase.resubmitRegistration(data);
-  // }
+  Future<void> submitRegistrationUpdate(
+      AppUser user, List<RegistrationField> registrationFields) async {
+    await _userRepository.submitRegistrationUpdate(user, registrationFields);
+  }
 }

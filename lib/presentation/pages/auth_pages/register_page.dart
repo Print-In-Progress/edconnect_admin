@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/presentation/widgets/common/forms.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:edconnect_admin/constants/database_constants.dart';
 import 'package:edconnect_admin/domain/entities/registration_request.dart';
 import 'package:edconnect_admin/models/registration_fields.dart';
-import 'package:edconnect_admin/presentation/providers/auth_provider.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/terms_and_conditions_checkbox.dart';
 import 'package:edconnect_admin/services/auth_service.dart';

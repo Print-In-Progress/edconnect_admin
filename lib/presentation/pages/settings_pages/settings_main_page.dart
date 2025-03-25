@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/presentation/pages/settings_pages/resubmit_reg_info.dart';
 import 'package:edconnect_admin/presentation/pages/settings_pages/settings_change_name_page.dart';
@@ -9,7 +10,6 @@ import 'package:edconnect_admin/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:edconnect_admin/presentation/providers/auth_provider.dart';
 
 class AccountOverview extends ConsumerStatefulWidget {
   const AccountOverview({super.key});

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edconnect_admin/models/registration_fields.dart';
 import '../../core/interfaces/user_repository.dart';
 import '../../core/models/app_user.dart';
 import '../datasource/user_data_source.dart';
@@ -28,7 +29,7 @@ class FirebaseUserRepositoryImpl implements UserRepository {
       user.firstName,
       user.lastName,
       user.email,
-      user.groups,
+      user.groupIds,
       withSignedPdf,
       publicKeyPem: user.registrationPdfPublicKey,
       signatureBytes: user.registrationPdfSignature,
@@ -52,5 +53,22 @@ class FirebaseUserRepositoryImpl implements UserRepository {
   @override
   Future<void> changeName(String uid, String firstName, String lastName) {
     return _userDataSource.changeName(uid, firstName, lastName);
+  }
+
+  @override
+  Future<void> submitRegistrationUpdate(
+      AppUser user, List<RegistrationField> registrationFields) {
+    return _userDataSource.submitRegistrationUpdate(user, registrationFields);
+  }
+
+  @override
+  Future<AppUser?> getUser(String userId) async {
+    final doc = await _firestore
+        .collection(customerSpecificCollectionUsers)
+        .doc(userId)
+        .get();
+
+    if (!doc.exists || doc.data() == null) return null;
+    return AppUser.fromMap(doc.data()!, doc.id);
   }
 }

@@ -1,13 +1,13 @@
 import 'dart:async';
+import 'package:edconnect_admin/presentation/providers/action_providers.dart';
+import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../home_page/home_page.dart';
 import 'user_not_found.dart';
-import '../../providers/auth_provider.dart';
 import '../../providers/theme_provider.dart';
-import '../../providers/user_providers.dart';
 
 class VerifyEmailPage extends ConsumerStatefulWidget {
   const VerifyEmailPage({super.key});

@@ -1,5 +1,3 @@
-// NO Firebase imports!
-
 abstract class AuthDataSource {
   /// Create user with email and password
   /// Returns userId on success

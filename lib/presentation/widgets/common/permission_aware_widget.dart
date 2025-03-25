@@ -1,7 +1,7 @@
+import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/entities/permissions.dart';
-import '../../providers/auth_provider.dart';
 import '../../providers/navigation_providers.dart';
 
 /// Widget that only shows its child if user has required permission
