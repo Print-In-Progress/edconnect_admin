@@ -17,14 +17,6 @@ class HomePage extends ConsumerWidget {
     final navState = ref.watch(navigationProvider);
     final userState = ref.watch(currentUserProvider);
 
-    if (userState.isLoading) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: _buildSkeletonLoader(),
-      );
-    }
-
-    // Always show the structure of the page, regardless of loading state
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
@@ -68,60 +60,69 @@ class HomePage extends ConsumerWidget {
 
             // Main content area
             Expanded(
-              child: NestedScrollView(
-                  floatHeaderSlivers: true,
-                  headerSliverBuilder: (context, bool innerBoxIsScrolled) {
-                    return [
-                      SliverAppBar(
-                        automaticallyImplyLeading: true,
-                        floating: true,
-                        snap: true,
-                        forceMaterialTransparency: true,
-                        actions: [
-                          const PIPChangeThemeButton(),
-                          // User menu (show loading placeholder if needed)
-                          userState.when(
-                            data: (user) => user != null
-                                ? AccountPopUpMenuButton(
-                                    isDarkMode: theme.isDarkMode,
-                                    user: user,
-                                  )
-                                : const SizedBox.shrink(),
-                            loading: () => const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: Column(
-                                  children: [
-                                    CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.white),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                child: userState.isLoading
+                    ? _buildSkeletonLoader()
+                    : NestedScrollView(
+                        floatHeaderSlivers: true,
+                        headerSliverBuilder:
+                            (context, bool innerBoxIsScrolled) {
+                          return [
+                            SliverAppBar(
+                              automaticallyImplyLeading: true,
+                              floating: true,
+                              snap: true,
+                              forceMaterialTransparency: true,
+                              actions: [
+                                const PIPChangeThemeButton(),
+                                // User menu (show loading placeholder if needed)
+                                userState.when(
+                                  data: (user) => user != null
+                                      ? AccountPopUpMenuButton(
+                                          isDarkMode: theme.isDarkMode,
+                                          user: user,
+                                        )
+                                      : const SizedBox.shrink(),
+                                  loading: () => const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: Column(
+                                        children: [
+                                          CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    Colors.white),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                  error: (_, __) => IconButton(
+                                    icon: const Icon(Icons.error_outline),
+                                    color: Colors.red,
+                                    onPressed: () =>
+                                        ref.refresh(currentUserProvider),
+                                  ),
+                                )
+                              ],
+                              actionsIconTheme:
+                                  const IconThemeData(color: Colors.white),
+                              iconTheme:
+                                  const IconThemeData(color: Colors.white),
+                              title: const Text(
+                                '$customerName Admin Panel',
+                                style: TextStyle(color: Colors.white),
                               ),
-                            ),
-                            error: (_, __) => IconButton(
-                              icon: const Icon(Icons.error_outline),
-                              color: Colors.red,
-                              onPressed: () => ref.refresh(currentUserProvider),
-                            ),
-                          )
-                        ],
-                        actionsIconTheme:
-                            const IconThemeData(color: Colors.white),
-                        iconTheme: const IconThemeData(color: Colors.white),
-                        title: const Text(
-                          '$customerName Admin Panel',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
-                    ];
-                  },
-                  // Show skeleton loader when user data or permissions are loading
-                  body: navState.currentScreen),
+                            )
+                          ];
+                        },
+                        // Show skeleton loader when user data or permissions are loading
+                        body: navState.currentScreen),
+              ),
             ),
           ],
         ),
