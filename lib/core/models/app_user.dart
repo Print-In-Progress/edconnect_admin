@@ -36,17 +36,22 @@ class AppUser {
 
   // Check if user has a specific permission
   bool hasPermission(String permission) {
-    // Check direct permissions first (faster)
-    if (permissions.contains(permission)) {
+    // Normalize permission to check (case-insensitive)
+    final normalizedPermission = permission.toLowerCase();
+
+    // Check direct permissions
+    if (permissions
+        .map((p) => p.toLowerCase())
+        .contains(normalizedPermission)) {
       return true;
     }
 
-    // Check group permissions if groups are resolved
-    if (_resolvedGroups != null) {
-      for (final group in _resolvedGroups) {
-        if (group.permissions.contains(permission)) {
-          return true;
-        }
+    // Check group permissions
+    for (final group in groups) {
+      if (group.permissions
+          .map((p) => p.toLowerCase())
+          .contains(normalizedPermission)) {
+        return true;
       }
     }
 
@@ -109,6 +114,22 @@ class AppUser {
       fcmTokens: [],
       deviceIds: {},
       accountType: '',
+    );
+  }
+
+  // Factory method to create an empty AppUser
+  factory AppUser.empty() {
+    return AppUser(
+      id: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      fcmTokens: [],
+      permissions: [],
+      groupIds: [],
+      deviceIds: {},
+      accountType: '',
+      isUnverified: true,
     );
   }
 

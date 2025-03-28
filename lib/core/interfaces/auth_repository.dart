@@ -11,6 +11,9 @@ abstract class AuthRepository {
   /// Check if email is verified
   Future<bool> isEmailVerified();
 
+  /// reload auth user
+  Future<void> reloadUser();
+
   /// Stream of current authenticated user
   Stream<AppUser?> get currentUserStream;
 

@@ -38,11 +38,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       return;
     }
 
+    // Rely on the login notifier to handle auth stages
     try {
       await ref.read(loginStateProvider.notifier).login(
             _emailController.text,
             _passwordController.text,
           );
+      // Auth stage transitions are now handled in the LoginNotifier
     } catch (e) {
       if (!mounted) return;
       errorMessage(context, e.toString());

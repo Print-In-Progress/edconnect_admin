@@ -133,12 +133,27 @@ class NavigationRepositoryImpl implements NavigationRepository {
       return const SizedBox.shrink();
     }
 
+    // Special case: if userPermissions is empty, we're still loading permissions
+    // Return a loading screen instead of access denied
+    if (userPermissions.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text("Loading permissions...")
+          ],
+        ),
+      );
+    }
+
     // Check permission
     if (!checkAccess(item.requiredPermissionIds, userPermissions)) {
       return const AccessDeniedPage();
     }
 
-    // Return screen using direct index-based mapping
+    // Return screen
     return _getScreenById(navigationItemId);
   }
 
