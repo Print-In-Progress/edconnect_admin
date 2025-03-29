@@ -1,8 +1,10 @@
 import 'package:edconnect_admin/core/interfaces/auth_repository.dart';
 import 'package:edconnect_admin/core/interfaces/user_repository.dart';
+import 'package:edconnect_admin/domain/entities/group.dart';
+import 'package:edconnect_admin/domain/providers/usecase_providers.dart';
+import 'package:edconnect_admin/domain/services/group_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/app_user.dart';
-import '../../domain/providers/service_providers.dart';
 import '../../core/providers/interface_providers.dart';
 
 // ----------------- AUTH STATE -----------------
@@ -28,23 +30,14 @@ class AuthStateNotifier extends StateNotifier<AuthStatus> {
   }
 
   void _setupAuthListener() {
-    state = AuthStatus.loadingUserData; // Set loading state first
-
     _authRepository.currentUserStream.listen((user) async {
       if (user == null) {
         state = AuthStatus.unauthenticated;
-      } else {
-        // If user exists but is unverified
-        if (user.isUnverified) {
-          await _authRepository.reloadUser();
-          final isVerified = await _authRepository.isEmailVerified();
-          if (!isVerified) {
-            state = AuthStatus.authenticated; // Show verify email page
-            return;
-          }
-        }
-        state = AuthStatus.authenticated;
+        return;
       }
+
+      // Single auth state transition
+      state = AuthStatus.authenticated;
     });
   }
 
@@ -79,24 +72,32 @@ final currentUserProvider = StreamProvider<AppUser?>((ref) {
   return authRepository.currentUserStream;
 });
 
-// Provider for fetching a user by ID with resolved groups.
-final getUserWithGroupsProvider =
-    FutureProvider.family<AppUser?, String>((ref, userId) async {
-  final cachedUsers = ref.read(cachedUserProvider);
-  if (cachedUsers.containsKey(userId)) {
-    return cachedUsers[userId];
-  }
+final userWithResolvedGroupsProvider = Provider<AppUser?>((ref) {
+  final user = ref.watch(currentUserProvider).value;
+  final groups = ref.watch(allGroupsStreamProvider).value ?? [];
 
-  final userRepository = ref.read(userRepositoryProvider);
-  final user = await userRepository.getUser(userId);
   if (user == null) return null;
 
-  final groups = await ref.read(groupServiceProvider).getGroupsForUser(userId);
-  final userWithGroups = user.withResolvedGroups(groups);
+  final userGroups =
+      groups.where((group) => user.groupIds.contains(group.id)).toList();
 
-  ref.read(cachedUserProvider.notifier).update((state) => {
-        ...state,
-        userId: userWithGroups,
-      });
-  return userWithGroups;
+  // Create new user instance with resolved groups
+  return user.copyWith(
+    resolvedGroups: userGroups,
+  );
+});
+
+// ---------------- GROUPS STATE  -----------------
+final groupServiceProvider = Provider<GroupService>((ref) {
+  return GroupService(ref.watch(groupManagementUseCaseProvider));
+});
+
+final cachedGroupsProvider = StateProvider<List<Group>>((ref) => []);
+
+// Single stream for groups
+final allGroupsStreamProvider = StreamProvider<List<Group>>((ref) {
+  final groupService = ref.watch(groupServiceProvider);
+  return groupService.groupsStream().map((groups) {
+    return groups;
+  });
 });

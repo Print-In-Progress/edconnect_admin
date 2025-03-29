@@ -84,30 +84,16 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
 
   void _updateNavigation() {
     final navigationRepository = _ref.read(navigationRepositoryProvider);
-    final user = _ref.read(currentUserProvider).value;
+    final user = _ref.read(userWithResolvedGroupsProvider);
 
-    if (user == null || user.allPermissions.isEmpty) {
-      return; // Wait for user data and permissions to be fully loaded
-    }
+    if (user == null) return;
 
-    final allItems = navigationRepository.getNavigationItems();
-    final currentId = state.selectedId;
-
-    // Get the screen without access check initially
     final screen = navigationRepository.getScreenForNavigationItem(
-      currentId,
+      state.selectedId,
       user.allPermissions,
     );
 
     state = state.copyWith(
-      availableItems: allItems,
-      destinations: allItems
-          .map((item) => NavigationRailDestination(
-                icon: Icon(item.icon),
-                selectedIcon: Icon(item.selectedIcon),
-                label: Text(item.titleKey),
-              ))
-          .toList(),
       currentScreen: screen,
     );
   }
@@ -115,29 +101,34 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
   void selectItemById(String id) {
     if (id == state.selectedId) return;
 
-    final user = _ref.read(currentUserProvider).value;
+    final user = _ref.read(userWithResolvedGroupsProvider);
     final permissionService = _ref.read(permissionServiceProvider);
     final navigationRepository = _ref.read(navigationRepositoryProvider);
 
-    // Check permission when selecting
-    final hasPermission = user != null &&
-        permissionService.canUserAccessScreen(
-          id,
-          user,
-        );
+    if (user != null) {
+      // Debug prints
+      print('--- Permission Debug Info ---');
+      print('Selected Navigation ID: $id');
+      print('User Direct Permissions: ${user.permissions}');
+      print('User Group IDs: ${user.groupIds}');
+      print(
+          'User Resolved Groups: ${user.groups.map((g) => "${g.name}: ${g.permissions}")}');
+      print('All User Permissions: ${user.allPermissions}');
 
-    // Get appropriate screen based on permission
-    final screen = hasPermission
-        ? navigationRepository.getScreenForNavigationItem(
-            id,
-            user.allPermissions,
-          )
-        : const AccessDeniedPage();
+      final hasPermission = permissionService.canUserAccessScreen(id, user);
+      print('Has Permission for $id: $hasPermission');
+      print('-------------------------');
 
-    state = state.copyWith(
-      selectedId: id,
-      currentScreen: screen,
-    );
+      final screen = hasPermission
+          ? navigationRepository.getScreenForNavigationItem(
+              id, user.allPermissions)
+          : const AccessDeniedPage();
+
+      state = state.copyWith(
+        selectedId: id,
+        currentScreen: screen,
+      );
+    }
   }
 }
 
@@ -162,6 +153,7 @@ class NavRailLocalizationHelper {
       'push_notifications': l10n.homePageSendPushNotificationsAdminMenuButton,
       'admin_settings': l10n.homePageAdminSettingsButtonLabel,
       'surveys': l10n.homePageSurveyButtonLabel,
+      'survey_sorter': l10n.homePageSorterButtonLabel,
     };
 
     return navigationTitles[id] ?? id;

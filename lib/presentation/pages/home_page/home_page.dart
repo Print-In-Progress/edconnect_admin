@@ -15,7 +15,7 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(appThemeProvider);
     final navState = ref.watch(navigationProvider);
-    final userState = ref.watch(currentUserProvider);
+    final user = ref.watch(userWithResolvedGroupsProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -61,8 +61,8 @@ class HomePage extends ConsumerWidget {
             // Main content area
             Expanded(
               child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: userState.isLoading
+                duration: const Duration(milliseconds: 50),
+                child: user == null
                     ? _buildSkeletonLoader()
                     : NestedScrollView(
                         floatHeaderSlivers: true,
@@ -77,36 +77,9 @@ class HomePage extends ConsumerWidget {
                               actions: [
                                 const PIPChangeThemeButton(),
                                 // User menu (show loading placeholder if needed)
-                                userState.when(
-                                  data: (user) => user != null
-                                      ? AccountPopUpMenuButton(
-                                          isDarkMode: theme.isDarkMode,
-                                          user: user,
-                                        )
-                                      : const SizedBox.shrink(),
-                                  loading: () => const Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: Column(
-                                        children: [
-                                          CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                    Colors.white),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  error: (_, __) => IconButton(
-                                    icon: const Icon(Icons.error_outline),
-                                    color: Colors.red,
-                                    onPressed: () =>
-                                        ref.refresh(currentUserProvider),
-                                  ),
+                                AccountPopUpMenuButton(
+                                  isDarkMode: theme.isDarkMode,
+                                  user: user,
                                 )
                               ],
                               actionsIconTheme:
@@ -121,7 +94,8 @@ class HomePage extends ConsumerWidget {
                           ];
                         },
                         // Show skeleton loader when user data or permissions are loading
-                        body: navState.currentScreen),
+                        body: navState.currentScreen,
+                      ),
               ),
             ),
           ],

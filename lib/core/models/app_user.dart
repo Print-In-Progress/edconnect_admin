@@ -22,15 +22,10 @@ class AppUser {
 
   // Get all permissions (direct + from groups)
   List<String> get allPermissions {
-    final Set<String> allPerms = Set<String>.from(permissions);
-
-    // Add permissions from all groups
-    if (_resolvedGroups != null) {
-      for (final group in _resolvedGroups) {
-        allPerms.addAll(group.permissions);
-      }
+    final Set<String> allPerms = {...permissions};
+    for (final group in groups) {
+      allPerms.addAll(group.permissions);
     }
-
     return allPerms.toList();
   }
 
@@ -58,12 +53,10 @@ class AppUser {
     return false;
   }
 
-  // Check if user has any of the given permissions
+  // Check if user has any of given permissions
   bool hasAnyPermission(List<String> requiredPermissions) {
     for (final permission in requiredPermissions) {
-      if (hasPermission(permission)) {
-        return true;
-      }
+      if (hasPermission(permission)) return true;
     }
     return false;
   }
@@ -118,20 +111,6 @@ class AppUser {
   }
 
   // Factory method to create an empty AppUser
-  factory AppUser.empty() {
-    return AppUser(
-      id: '',
-      firstName: '',
-      lastName: '',
-      email: '',
-      fcmTokens: [],
-      permissions: [],
-      groupIds: [],
-      deviceIds: {},
-      accountType: '',
-      isUnverified: true,
-    );
-  }
 
   // Create from Firestore document
   factory AppUser.fromMap(Map<String, dynamic> map, String id) {
@@ -193,10 +172,6 @@ class AppUser {
   }
 
   // The method that your providers are looking for
-  AppUser withResolvedGroups(List<Group> groups) {
-    return copyWith(resolvedGroups: groups);
-  }
-
   String get initials => firstName.isNotEmpty && lastName.isNotEmpty
       ? '${firstName[0]}${lastName[0]}'
       : '';
