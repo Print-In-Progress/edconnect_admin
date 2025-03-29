@@ -51,12 +51,11 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
   final Ref _ref;
 
   NavigationNotifier(this._ref) : super(_createInitialState()) {
-    _ref.listen(currentUserProvider, (_, next) {
-      next.whenData((user) {
-        if (user != null) {
-          _updateNavigation();
-        }
-      });
+    // Listen to both user and groups data
+    _ref.listen(userWithResolvedGroupsProvider, (_, next) {
+      if (next != null) {
+        _updateNavigation();
+      }
     });
   }
 
@@ -75,23 +74,25 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
                 label: Text(item.titleKey),
               ))
           .toList(),
-      // Show loading indicator as initial screen
-      currentScreen: const Center(
-        child: CircularProgressIndicator(),
-      ),
+      currentScreen:
+          const SizedBox.shrink(), // Start with empty widget instead of loading
     );
   }
 
   void _updateNavigation() {
     final navigationRepository = _ref.read(navigationRepositoryProvider);
     final user = _ref.read(userWithResolvedGroupsProvider);
+    final permissionService = _ref.read(permissionServiceProvider);
 
     if (user == null) return;
 
-    final screen = navigationRepository.getScreenForNavigationItem(
-      state.selectedId,
-      user.allPermissions,
-    );
+    // Get appropriate screen based on permission
+    final hasPermission =
+        permissionService.canUserAccessScreen(state.selectedId, user);
+    final screen = hasPermission
+        ? navigationRepository.getScreenForNavigationItem(
+            state.selectedId, user.allPermissions)
+        : const AccessDeniedPage();
 
     state = state.copyWith(
       currentScreen: screen,
@@ -106,19 +107,7 @@ class NavigationNotifier extends StateNotifier<NavigationState> {
     final navigationRepository = _ref.read(navigationRepositoryProvider);
 
     if (user != null) {
-      // Debug prints
-      print('--- Permission Debug Info ---');
-      print('Selected Navigation ID: $id');
-      print('User Direct Permissions: ${user.permissions}');
-      print('User Group IDs: ${user.groupIds}');
-      print(
-          'User Resolved Groups: ${user.groups.map((g) => "${g.name}: ${g.permissions}")}');
-      print('All User Permissions: ${user.allPermissions}');
-
       final hasPermission = permissionService.canUserAccessScreen(id, user);
-      print('Has Permission for $id: $hasPermission');
-      print('-------------------------');
-
       final screen = hasPermission
           ? navigationRepository.getScreenForNavigationItem(
               id, user.allPermissions)

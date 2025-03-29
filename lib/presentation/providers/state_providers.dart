@@ -74,21 +74,23 @@ final currentUserProvider = StreamProvider<AppUser?>((ref) {
 
 final userWithResolvedGroupsProvider = Provider<AppUser?>((ref) {
   final user = ref.watch(currentUserProvider).value;
-  final groups = ref.watch(cachedGroupsProvider);
+  final groupsValue = ref.watch(allGroupsStreamProvider);
 
   if (user == null) return null;
 
-  final userGroups = user.groupIds
-      .map((id) => groups.firstWhere(
-            (g) => g.id == id,
-            orElse: () =>
-                Group(id: id, name: '', permissions: [], memberIds: []),
-          ))
-      .toList();
+  return groupsValue.when(
+    data: (groups) {
+      final userGroups = user.groupIds
+          .map((id) => groups.where((g) => g.id == id).firstOrNull)
+          .whereType<Group>()
+          .toList();
 
-  return user.copyWith(resolvedGroups: userGroups);
+      return user.copyWith(resolvedGroups: userGroups);
+    },
+    loading: () => user,
+    error: (_, __) => user,
+  );
 });
-
 // ---------------- GROUPS STATE  -----------------
 final groupServiceProvider = Provider<GroupService>((ref) {
   return GroupService(ref.watch(groupManagementUseCaseProvider));
