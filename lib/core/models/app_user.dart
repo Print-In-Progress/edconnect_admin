@@ -20,46 +20,7 @@ class AppUser {
   final List<Group>? _resolvedGroups;
   List<Group> get groups => _resolvedGroups ?? [];
 
-  // Get all permissions (direct + from groups)
-  List<String> get allPermissions {
-    final Set<String> allPerms = {...permissions};
-    for (final group in groups) {
-      allPerms.addAll(group.permissions);
-    }
-    return allPerms.toList();
-  }
-
-  // Check if user has a specific permission
-  bool hasPermission(String permission) {
-    // Normalize permission to check (case-insensitive)
-    final normalizedPermission = permission.toLowerCase();
-
-    // Check direct permissions
-    if (permissions
-        .map((p) => p.toLowerCase())
-        .contains(normalizedPermission)) {
-      return true;
-    }
-
-    // Check group permissions
-    for (final group in groups) {
-      if (group.permissions
-          .map((p) => p.toLowerCase())
-          .contains(normalizedPermission)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  // Check if user has any of given permissions
-  bool hasAnyPermission(List<String> requiredPermissions) {
-    for (final permission in requiredPermissions) {
-      if (hasPermission(permission)) return true;
-    }
-    return false;
-  }
+  late final Set<String> normalizedPermissions;
 
   AppUser({
     required this.id,
@@ -76,7 +37,35 @@ class AppUser {
     required this.accountType,
     this.isUnverified = false,
     List<Group>? resolvedGroups,
-  }) : _resolvedGroups = resolvedGroups;
+  }) : _resolvedGroups = resolvedGroups {
+    normalizedPermissions = _initializeNormalizedPermissions();
+  }
+
+  // Initialize normalized permissions set
+  Set<String> _initializeNormalizedPermissions() {
+    final Set<String> normalized = {};
+    // Add direct permissions
+    normalized.addAll(permissions.map((p) => p.toLowerCase()));
+    // Add group permissions
+    for (final group in groups) {
+      normalized.addAll(group.permissions.map((p) => p.toLowerCase()));
+    }
+    return normalized;
+  }
+
+  // O(1) permission check
+  bool hasPermission(String permission) {
+    return normalizedPermissions.contains(permission.toLowerCase());
+  }
+
+  // O(n) where n is the number of required permissions
+  bool hasAnyPermission(List<String> requiredPermissions) {
+    return requiredPermissions.any((permission) =>
+        normalizedPermissions.contains(permission.toLowerCase()));
+  }
+
+  // Get all permissions (now returns cached set)
+  List<String> get allPermissions => normalizedPermissions.toList();
 
   // Convert to Firestore-compatible map
   Map<String, dynamic> toMap() {

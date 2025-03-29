@@ -74,17 +74,19 @@ final currentUserProvider = StreamProvider<AppUser?>((ref) {
 
 final userWithResolvedGroupsProvider = Provider<AppUser?>((ref) {
   final user = ref.watch(currentUserProvider).value;
-  final groups = ref.watch(allGroupsStreamProvider).value ?? [];
+  final groups = ref.watch(cachedGroupsProvider);
 
   if (user == null) return null;
 
-  final userGroups =
-      groups.where((group) => user.groupIds.contains(group.id)).toList();
+  final userGroups = user.groupIds
+      .map((id) => groups.firstWhere(
+            (g) => g.id == id,
+            orElse: () =>
+                Group(id: id, name: '', permissions: [], memberIds: []),
+          ))
+      .toList();
 
-  // Create new user instance with resolved groups
-  return user.copyWith(
-    resolvedGroups: userGroups,
-  );
+  return user.copyWith(resolvedGroups: userGroups);
 });
 
 // ---------------- GROUPS STATE  -----------------

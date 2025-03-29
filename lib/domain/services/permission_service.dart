@@ -41,42 +41,28 @@ class PermissionService {
     'admin_settings': [Permissions.admin.id],
   };
 
-  // Check if user has access to a screen
-  bool canUserAccessScreen(String screenKey, AppUser user) {
-    // Admin always has access to everything
-    if (user.hasPermission(Permissions.admin.id)) {
-      return true;
-    }
+  static final Map<String, Set<String>> _normalizedScreenPermissions =
+      _initializeScreenPermissions();
 
-    // Get required permissions for the screen
-    final requiredPermissions = _screenPermissions[screenKey];
+  static Map<String, Set<String>> _initializeScreenPermissions() {
+    return Map.fromEntries(
+      _screenPermissions.entries.map((entry) => MapEntry(
+            entry.key,
+            entry.value.map((p) => p.toLowerCase()).toSet(),
+          )),
+    );
+  }
+
+  bool canUserAccessScreen(String screenKey, AppUser user) {
+    // Fast path for admin
+    if (user.hasPermission('admin')) return true;
+
+    final requiredPermissions = _normalizedScreenPermissions[screenKey];
     if (requiredPermissions == null) return false;
 
-    // Check if user has any of the required permissions
-    return requiredPermissions
-        .any((permission) => user.hasPermission(permission));
-  }
-
-  // Check if a list of permissions contains a specific permission
-  bool hasPermission(String permissionId, List<String> userPermissions) {
-    return userPermissions.contains(permissionId);
-  }
-
-  // Check if permissions list contains any of the required permissions
-  bool hasAnyPermission(
-      List<String> requiredPermissions, List<String> userPermissions) {
-    // Admin bypass
-    if (userPermissions.contains(Permissions.admin.id)) {
-      return true;
-    }
-
-    // Check for any permission match
-    return requiredPermissions
-        .any((permission) => userPermissions.contains(permission));
-  }
-
-  // Get required permissions for a screen
-  List<String> getRequiredPermissionsForScreen(String screenKey) {
-    return _screenPermissions[screenKey] ?? [];
+    // Single set intersection check
+    return user.normalizedPermissions
+        .intersection(requiredPermissions)
+        .isNotEmpty;
   }
 }

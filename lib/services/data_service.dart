@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edconnect_admin/constants/database_constants.dart';
 import 'package:edconnect_admin/models/registration_fields.dart';
-import 'package:edconnect_admin/services/auth_service.dart';
 import 'package:edconnect_admin/services/pdf_service.dart';
 import 'package:edconnect_admin/utils/crypto_utils.dart';
 import 'package:edconnect_admin/utils/validation_utils.dart';
@@ -19,8 +18,6 @@ import 'package:pointycastle/export.dart' as pc;
 class DataService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
-
-  final AuthService _auth = AuthService();
 
   Future<String> uploadPdf(
     Uint8List pdfBytes,
@@ -290,8 +287,8 @@ class DataService {
         return Future.error(validationResult);
       }
 
-      final uid = _auth.currentUser!.uid;
-      final email = _auth.currentUser!.email!;
+      final uid = '';
+      final email = '';
 
       // Check if form is signed
       final hasSignature = flattenedList

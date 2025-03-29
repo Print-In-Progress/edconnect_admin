@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:edconnect_admin/constants/app_permissions.dart';
 import 'package:edconnect_admin/constants/database_constants.dart';
 import 'package:edconnect_admin/models/registration_fields.dart';
-import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/services/pdf_service.dart';
 import 'package:edconnect_admin/services/data_service.dart';
 import 'package:edconnect_admin/utils/crypto_utils.dart';
@@ -23,74 +21,6 @@ enum AuthStatus {
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  static const Map<String, List<String>> _screenPermissions = {
-    'dashboard': AppPermissions.adminPermissions,
-    'articles': AppPermissions.articlePermissions,
-    'events': AppPermissions.eventPermissions,
-    'users': [AppPermissions.admin, AppPermissions.userManagement],
-    'surveys': AppPermissions.surveyPermissions,
-    'digital_library': [
-      AppPermissions.admin,
-      AppPermissions.author,
-      AppPermissions.digitalLibrary
-    ],
-    'media': [
-      AppPermissions.admin,
-      AppPermissions.author,
-      AppPermissions.fileManagement
-    ],
-    'push_notifications': [
-      AppPermissions.admin,
-      AppPermissions.pushNotifications
-    ],
-    'admin_settings': AppPermissions.adminPermissions,
-  };
-
-  // Get current user
-  User? get currentUser => _auth.currentUser;
-
-  // Auth state changes stream
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
-
-  // Check email verification
-  bool get isEmailVerified => _auth.currentUser?.emailVerified ?? false;
-
-  // Send email verification
-  Future<void> sendEmailVerification() async {
-    await _auth.currentUser?.sendEmailVerification();
-  }
-
-  // Sign out
-  Future<void> signOut() async {
-    await _auth.signOut();
-  }
-
-  // Permission methods
-  bool canAccessScreen(String screenKey, List<String> userPermissions) {
-    final requiredPermissions = _screenPermissions[screenKey];
-    if (requiredPermissions == null) return false;
-    return requiredPermissions
-        .any((permission) => userPermissions.contains(permission));
-  }
-
-  bool hasPermission(AppUser user, String permission) {
-    return user.permissions.contains(permission);
-  }
-
-  Future<void> sendEmailVerificationWithCooldown({
-    required Function(bool) onCooldownChange,
-    Duration cooldown = const Duration(seconds: 5),
-  }) async {
-    try {
-      await _auth.currentUser?.sendEmailVerification();
-      onCooldownChange(false);
-      await Future.delayed(cooldown);
-      onCooldownChange(true);
-    } catch (e) {
-      rethrow;
-    }
-  }
 
   Future<String?> signUp(
     String email,
