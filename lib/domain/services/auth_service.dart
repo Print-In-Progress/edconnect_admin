@@ -10,7 +10,12 @@ class AuthService {
   AuthService(this._signUpUseCase, this._signInUseCase);
 
   Future<String?> signUp(RegistrationRequest request) async {
-    return await _signUpUseCase.execute(request);
+    return await _signUpUseCase.signUp(request);
+  }
+
+  Future<String?> signUpWithExistingAuthAccount(
+      RegistrationRequest request) async {
+    return await _signUpUseCase.signUpWithExistingAuthAccount(request);
   }
 
   Future<String?> signInWithEmailAndPassword(

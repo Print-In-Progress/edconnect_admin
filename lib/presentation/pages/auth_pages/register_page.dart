@@ -8,7 +8,6 @@ import 'package:edconnect_admin/domain/entities/registration_request.dart';
 import 'package:edconnect_admin/models/registration_fields.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/terms_and_conditions_checkbox.dart';
-import 'package:edconnect_admin/services/auth_service.dart';
 import 'package:edconnect_admin/services/data_service.dart';
 import 'package:edconnect_admin/utils/registration_card_builder.dart';
 import 'package:flutter/material.dart';
@@ -38,8 +37,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   bool _validateFirstNameField = false;
   bool _validateLastNameField = false;
   bool _validateEmailField = false;
-
-  final AuthService _authService = AuthService();
 
   Future<List<BaseRegistrationField>>? _registrationFieldsFuture;
   List<BaseRegistrationField>? _registrationFields;
@@ -78,41 +75,20 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       List<BaseRegistrationField> registrationFields,
       BuildContext context,
       AppLocalizations localizations) async {
-    final email = _emailController.text;
-    final firstName = _firstNameController.text;
-    final lastName = _lastNameController.text;
-    final password = _passwordController.text;
-    final confirmedPassword = _confirmedPasswordController.text;
+    final request = RegistrationRequest(
+      email: _emailController.text,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      password: _passwordController.text,
+      confirmedPassword: _confirmedPasswordController.text,
+      orgName: customerName,
+      registrationFields: registrationFields,
+      accountType: 'Student',
+    );
 
-    try {
-      String? result = await _authService.signUpToOrg(
-        email,
-        firstName,
-        lastName,
-        password,
-        confirmedPassword,
-        customerName,
-        registrationFields,
-      );
-
-      if (result != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          errorMessage(context,
-              '${localizations.globalUnexpectedErrorLabel}: ${result.split(' ').last}');
-        });
-      } else {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          successMessage(
-            context,
-            AppLocalizations.of(context)!.authPagesRegisterSuccessSnackbarLabel,
-          );
-        });
-      }
-    } catch (e) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        errorMessage(context, e.toString());
-      });
-    }
+    await ref
+        .read(signUpWithExistingAuthAccountNotifierProvider.notifier)
+        .signUpWithExistingAuthAccount(request);
   }
 
   @override

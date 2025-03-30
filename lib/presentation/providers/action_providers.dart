@@ -38,7 +38,7 @@ class SignUpNotifier extends StateNotifier<AsyncValue<String?>> {
     state = const AsyncValue.loading();
 
     try {
-      final result = await _signUpUseCase.execute(request);
+      final result = await _signUpUseCase.signUp(request);
       if (result == null) {
         state = const AsyncValue.data(null); // Success
       } else {
@@ -54,6 +54,35 @@ class SignUpNotifier extends StateNotifier<AsyncValue<String?>> {
 final signUpNotifierProvider =
     StateNotifierProvider<SignUpNotifier, AsyncValue<String?>>((ref) {
   return SignUpNotifier(ref.read(signUpUseCaseProvider));
+});
+
+class SignUpWithExistingAuthAccountNotifier
+    extends StateNotifier<AsyncValue<String?>> {
+  final SignUpUseCase _useCase;
+
+  SignUpWithExistingAuthAccountNotifier(this._useCase)
+      : super(const AsyncValue.data(null));
+
+  Future<void> signUpWithExistingAuthAccount(
+      RegistrationRequest request) async {
+    state = const AsyncValue.loading();
+
+    try {
+      final result = await _useCase.signUpWithExistingAuthAccount(request);
+      if (result == null) {
+        state = const AsyncValue.data(null); // Success
+      } else {
+        state = AsyncValue.error(result, StackTrace.current);
+      }
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+}
+
+final signUpWithExistingAuthAccountNotifierProvider = StateNotifierProvider<
+    SignUpWithExistingAuthAccountNotifier, AsyncValue<String?>>((ref) {
+  return SignUpWithExistingAuthAccountNotifier(ref.read(signUpUseCaseProvider));
 });
 
 // Login notifier.
