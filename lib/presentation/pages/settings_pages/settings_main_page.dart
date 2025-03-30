@@ -6,7 +6,6 @@ import 'package:edconnect_admin/presentation/pages/settings_pages/settings_chang
 import 'package:edconnect_admin/presentation/pages/settings_pages/settings_update_password_page.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
-import 'package:edconnect_admin/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +21,6 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
   final _reauthenticatePasswordController = TextEditingController();
 
   bool reauthenticatePasswordVisible = false;
-  final _authService = AuthService();
 
   @override
   void dispose() {
@@ -418,6 +416,8 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
   Widget _buildDeleteAccountDialog(BuildContext context) {
     return StatefulBuilder(
       builder: (context, setState) {
+        final deleteAccountState = ref.watch(deleteAccountProvider);
+
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.globalReauthenticateLabel),
           content: Column(
@@ -450,29 +450,32 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
           ),
           actions: [
             const PIPCancelButton(),
-            PIPDialogTextButton(
-              label: 'Ok',
-              onPressed: () async {
-                try {
-                  await _authService.deleteUserAccount(
-                    password: _reauthenticatePasswordController.text,
-                  );
+            if (deleteAccountState.isLoading)
+              const CircularProgressIndicator()
+            else
+              PIPDialogTextButton(
+                label: 'Ok',
+                onPressed: () async {
+                  try {
+                    await ref
+                        .read(deleteAccountProvider.notifier)
+                        .deleteAccount(_reauthenticatePasswordController.text);
 
-                  if (!context.mounted) return;
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                  successMessage(
-                    context,
-                    AppLocalizations.of(context)!
-                        .settingsPageSuccessOnDeleteAccountSnackbarLabel,
-                  );
-                } catch (e) {
-                  if (!context.mounted) return;
-                  Navigator.of(context).pop();
-                  errorMessage(context, e.toString());
-                }
-              },
-            ),
+                    if (!context.mounted) return;
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(); // Pop settings page
+                    successMessage(
+                      context,
+                      AppLocalizations.of(context)!
+                          .settingsPageSuccessOnDeleteAccountSnackbarLabel,
+                    );
+                  } catch (e) {
+                    if (!context.mounted) return;
+                    Navigator.of(context).pop();
+                    errorMessage(context, e.toString());
+                  }
+                },
+              ),
           ],
         );
       },

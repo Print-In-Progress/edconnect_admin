@@ -1,6 +1,7 @@
 import 'package:edconnect_admin/core/interfaces/auth_repository.dart';
 import 'package:edconnect_admin/core/interfaces/group_repository.dart';
 import 'package:edconnect_admin/core/interfaces/navigation_repository.dart';
+import 'package:edconnect_admin/core/interfaces/storage_repository.dart';
 import 'package:edconnect_admin/core/interfaces/user_repository.dart';
 import 'package:edconnect_admin/data/providers/repository_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,4 +21,8 @@ final groupRepositoryProvider = Provider<GroupRepository>((ref) {
 
 final navigationRepositoryProvider = Provider<NavigationRepository>((ref) {
   return ref.watch(navigationRepositoryImplProvider);
+});
+
+final storageRepositoryProvider = Provider<StorageRepository>((ref) {
+  return ref.watch(storageRepositoryImplProvider);
 });

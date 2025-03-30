@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/domain/usecases/auth/delete_account_use_case.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/usecases/auth/sign_in_usecase.dart';
@@ -55,4 +56,12 @@ final setLogoUrlUseCaseProvider = Provider<SetLogoUrlUseCase>((ref) {
 final refreshRemoteThemeUseCaseProvider =
     Provider<RefreshRemoteThemeUseCase>((ref) {
   return RefreshRemoteThemeUseCase(ref.watch(themeRepositoryProvider));
+});
+
+final deleteAccountUseCaseProvider = Provider<DeleteAccountUseCase>((ref) {
+  return DeleteAccountUseCase(
+    ref.watch(authRepositoryProvider),
+    ref.watch(userRepositoryProvider),
+    ref.watch(storageRepositoryProvider),
+  );
 });

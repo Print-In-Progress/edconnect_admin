@@ -71,4 +71,14 @@ class FirebaseUserRepositoryImpl implements UserRepository {
     if (!doc.exists || doc.data() == null) return null;
     return AppUser.fromMap(doc.data()!, doc.id);
   }
+
+  @override
+  Future<void> anonymizeUserData(String uid) {
+    return _userDataSource.anonymizeUserData(uid);
+  }
+
+  @override
+  Future<void> deleteUserDocument(String uid) {
+    return _userDataSource.deleteUserDocument(uid);
+  }
 }

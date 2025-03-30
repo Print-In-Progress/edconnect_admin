@@ -5,6 +5,9 @@ abstract class AuthRepository {
   /// Returns null on success or an error message on failure
   Future<String?> signUp(RegistrationRequest request);
 
+  /// sign up if user exists in Auth but not in Database (for example, if user was created in another organization)
+  Future<String?> signUpWithExistingAuth();
+
   /// Send email verification to current user
   Future<void> sendEmailVerification();
 
@@ -34,4 +37,7 @@ abstract class AuthRepository {
 
   /// Change password (requires recent authentication)
   Future<String?> changePassword(String newPassword);
+
+  /// Delete the current user's account (requires recent authentication)
+  Future<void> deleteAccount();
 }

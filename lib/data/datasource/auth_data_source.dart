@@ -35,4 +35,7 @@ abstract class AuthDataSource {
 
   /// Change password (requires recent authentication)
   Future<String?> changePassword(String newPassword);
+
+  /// Delete the current user's account (requires recent authentication)
+  Future<void> deleteAccount();
 }

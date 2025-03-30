@@ -284,6 +284,11 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   Future<String?> changePassword(String newPassword) async {
     return await _authDataSource.changePassword(newPassword);
   }
+
+  @override
+  Future<void> deleteAccount() async {
+    await _authDataSource.deleteAccount();
+  }
 }
 
 // Helper function

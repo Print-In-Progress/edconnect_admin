@@ -208,4 +208,31 @@ class FirebaseUserDataSource implements UserDataSource {
       await _groupRepository.updateUserGroups(user.id, groups);
     }
   }
+
+  @override
+  Future<void> anonymizeUserData(String uid) async {
+    final batch = _firestore.batch();
+
+    final commentsQuery = await _firestore
+        .collection(customerSpecificCollectionComments)
+        .where('author_uid', isEqualTo: uid)
+        .get();
+
+    for (var doc in commentsQuery.docs) {
+      batch.update(doc.reference, {
+        'author_full_name': '[Deleted User]',
+        'author_uid': 'anonymous',
+      });
+    }
+
+    await batch.commit();
+  }
+
+  @override
+  Future<void> deleteUserDocument(String uid) async {
+    await _firestore
+        .collection(customerSpecificCollectionUsers)
+        .doc(uid)
+        .delete();
+  }
 }

@@ -116,4 +116,13 @@ class FirebaseAuthDataSource implements AuthDataSource {
       return 'AuthError: $e';
     }
   }
+
+  @override
+  Future<void> deleteAccount() async {
+    try {
+      await _firebaseAuth.currentUser?.delete();
+    } catch (e) {
+      throw Exception('Failed to delete account: $e');
+    }
+  }
 }

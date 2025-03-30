@@ -19,4 +19,10 @@ abstract class UserDataSource {
 
   Future<void> submitRegistrationUpdate(
       AppUser user, List<RegistrationField> registrationFields);
+
+  /// Anonymize user data for GDPR compliance
+  Future<void> anonymizeUserData(String uid);
+
+  /// Delete user document from database
+  Future<void> deleteUserDocument(String uid);
 }

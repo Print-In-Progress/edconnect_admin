@@ -27,4 +27,10 @@ class FirebaseStorageRepositoryImpl implements StorageRepository {
     // Simply delegate to the data source
     return _dataSource.uploadFiles(files, fileNames, userId, folder);
   }
+
+  @override
+  Future<void> deleteAllUserFiles(String uid) {
+    // Simply delegate to the data source
+    return _dataSource.deleteAllUserFiles(uid);
+  }
 }

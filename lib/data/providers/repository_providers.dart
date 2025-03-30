@@ -1,3 +1,5 @@
+import 'package:edconnect_admin/core/interfaces/storage_repository.dart';
+import 'package:edconnect_admin/data/repositories/firebase_storage_repository_impl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/interfaces/auth_repository.dart';
 import '../../core/interfaces/group_repository.dart';
@@ -46,5 +48,11 @@ final themeRepositoryImplProvider = Provider<ThemeRepository>((ref) {
   return ThemeRepositoryImpl(
     ref.watch(themeLocalDataSourceProvider),
     ref.watch(themeRemoteDataSourceProvider),
+  );
+});
+
+final storageRepositoryImplProvider = Provider<StorageRepository>((ref) {
+  return FirebaseStorageRepositoryImpl(
+    ref.watch(storageDataSourceProvider),
   );
 });

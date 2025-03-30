@@ -6,4 +6,6 @@ abstract class StorageRepository {
 
   Future<void> uploadFiles(List<Uint8List> files, List<String> fileNames,
       String userId, String folder);
+
+  Future<void> deleteAllUserFiles(String uid);
 }

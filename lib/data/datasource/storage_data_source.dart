@@ -14,4 +14,6 @@ abstract class StorageDataSource {
     String uid,
     String folder,
   );
+
+  Future<void> deleteAllUserFiles(String uid);
 }

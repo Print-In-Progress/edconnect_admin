@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/domain/usecases/auth/delete_account_use_case.dart';
 import 'package:edconnect_admin/domain/usecases/auth/sign_in_usecase.dart';
 import 'package:edconnect_admin/domain/usecases/auth/sign_out_use_case.dart';
 import 'package:edconnect_admin/domain/usecases/auth/sign_up_usecase.dart';
@@ -284,4 +285,26 @@ class ResetPasswordNotifier extends StateNotifier<AsyncValue<void>> {
 final resetPasswordProvider =
     StateNotifierProvider<ResetPasswordNotifier, AsyncValue<void>>((ref) {
   return ResetPasswordNotifier(ref.read(userCredentialsUseCaseProvider));
+});
+
+class DeleteAccountNotifier extends StateNotifier<AsyncValue<void>> {
+  final DeleteAccountUseCase _useCase;
+
+  DeleteAccountNotifier(this._useCase) : super(const AsyncValue.data(null));
+
+  Future<void> deleteAccount(String password) async {
+    state = const AsyncValue.loading();
+
+    try {
+      await _useCase.execute(password);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+}
+
+final deleteAccountProvider =
+    StateNotifierProvider<DeleteAccountNotifier, AsyncValue<void>>((ref) {
+  return DeleteAccountNotifier(ref.read(deleteAccountUseCaseProvider));
 });

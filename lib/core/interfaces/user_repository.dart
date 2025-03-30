@@ -15,4 +15,10 @@ abstract class UserRepository {
 
   /// Get a user by ID (single fetch, not a stream)
   Future<AppUser?> getUser(String userId);
+
+  /// Anonymize user data for GDPR compliance
+  Future<void> anonymizeUserData(String uid);
+
+  /// Delete user document in database
+  Future<void> deleteUserDocument(String uid);
 }
