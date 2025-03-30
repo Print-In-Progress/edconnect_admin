@@ -205,6 +205,150 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<String?> signUpWithExistingAuthAccount(
+      RegistrationRequest request) async {
+    try {
+      // Filter registration fields
+      final filteredFields = request.registrationFields.where((field) {
+        return !(field.type == 'checkbox_section' && field.checked != true);
+      }).toList();
+
+      // Flatten and validate
+      final flattenedFields = flattenRegistrationFields(filteredFields);
+      final validationError = validateCustomRegistrationFields(flattenedFields);
+      if (validationError.isNotEmpty) {
+        return validationError;
+      }
+
+      // Try to sign in with existing account
+      final signInResult = await _authDataSource.signUpWithExistingAuthAccount(
+        request.email.trim(),
+        request.password.trim(),
+      );
+
+      // Check for auth errors
+      if (signInResult == null ||
+          signInResult.startsWith('AuthError') ||
+          signInResult.startsWith('UnexpectedError')) {
+        return signInResult ?? 'Failed to authenticate';
+      }
+
+      // Get groups from registration fields
+      final checkedGroups = flattenedFields
+          .where((field) =>
+              field.type == 'checkbox_assign_group' && (field.checked ?? false))
+          .map((field) => field.group!)
+          .toList();
+
+      // Check if user provided a signature
+      final hasSignature = flattenedFields.any(
+          (field) => field.type == 'signature' && (field.checked ?? false));
+
+      Uint8List pdfBytes;
+      if (hasSignature) {
+        // Generate signed PDF
+        final keyPair = generateRSAKeyPair();
+        pdfBytes = await _pdfService.generatePdf(
+          flattenedFields,
+          true,
+          signInResult,
+          request.orgName,
+          capitalize(request.firstName),
+          capitalize(request.lastName),
+          request.email.trim(),
+          publicKey: keyPair.publicKey,
+        );
+
+        // Sign the PDF
+        final pdfHash = hashBytes(pdfBytes);
+        final signatureBytes = signHash(pdfHash, keyPair.privateKey);
+        final publicKeyPem = convertPublicKeyToPem(keyPair.publicKey);
+
+        // Save user with signature
+        await _userDataSource.saveUserDetails(
+          signInResult,
+          capitalize(request.firstName),
+          capitalize(request.lastName),
+          request.email.trim(),
+          checkedGroups,
+          true,
+          publicKeyPem: publicKeyPem,
+          signatureBytes: signatureBytes,
+        );
+
+        // Upload signed PDF
+        await _storageDataSource.uploadPdf(
+          pdfBytes,
+          '${signInResult}_registration_form.pdf',
+          signInResult,
+          true,
+        );
+      } else {
+        // Generate unsigned PDF
+        pdfBytes = await _pdfService.generatePdf(
+          flattenedFields,
+          false,
+          signInResult,
+          request.orgName,
+          capitalize(request.firstName),
+          capitalize(request.lastName),
+          request.email.trim(),
+        );
+
+        // Save user without signature
+        await _userDataSource.saveUserDetails(
+          signInResult,
+          capitalize(request.firstName),
+          capitalize(request.lastName),
+          request.email.trim(),
+          checkedGroups,
+          false,
+        );
+
+        // Upload unsigned PDF
+        await _storageDataSource.uploadPdf(
+          pdfBytes,
+          '${signInResult}_registration_form_unsigned.pdf',
+          signInResult,
+          false,
+        );
+      }
+
+      // Process any file uploads
+      final fileUploadFields = flattenedFields
+          .where((field) => field.type == 'file_upload' && field.file != null)
+          .toList();
+
+      if (fileUploadFields.isNotEmpty) {
+        List<Uint8List> fileBytes = [];
+        List<String> fileNames = [];
+
+        for (var field in fileUploadFields) {
+          for (var platformFile in field.file!) {
+            if (platformFile.bytes != null) {
+              fileBytes.add(platformFile.bytes!);
+              fileNames.add(platformFile.name);
+            }
+          }
+        }
+
+        if (fileBytes.isNotEmpty) {
+          await _storageDataSource.uploadFiles(
+            fileBytes,
+            fileNames,
+            signInResult,
+            'registration_form',
+          );
+        }
+      }
+
+      return null; // Success
+    } catch (e) {
+      return 'UnexpectedError: $e';
+    }
+  }
+
+  @override
   Future<void> sendEmailVerification() async {
     await _authDataSource.sendEmailVerification();
   }

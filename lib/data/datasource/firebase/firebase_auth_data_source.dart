@@ -23,6 +23,28 @@ class FirebaseAuthDataSource implements AuthDataSource {
   }
 
   @override
+  Future<String?> signUpWithExistingAuthAccount(
+      String email, String password) async {
+    try {
+      // Attempt to sign in with existing account
+      final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (userCredential.user == null) {
+        return 'Failed to authenticate user';
+      }
+
+      return userCredential.user!.uid;
+    } on FirebaseAuthException catch (e) {
+      return 'AuthError: ${e.code}';
+    } catch (e) {
+      return 'UnexpectedError: $e';
+    }
+  }
+
+  @override
   Future<void> sendEmailVerification() async {
     await _firebaseAuth.currentUser?.sendEmailVerification();
   }

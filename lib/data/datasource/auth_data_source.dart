@@ -3,6 +3,9 @@ abstract class AuthDataSource {
   /// Returns userId on success
   Future<String> createUserWithEmailAndPassword(String email, String password);
 
+  /// Sign up to organization with existing auth account
+  Future<String?> signUpWithExistingAuthAccount(String email, String password);
+
   /// Send verification email to current user
   Future<void> sendEmailVerification();
 

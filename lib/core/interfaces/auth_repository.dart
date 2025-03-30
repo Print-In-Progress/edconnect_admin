@@ -6,7 +6,7 @@ abstract class AuthRepository {
   Future<String?> signUp(RegistrationRequest request);
 
   /// sign up if user exists in Auth but not in Database (for example, if user was created in another organization)
-  Future<String?> signUpWithExistingAuth();
+  Future<String?> signUpWithExistingAuthAccount(RegistrationRequest request);
 
   /// Send email verification to current user
   Future<void> sendEmailVerification();
