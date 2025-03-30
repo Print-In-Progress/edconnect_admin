@@ -28,4 +28,10 @@ abstract class AuthRepository {
 
   /// Change email
   Future<String?> changeEmail(String email);
+
+  /// Reauthenticate the current user (for sensitive operations)
+  Future<String?> reauthenticate(String password);
+
+  /// Change password (requires recent authentication)
+  Future<String?> changePassword(String newPassword);
 }

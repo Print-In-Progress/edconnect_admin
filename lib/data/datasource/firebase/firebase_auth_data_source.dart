@@ -86,4 +86,34 @@ class FirebaseAuthDataSource implements AuthDataSource {
     }
     return null;
   }
+
+  @override
+  Future<String?> reauthenticate(String password) async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user == null || user.email == null) {
+        return 'No authenticated user found';
+      }
+
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: password,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+      return null;
+    } catch (e) {
+      return 'AuthError: $e';
+    }
+  }
+
+  @override
+  Future<String?> changePassword(String newPassword) async {
+    try {
+      await _firebaseAuth.currentUser?.updatePassword(newPassword);
+      return null;
+    } catch (e) {
+      return 'AuthError: $e';
+    }
+  }
 }

@@ -1,9 +1,9 @@
+import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/presentation/widgets/common/forms.dart';
 import 'package:edconnect_admin/presentation/pages/auth_pages/forgot_password_page.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
-import 'package:edconnect_admin/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,19 +22,23 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
 
   final _formKey = GlobalKey<FormState>();
 
-  final _auth = AuthService();
-
   bool _newPasswordVisible = false;
   bool _currentPasswordVisible = false;
   bool _confirmNewPasswordVisible = false;
 
   Future<void> _updatePassword() async {
+    if (!_formKey.currentState!.validate()) return;
+
     try {
-      await _auth.updatePassword(
-        currentPassword: _currentPasswordController.text,
-        newPassword: _newPasswordController.text,
-        confirmedPassword: _confirmNewPasswordController.text,
-      );
+      // First reauthenticate
+      await ref
+          .read(reauthenticateProvider.notifier)
+          .reauthenticate(_currentPasswordController.text);
+
+      // Then change password
+      await ref
+          .read(changePasswordProvider.notifier)
+          .changePassword(_newPasswordController.text);
 
       if (!mounted) return;
       successMessage(
@@ -42,7 +46,8 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
         AppLocalizations.of(context)!
             .settingsPageSuccessOnPasswordChangedSnackbarLabel,
       );
-    } on Exception catch (e) {
+      Navigator.of(context).pop();
+    } catch (e) {
       if (!mounted) return;
       errorMessage(context, e.toString());
     }

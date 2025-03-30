@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/forms.dart';
 import 'package:edconnect_admin/models/registration_fields.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
@@ -8,14 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ResubmitRegInfo extends ConsumerStatefulWidget {
-  const ResubmitRegInfo({super.key});
+class SubmitRegistrationUpdate extends ConsumerStatefulWidget {
+  const SubmitRegistrationUpdate({super.key});
 
   @override
-  ConsumerState<ResubmitRegInfo> createState() => _ResubmitRegInfoState();
+  ConsumerState<SubmitRegistrationUpdate> createState() =>
+      _SubmitRegistrationUpdateState();
 }
 
-class _ResubmitRegInfoState extends ConsumerState<ResubmitRegInfo> {
+class _SubmitRegistrationUpdateState
+    extends ConsumerState<SubmitRegistrationUpdate> {
   late Future<List<BaseRegistrationField>> _futureDocs;
   bool _isDataFetched = false;
   final _firstNameController = TextEditingController();
@@ -28,8 +31,6 @@ class _ResubmitRegInfoState extends ConsumerState<ResubmitRegInfo> {
   double _progress = 0.0;
   String _progressLabel = '';
 
-  final _dataService = DataService();
-
   Future<void> _handleSubmit(
       List<BaseRegistrationField> registrationFields) async {
     if (!_validateForm()) return;
@@ -37,11 +38,11 @@ class _ResubmitRegInfoState extends ConsumerState<ResubmitRegInfo> {
     setState(() => _isSubmitting = true);
 
     try {
-      await _dataService.submitRegistrationUpdate(
-        registrationFields: registrationFields,
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        onProgress: (progress, label) {
+      await ref.read(registrationUpdateProvider.notifier).submitUpdate(
+        registrationFields,
+        _firstNameController.text,
+        _lastNameController.text,
+        (progress, label) {
           setState(() {
             _progress = progress;
             _progressLabel = label;

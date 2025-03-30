@@ -1,8 +1,8 @@
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
-import 'package:edconnect_admin/presentation/pages/settings_pages/resubmit_reg_info.dart';
+import 'package:edconnect_admin/presentation/pages/settings_pages/submit_registration_update.dart';
 import 'package:edconnect_admin/presentation/pages/settings_pages/settings_change_name_page.dart';
-import 'package:edconnect_admin/presentation/pages/settings_pages/settings_update_email.dart';
+import 'package:edconnect_admin/presentation/pages/settings_pages/settings_change_email.dart';
 import 'package:edconnect_admin/presentation/pages/settings_pages/settings_update_password_page.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
@@ -262,7 +262,7 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                                   settings: const RouteSettings(
                                       name: 'resubmitRegInfo'),
                                   builder: (context) {
-                                    return const ResubmitRegInfo();
+                                    return const SubmitRegistrationUpdate();
                                   },
                                 ));
                           },

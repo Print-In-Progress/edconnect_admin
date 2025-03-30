@@ -12,4 +12,12 @@ class UserCredentialsUseCase {
   Future<String?> changeEmail(String newEmail) async {
     return await _authRepository.changeEmail(newEmail);
   }
+
+  Future<String?> reauthenticate(String password) async {
+    return await _authRepository.reauthenticate(password);
+  }
+
+  Future<String?> changePassword(String newPassword) async {
+    return await _authRepository.changePassword(newPassword);
+  }
 }

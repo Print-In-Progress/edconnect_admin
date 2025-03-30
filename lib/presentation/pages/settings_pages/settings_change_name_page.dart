@@ -1,7 +1,8 @@
+import 'package:edconnect_admin/presentation/providers/action_providers.dart';
+import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
-import 'package:edconnect_admin/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,8 +17,6 @@ class AccountName extends ConsumerStatefulWidget {
 class _AccountNameState extends ConsumerState<AccountName> {
   final _userFirstNameController = TextEditingController();
   final _userLastNameController = TextEditingController();
-
-  final _authService = AuthService();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -132,12 +131,17 @@ class _AccountNameState extends ConsumerState<AccountName> {
                                   onPressed: () async {
                                     try {
                                       if (_formKey.currentState!.validate()) {
-                                        await _authService.updateUserName(
-                                          firstName:
+                                        final user =
+                                            ref.read(currentUserProvider).value;
+                                        if (user == null) return;
+
+                                        await ref
+                                            .read(changeNameProvider.notifier)
+                                            .changeName(
+                                              user.id,
                                               _userFirstNameController.text,
-                                          lastName:
                                               _userLastNameController.text,
-                                        );
+                                            );
 
                                         if (!context.mounted) return;
                                         successMessage(

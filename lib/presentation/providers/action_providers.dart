@@ -1,6 +1,9 @@
 import 'package:edconnect_admin/domain/usecases/auth/sign_in_usecase.dart';
 import 'package:edconnect_admin/domain/usecases/auth/sign_out_use_case.dart';
 import 'package:edconnect_admin/domain/usecases/auth/sign_up_usecase.dart';
+import 'package:edconnect_admin/domain/usecases/auth/user_credential_repository.dart';
+import 'package:edconnect_admin/domain/usecases/auth/user_profile_use_case.dart';
+import 'package:edconnect_admin/models/registration_fields.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/registration_request.dart';
@@ -115,4 +118,170 @@ class SignOutNotifier extends StateNotifier<AsyncValue<void>> {
 final signOutStateProvider =
     StateNotifierProvider<SignOutNotifier, AsyncValue<void>>((ref) {
   return SignOutNotifier(ref.read(signOutUseCaseProvider));
+});
+
+// ---------------- USER ACTIONS -----------------
+
+class RegistrationUpdateNotifier extends StateNotifier<AsyncValue<void>> {
+  final UserProfileDataUseCase _useCase;
+  final Ref _ref;
+
+  RegistrationUpdateNotifier(this._useCase, this._ref)
+      : super(const AsyncValue.data(null));
+
+  Future<void> submitUpdate(
+    List<BaseRegistrationField> fields,
+    String firstName,
+    String lastName,
+    void Function(double progress, String label)? onProgress,
+  ) async {
+    state = const AsyncValue.loading();
+
+    try {
+      // Get current user
+      final user = _ref.read(currentUserProvider).value;
+      if (user == null) throw Exception('No user logged in');
+
+      // Convert BaseRegistrationField to RegistrationField
+      final registrationFields = fields.whereType<RegistrationField>().toList();
+
+      // Submit registration update
+      await _useCase.submitRegistrationUpdate(user, registrationFields);
+
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+}
+
+final registrationUpdateProvider =
+    StateNotifierProvider<RegistrationUpdateNotifier, AsyncValue<void>>((ref) {
+  return RegistrationUpdateNotifier(
+    ref.read(userProfileDataUseCaseProvider),
+    ref,
+  );
+});
+
+class ChangeNameNotifier extends StateNotifier<AsyncValue<void>> {
+  final UserProfileDataUseCase _useCase;
+
+  ChangeNameNotifier(this._useCase) : super(const AsyncValue.data(null));
+
+  Future<void> changeName(
+      String userId, String firstName, String lastName) async {
+    state = const AsyncValue.loading();
+
+    try {
+      await _useCase.changeName(userId, firstName, lastName);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+}
+
+final changeNameProvider =
+    StateNotifierProvider<ChangeNameNotifier, AsyncValue<void>>((ref) {
+  return ChangeNameNotifier(ref.read(userProfileDataUseCaseProvider));
+});
+
+class UpdateEmailNotifier extends StateNotifier<AsyncValue<void>> {
+  final UserCredentialsUseCase _useCase;
+
+  UpdateEmailNotifier(this._useCase) : super(const AsyncValue.data(null));
+
+  Future<void> updateEmail(String newEmail) async {
+    state = const AsyncValue.loading();
+
+    try {
+      final result = await _useCase.changeEmail(newEmail);
+      if (result != null) {
+        throw Exception(result);
+      }
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+}
+
+final updateEmailProvider =
+    StateNotifierProvider<UpdateEmailNotifier, AsyncValue<void>>((ref) {
+  return UpdateEmailNotifier(ref.read(userCredentialsUseCaseProvider));
+});
+
+class ReauthenticateNotifier extends StateNotifier<AsyncValue<void>> {
+  final UserCredentialsUseCase _useCase;
+
+  ReauthenticateNotifier(this._useCase) : super(const AsyncValue.data(null));
+
+  Future<void> reauthenticate(String password) async {
+    state = const AsyncValue.loading();
+
+    try {
+      final result = await _useCase.reauthenticate(password);
+      if (result != null) {
+        throw Exception(result);
+      }
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+}
+
+final reauthenticateProvider =
+    StateNotifierProvider<ReauthenticateNotifier, AsyncValue<void>>((ref) {
+  return ReauthenticateNotifier(ref.read(userCredentialsUseCaseProvider));
+});
+
+class ChangePasswordNotifier extends StateNotifier<AsyncValue<void>> {
+  final UserCredentialsUseCase _useCase;
+
+  ChangePasswordNotifier(this._useCase) : super(const AsyncValue.data(null));
+
+  Future<void> changePassword(String newPassword) async {
+    state = const AsyncValue.loading();
+
+    try {
+      final result = await _useCase.changePassword(newPassword);
+      if (result != null) {
+        throw Exception(result);
+      }
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+}
+
+final changePasswordProvider =
+    StateNotifierProvider<ChangePasswordNotifier, AsyncValue<void>>((ref) {
+  return ChangePasswordNotifier(ref.read(userCredentialsUseCaseProvider));
+});
+
+class ResetPasswordNotifier extends StateNotifier<AsyncValue<void>> {
+  final UserCredentialsUseCase _useCase;
+
+  ResetPasswordNotifier(this._useCase) : super(const AsyncValue.data(null));
+
+  Future<void> resetPassword(String email) async {
+    state = const AsyncValue.loading();
+
+    try {
+      final result = await _useCase.resetPassword(email);
+      if (result != null) {
+        throw Exception(result);
+      }
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+}
+
+final resetPasswordProvider =
+    StateNotifierProvider<ResetPasswordNotifier, AsyncValue<void>>((ref) {
+  return ResetPasswordNotifier(ref.read(userCredentialsUseCaseProvider));
 });
