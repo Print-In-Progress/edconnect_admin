@@ -81,4 +81,9 @@ class FirebaseUserRepositoryImpl implements UserRepository {
   Future<void> deleteUserDocument(String uid) {
     return _userDataSource.deleteUserDocument(uid);
   }
+
+  @override
+  Future<List<BaseRegistrationField>> getRegistrationFields() async {
+    return await _userDataSource.getRegistrationFields();
+  }
 }

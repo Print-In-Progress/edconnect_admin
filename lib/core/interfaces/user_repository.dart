@@ -21,4 +21,7 @@ abstract class UserRepository {
 
   /// Delete user document in database
   Future<void> deleteUserDocument(String uid);
+
+  /// Fetch registration fields
+  Future<List<BaseRegistrationField>> getRegistrationFields();
 }

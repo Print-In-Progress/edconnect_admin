@@ -10,6 +10,7 @@ import 'package:edconnect_admin/models/registration_fields.dart';
 import 'package:edconnect_admin/services/pdf_service.dart';
 import 'package:edconnect_admin/utils/crypto_utils.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import '../../../constants/database_constants.dart';
 import '../user_data_source.dart';
 import 'package:pointycastle/export.dart' as pc;
@@ -234,5 +235,106 @@ class FirebaseUserDataSource implements UserDataSource {
         .collection(customerSpecificCollectionUsers)
         .doc(uid)
         .delete();
+  }
+
+  @override
+  Future<List<BaseRegistrationField>> getRegistrationFields() async {
+    var snapshot = await _firestore
+        .collection(customerSpecificCollectionRegistration)
+        .get();
+
+    var docs = snapshot.docs;
+
+    if (snapshot.docs.isEmpty) {
+      return [];
+    }
+
+    // Sort documents locally in ascending order by 'pos'
+    docs.sort((a, b) {
+      var aPos = a.data().containsKey('pos') ? a['pos'] : double.maxFinite;
+      var bPos = b.data().containsKey('pos') ? b['pos'] : double.maxFinite;
+      return aPos.compareTo(bPos);
+    });
+
+    // Create a map to hold subfields grouped by parentUid
+    Map<String, List<RegistrationSubField>> subFieldsMap = {};
+
+    // First pass: create subfields and group them by parentUid
+    for (var doc in docs) {
+      var data = doc.data();
+      if (data.containsKey('parent_uid')) {
+        var subField = RegistrationSubField(
+          id: doc.id,
+          parentUid: data['parent_uid'] ?? '',
+          type: data['type'] ?? '',
+          text: data['type'] == 'infobox' ||
+                  data['type'] == 'checkbox' ||
+                  data['type'] == 'file_upload'
+              ? data['text'] ?? ''
+              : null,
+          options: data['type'] == 'dropdown' ? data['options'] : null,
+          group: data['type'] == 'checkbox_assign_group' ? data['group'] : null,
+          response: TextEditingController(),
+          selectedDate: null,
+          checked: false,
+          maxFileUploads: data['type'] == 'file_upload'
+              ? data['max_file_uploads']?.toInt() ?? 0
+              : null,
+          checkboxLabel:
+              data['type'] == 'checkbox' ? data['checkbox_label'] ?? '' : null,
+          title: data['title'] ?? '',
+          pos: data['sub_pos']?.toInt() ?? 0,
+        );
+
+        if (!subFieldsMap.containsKey(subField.parentUid)) {
+          subFieldsMap[subField.parentUid] = [];
+        }
+        subFieldsMap[subField.parentUid]!.add(subField);
+      }
+    }
+
+    // Sort subfields by 'pos' within each parentUid group
+    subFieldsMap.forEach((key, value) {
+      value.sort((a, b) => a.pos.compareTo(b.pos));
+    });
+
+    // Create fields and assign subfields
+    List<BaseRegistrationField> registrationFieldList = docs
+        .map((doc) {
+          var data = doc.data();
+          if (!data.containsKey('parent_uid')) {
+            return RegistrationField(
+              id: doc.id,
+              type: data['type'] ?? '',
+              text: data['type'] == 'infobox' ||
+                      data['type'] == 'checkbox' ||
+                      data['type'] == 'file_upload'
+                  ? data['text'] ?? ''
+                  : null,
+              options: data['type'] == 'dropdown' ? data['options'] : null,
+              group: data['type'] == 'checkbox_assign_group'
+                  ? data['group']
+                  : null,
+              selectedDate: null,
+              maxFileUploads: data['type'] == 'file_upload'
+                  ? data['max_file_uploads']?.toInt()
+                  : null,
+              checkboxLabel: data['type'] == 'checkbox'
+                  ? data['checkbox_label'] ?? ''
+                  : null,
+              response: TextEditingController(),
+              checked: false,
+              title: data['title'] ?? '',
+              pos: data['pos']?.toInt() ?? 0,
+              childWidgets: subFieldsMap[doc.id] ?? [],
+            );
+          }
+          return null;
+        })
+        .where((field) => field != null)
+        .cast<BaseRegistrationField>()
+        .toList();
+
+    return registrationFieldList;
   }
 }

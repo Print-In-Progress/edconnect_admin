@@ -1,4 +1,5 @@
 import 'package:edconnect_admin/domain/usecases/auth/delete_account_use_case.dart';
+import 'package:edconnect_admin/domain/usecases/auth/get_registration_fields_use_case.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/usecases/auth/sign_in_usecase.dart';
@@ -64,4 +65,9 @@ final deleteAccountUseCaseProvider = Provider<DeleteAccountUseCase>((ref) {
     ref.watch(userRepositoryProvider),
     ref.watch(storageRepositoryProvider),
   );
+});
+
+final getRegistrationFieldsUseCaseProvider =
+    Provider<GetRegistrationFieldsUseCase>((ref) {
+  return GetRegistrationFieldsUseCase(ref.watch(userRepositoryProvider));
 });

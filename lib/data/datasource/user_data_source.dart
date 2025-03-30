@@ -25,4 +25,7 @@ abstract class UserDataSource {
 
   /// Delete user document from database
   Future<void> deleteUserDocument(String uid);
+
+  /// Fetch registration fields
+  Future<List<BaseRegistrationField>> getRegistrationFields();
 }

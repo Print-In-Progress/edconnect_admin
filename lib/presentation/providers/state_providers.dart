@@ -91,6 +91,7 @@ final userWithResolvedGroupsProvider = Provider<AppUser?>((ref) {
     error: (_, __) => user,
   );
 });
+
 // ---------------- GROUPS STATE  -----------------
 final groupServiceProvider = Provider<GroupService>((ref) {
   return GroupService(ref.watch(groupManagementUseCaseProvider));

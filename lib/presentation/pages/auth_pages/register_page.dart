@@ -8,7 +8,6 @@ import 'package:edconnect_admin/domain/entities/registration_request.dart';
 import 'package:edconnect_admin/models/registration_fields.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/terms_and_conditions_checkbox.dart';
-import 'package:edconnect_admin/services/data_service.dart';
 import 'package:edconnect_admin/utils/registration_card_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -38,7 +37,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   bool _validateLastNameField = false;
   bool _validateEmailField = false;
 
-  Future<List<BaseRegistrationField>>? _registrationFieldsFuture;
   List<BaseRegistrationField>? _registrationFields;
 
   @override
@@ -48,12 +46,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _registrationFieldsFuture = DataService().fetchRegistrationFieldData();
   }
 
   Future<void> signUp(BuildContext context) async {
@@ -95,6 +87,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   Widget build(BuildContext context) {
     // Watch the sign up state
     final signUpState = ref.watch(signUpNotifierProvider);
+    final registrationFields = ref.watch(registrationFieldsProvider);
 
     // Watch theme providers
     final theme = ref.watch(appThemeProvider);
@@ -277,32 +270,53 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             height: 10,
                           ),
 
-                          FutureBuilder<List<BaseRegistrationField>>(
-                            future: _registrationFieldsFuture,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                _registrationFields = snapshot.data;
-
-                                if (snapshot.data!.isEmpty) {
-                                  return const SizedBox.shrink();
-                                }
-
-                                return ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (context, index) =>
-                                      buildRegistrationCard(
-                                          context, snapshot.data!, index),
-                                );
+                          registrationFields.when(
+                            loading: () => Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: List.generate(
+                                5,
+                                (index) => Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 2),
+                                  child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            width: double.infinity,
+                                            height: 20.0,
+                                            color: Colors.grey[300],
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Container(
+                                            width: double.infinity,
+                                            height: 20.0,
+                                            color: Colors.grey[300],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            error: (error, stack) => Center(
+                              child: Text('Error: $error'),
+                            ),
+                            data: (fields) {
+                              if (fields.isEmpty) {
+                                return const SizedBox.shrink();
                               }
 
-                              if (snapshot.hasError) {
-                                return Center(
-                                    child: Text('Error: ${snapshot.error}'));
-                              }
-
-                              return const Center(
-                                  child: CircularProgressIndicator());
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: fields.length,
+                                itemBuilder: (context, index) =>
+                                    buildRegistrationCard(
+                                        context, fields, index),
+                              );
                             },
                           ),
 

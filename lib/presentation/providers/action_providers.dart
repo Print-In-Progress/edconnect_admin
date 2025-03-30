@@ -6,6 +6,7 @@ import 'package:edconnect_admin/domain/usecases/auth/user_credential_repository.
 import 'package:edconnect_admin/domain/usecases/auth/user_profile_use_case.dart';
 import 'package:edconnect_admin/models/registration_fields.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
+import 'package:edconnect_admin/utils/validation_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/registration_request.dart';
 import '../../domain/providers/usecase_providers.dart';
@@ -163,7 +164,6 @@ class RegistrationUpdateNotifier extends StateNotifier<AsyncValue<void>> {
     List<BaseRegistrationField> fields,
     String firstName,
     String lastName,
-    void Function(double progress, String label)? onProgress,
   ) async {
     state = const AsyncValue.loading();
 
@@ -172,8 +172,18 @@ class RegistrationUpdateNotifier extends StateNotifier<AsyncValue<void>> {
       final user = _ref.read(currentUserProvider).value;
       if (user == null) throw Exception('No user logged in');
 
-      // Convert BaseRegistrationField to RegistrationField
+      // Update name first
+      await _useCase.changeName(user.id, firstName, lastName);
+
+      // Convert BaseRegistrationField to RegistrationField and filter valid fields
       final registrationFields = fields.whereType<RegistrationField>().toList();
+
+      // Flatten and validate fields
+      final flattenedFields = flattenRegistrationFields(registrationFields);
+      final validationError = validateCustomRegistrationFields(flattenedFields);
+      if (validationError.isNotEmpty) {
+        throw Exception(validationError);
+      }
 
       // Submit registration update
       await _useCase.submitRegistrationUpdate(user, registrationFields);
@@ -336,4 +346,9 @@ class DeleteAccountNotifier extends StateNotifier<AsyncValue<void>> {
 final deleteAccountProvider =
     StateNotifierProvider<DeleteAccountNotifier, AsyncValue<void>>((ref) {
   return DeleteAccountNotifier(ref.read(deleteAccountUseCaseProvider));
+});
+
+final registrationFieldsProvider =
+    FutureProvider<List<BaseRegistrationField>>((ref) {
+  return ref.read(getRegistrationFieldsUseCaseProvider).execute();
 });
