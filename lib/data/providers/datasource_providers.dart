@@ -33,9 +33,9 @@ final groupDataSourceProvider = Provider<GroupDataSource>((ref) {
 // to avoid circular dependency
 final userDataSourceProvider = Provider<UserDataSource>((ref) {
   return FirebaseUserDataSource(
-    firestore: ref.watch(firestoreProvider),
-    storage: ref.watch(firebaseStorageProvider),
+    storageDataSource: ref.watch(storageDataSourceProvider),
     groupRepository: ref.watch(groupRepositoryProvider),
+    firestore: ref.watch(firestoreProvider),
   );
 });
 

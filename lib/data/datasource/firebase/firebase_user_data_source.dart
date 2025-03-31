@@ -1,31 +1,31 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edconnect_admin/core/interfaces/group_repository.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/core/utils/validation_utils.dart';
+import 'package:edconnect_admin/data/datasource/storage_data_source.dart';
+import 'package:edconnect_admin/data/services/pdf_service.dart';
 import 'package:edconnect_admin/domain/utils/registration_utils.dart';
 import 'package:edconnect_admin/models/registration_fields.dart';
-import 'package:edconnect_admin/services/pdf_service.dart';
 import 'package:edconnect_admin/utils/crypto_utils.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../../../constants/database_constants.dart';
 import '../user_data_source.dart';
-import 'package:pointycastle/export.dart' as pc;
 
 class FirebaseUserDataSource implements UserDataSource {
   final FirebaseFirestore _firestore;
-  final FirebaseStorage _storage;
+  final StorageDataSource _storageDataSource;
+  final PdfService _pdfService;
   final GroupRepository _groupRepository;
 
-  FirebaseUserDataSource({
-    FirebaseFirestore? firestore,
-    FirebaseStorage? storage,
-    required GroupRepository groupRepository,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _storage = storage ?? FirebaseStorage.instance,
+  FirebaseUserDataSource(
+      {FirebaseFirestore? firestore,
+      required StorageDataSource storageDataSource,
+      required GroupRepository groupRepository})
+      : _firestore = firestore ?? FirebaseFirestore.instance,
+        _storageDataSource = storageDataSource,
+        _pdfService = PdfService(),
         _groupRepository = groupRepository;
 
   @override
@@ -100,112 +100,110 @@ class FirebaseUserDataSource implements UserDataSource {
     }
   }
 
-  // Registration submission helper methods
   Future<void> _handleSignedSubmission(
-    List<BaseRegistrationField> flattenedList,
+    List<BaseRegistrationField> flattenedFields,
     AppUser user,
   ) async {
-    try {
-      final keyPair = generateRSAKeyPair();
+    // Generate key pair and PDF
+    final keyPair = generateRSAKeyPair();
+    final pdfBytes = await _pdfService.generatePdf(
+      flattenedFields,
+      true,
+      user.id,
+      customerName,
+      user.lastName,
+      user.firstName,
+      user.email,
+      publicKey: keyPair.publicKey,
+    );
 
-      final pdfBytes = await generatePdf(flattenedList, true, user.id,
-          customerName, user.lastName, user.firstName, user.email);
+    // Sign PDF
+    final pdfHash = hashBytes(pdfBytes);
+    final signatureBytes = signHash(pdfHash, keyPair.privateKey);
+    final publicKeyPem = convertPublicKeyToPem(keyPair.publicKey);
 
-      final pdfHash = hashBytes(pdfBytes);
-      final signature = signHash(pdfHash, keyPair.privateKey);
-      verifySignature(pdfHash, signature, keyPair.publicKey);
-
-      await _uploadPdfSignature(user.id, keyPair.publicKey, signature);
-
-      final fileName = '${user.id}_registration_form_signed.pdf';
-      await _uploadPdf(pdfBytes, fileName, user.id);
-
-      await _handleAdditionalData(
-        flattenedList: flattenedList,
-        user: user,
-      );
-    } catch (e) {
-      throw Exception('Error signing PDF: $e');
-    }
-  }
-
-  Future _uploadPdfSignature(
-      String uid, pc.RSAPublicKey? publicKey, Uint8List? signatureBytes) async {
-    _firestore.collection(customerSpecificCollectionUsers).doc(uid).update({
-      'reg_pdf_public_key': convertPublicKeyToPem(publicKey!),
-      'reg_pdf_signature': base64Encode(signatureBytes!),
+    // Save signature to user document
+    await _firestore
+        .collection(customerSpecificCollectionUsers)
+        .doc(user.id)
+        .update({
+      'reg_pdf_public_key': publicKeyPem,
+      'reg_pdf_signature': base64Encode(signatureBytes),
     });
+
+    // Upload signed PDF
+    await _storageDataSource.uploadPdf(
+      pdfBytes,
+      '${user.id}_registration_form_signed.pdf',
+      user.id,
+    );
+
+    // Handle additional data (groups and files)
+    await _handleAdditionalData(flattenedFields, user);
   }
 
   Future<void> _handleUnsignedSubmission(
-    List<BaseRegistrationField> flattenedList,
+    List<BaseRegistrationField> flattenedFields,
     AppUser user,
   ) async {
-    try {
-      // Generate PDF without signature
-      final pdfBytes = await generatePdf(flattenedList, false, user.id,
-          customerName, user.lastName, user.firstName, user.email);
+    // Generate PDF without signature
+    final pdfBytes = await _pdfService.generatePdf(
+      flattenedFields,
+      false,
+      user.id,
+      customerName,
+      user.lastName,
+      user.firstName,
+      user.email,
+    );
 
-      // Upload PDF
-      final fileName = '${user.id}_registration_form_unsigned.pdf';
-      await _uploadPdf(pdfBytes, fileName, user.id);
+    // Upload unsigned PDF
+    await _storageDataSource.uploadPdf(
+      pdfBytes,
+      '${user.id}_registration_form_unsigned.pdf',
+      user.id,
+    );
 
-      // Handle additional data (files and groups)
-      await _handleAdditionalData(
-        flattenedList: flattenedList,
-        user: user,
-      );
-    } catch (e) {
-      return Future.error('Error in unsigned submission: ${e.toString()}');
-    }
+    // Handle additional data (groups and files)
+    await _handleAdditionalData(flattenedFields, user);
   }
 
-  Future<String> _uploadPdf(
-    Uint8List pdfBytes,
-    String fileName,
-    String uid,
+  Future<void> _handleAdditionalData(
+    List<BaseRegistrationField> flattenedFields,
+    AppUser user,
   ) async {
-    final storageRef = _storage.ref();
-    final pdfRef = storageRef.child(
-        '$customerSpecificCollectionFiles/user_data/$uid/reg_file_$fileName');
+    // Handle file uploads
+    final fileFields = flattenedFields
+        .where((field) => field.type == 'file_upload' && field.file != null);
 
-    final uploadTask = pdfRef.putData(pdfBytes);
-    final snapshot = await uploadTask.whenComplete(() => null);
+    for (var field in fileFields) {
+      List<Uint8List> fileBytes = [];
+      List<String> fileNames = [];
 
-    final downloadUrl = await snapshot.ref.getDownloadURL();
-    return downloadUrl;
-  }
+      for (var file in field.file!) {
+        if (file.bytes != null) {
+          fileBytes.add(file.bytes!);
+          fileNames.add(file.name);
+        }
+      }
 
-  Future<void> _handleAdditionalData({
-    required List<BaseRegistrationField> flattenedList,
-    required AppUser user,
-  }) async {
-    // Handle files
-    final fileFields = flattenedList.where((field) =>
-        field.type == 'file_upload' &&
-        field.file != null &&
-        field.file!.isNotEmpty);
-
-    for (final field in fileFields) {
-      for (final file in field.file!) {
-        // Convert PlatformFile to Uint8List
-        final Uint8List fileBytes = file.bytes != null
-            ? file.bytes!
-            : await File(file.path!).readAsBytes();
-
-        await _uploadPdf(fileBytes, user.id, 'registration_form');
+      if (fileBytes.isNotEmpty) {
+        await _storageDataSource.uploadFiles(
+          fileBytes,
+          fileNames,
+          'registration_form/${user.id}',
+        );
       }
     }
 
     // Handle groups
-    final groups = flattenedList
-        .where(
-            (field) => field.type == 'checkbox_assign_group' && field.checked!)
+    final groups = flattenedFields
+        .where((field) =>
+            field.type == 'checkbox_assign_group' && field.checked == true)
         .map((field) => field.group!)
         .toList();
 
     if (groups.isNotEmpty) {
-      // Use the injected repository to update user groups
       await _groupRepository.updateUserGroups(user.id, groups);
     }
   }
