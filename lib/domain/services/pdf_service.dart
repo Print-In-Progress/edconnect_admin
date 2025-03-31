@@ -1,5 +1,5 @@
+import 'package:edconnect_admin/core/utils/crypto_utils.dart';
 import 'package:edconnect_admin/domain/entities/registration_fields.dart';
-import 'package:edconnect_admin/utils/crypto_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/widgets.dart' as pw;
