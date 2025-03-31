@@ -6,7 +6,7 @@ enum StorageModule {
       'Personal Storage', '$customerSpecificCollectionFiles/personal_storage'),
   library('Library', '$customerSpecificCollectionFiles/library'),
   registrationFiles('Registration Files',
-      '$customerSpecificCollectionFiles/registration_files'),
+      '$customerSpecificCollectionFiles/registration_data'),
   ;
 
   final String displayName;

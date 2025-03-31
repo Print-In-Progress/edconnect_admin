@@ -8,7 +8,7 @@ bool passwordConfirmed(String password, String confirmedPassword) {
   }
 }
 
-String validateCustomRegistrationFields(flattenedRegistrationList) {
+String validateRegistrationFields(flattenedRegistrationList) {
   for (var field in flattenedRegistrationList) {
     if (field is RegistrationSubField && field.type == 'signature') {
       var parentField = flattenedRegistrationList

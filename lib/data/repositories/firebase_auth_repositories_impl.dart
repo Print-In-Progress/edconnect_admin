@@ -40,7 +40,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
 
     // Flatten and validate
     final flattenedFields = flattenRegistrationFields(filteredFields);
-    final validationError = validateCustomRegistrationFields(flattenedFields);
+    final validationError = validateRegistrationFields(flattenedFields);
     if (validationError.isNotEmpty) {
       return validationError;
     }
@@ -172,7 +172,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
           await _storageDataSource.uploadFiles(
             fileBytes,
             fileNames,
-            'registration_form/$uid',
+            'registration_data/$uid',
           );
         }
       }
@@ -211,7 +211,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
 
       // Flatten and validate
       final flattenedFields = flattenRegistrationFields(filteredFields);
-      final validationError = validateCustomRegistrationFields(flattenedFields);
+      final validationError = validateRegistrationFields(flattenedFields);
       if (validationError.isNotEmpty) {
         return validationError;
       }
@@ -330,7 +330,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
           await _storageDataSource.uploadFiles(
             fileBytes,
             fileNames,
-            'registration_form/$signInResult',
+            'registration_data/$signInResult',
           );
         }
       }

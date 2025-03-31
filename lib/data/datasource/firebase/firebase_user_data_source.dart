@@ -76,7 +76,7 @@ class FirebaseUserDataSource implements UserDataSource {
     }).toList();
 
     final flattenedList = flattenRegistrationFields(filteredFields);
-    final validationResult = validateCustomRegistrationFields(flattenedList);
+    final validationResult = validateRegistrationFields(flattenedList);
 
     if (validationResult.isNotEmpty) {
       throw Exception(validationResult);

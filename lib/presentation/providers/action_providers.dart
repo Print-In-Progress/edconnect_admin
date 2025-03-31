@@ -183,7 +183,7 @@ class RegistrationUpdateNotifier extends StateNotifier<AsyncValue<void>> {
 
       // Flatten and validate fields
       final flattenedFields = flattenRegistrationFields(registrationFields);
-      final validationError = validateCustomRegistrationFields(flattenedFields);
+      final validationError = validateRegistrationFields(flattenedFields);
       if (validationError.isNotEmpty) {
         throw Exception(validationError);
       }
