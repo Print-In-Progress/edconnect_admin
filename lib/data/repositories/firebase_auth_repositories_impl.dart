@@ -117,9 +117,8 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         // Upload signed PDF
         await _storageDataSource.uploadPdf(
           pdfBytes,
-          '${uid}_registration_form.pdf',
-          uid,
-          true,
+          '${uid}_registration_form_signed.pdf',
+          'registration_data/$uid',
         );
       } else {
         // Generate unsigned PDF
@@ -147,8 +146,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         await _storageDataSource.uploadPdf(
           pdfBytes,
           '${uid}_registration_form_unsigned.pdf',
-          uid,
-          false,
+          'registration_data/$uid',
         );
       }
 
@@ -175,8 +173,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
           await _storageDataSource.uploadFiles(
             fileBytes,
             fileNames,
-            uid,
-            'registration_form',
+            'registration_form/$uid',
           );
         }
       }
@@ -279,9 +276,8 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         // Upload signed PDF
         await _storageDataSource.uploadPdf(
           pdfBytes,
-          '${signInResult}_registration_form.pdf',
-          signInResult,
-          true,
+          '${signInResult}_registration_form_signed.pdf',
+          'registration_data/$signInResult',
         );
       } else {
         // Generate unsigned PDF
@@ -309,8 +305,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         await _storageDataSource.uploadPdf(
           pdfBytes,
           '${signInResult}_registration_form_unsigned.pdf',
-          signInResult,
-          false,
+          'registration_data/$signInResult',
         );
       }
 
@@ -336,8 +331,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
           await _storageDataSource.uploadFiles(
             fileBytes,
             fileNames,
-            signInResult,
-            'registration_form',
+            'registration_form/$signInResult',
           );
         }
       }

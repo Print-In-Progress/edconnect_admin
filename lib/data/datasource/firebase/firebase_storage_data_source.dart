@@ -13,12 +13,11 @@ class FirebaseStorageDataSource implements StorageDataSource {
   Future<void> uploadPdf(
     Uint8List pdfBytes,
     String fileName,
-    String uid,
-    bool isSigned,
+    String path,
   ) async {
     final storageRef = _storage
         .ref()
-        .child('$customerSpecificCollectionFiles/$uid/registration/$fileName');
+        .child('$customerSpecificCollectionFiles/$path/$fileName');
     await storageRef.putData(pdfBytes);
   }
 
@@ -26,15 +25,14 @@ class FirebaseStorageDataSource implements StorageDataSource {
   Future<void> uploadFiles(
     List<Uint8List> files,
     List<String> fileNames,
-    String uid,
-    String folder,
+    String path,
   ) async {
     for (int i = 0; i < files.length; i++) {
       if (i < fileNames.length) {
         final fileName = fileNames[i];
         final storageRef = _storage
             .ref()
-            .child('$customerSpecificCollectionFiles/$uid/$folder/$fileName');
+            .child('$customerSpecificCollectionFiles/$path/$fileName');
         await storageRef.putData(files[i]);
       }
     }

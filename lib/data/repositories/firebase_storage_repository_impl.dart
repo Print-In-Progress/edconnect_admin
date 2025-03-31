@@ -11,21 +11,19 @@ class FirebaseStorageRepositoryImpl implements StorageRepository {
   Future<void> uploadPdf(
     Uint8List pdfBytes,
     String fileName,
-    String userId,
-    bool isSigned,
+    String path,
   ) {
-    return _dataSource.uploadPdf(pdfBytes, fileName, userId, isSigned);
+    return _dataSource.uploadPdf(pdfBytes, fileName, path);
   }
 
   @override
   Future<void> uploadFiles(
     List<Uint8List> files,
     List<String> fileNames,
-    String userId,
-    String folder,
+    String path,
   ) {
     // Simply delegate to the data source
-    return _dataSource.uploadFiles(files, fileNames, userId, folder);
+    return _dataSource.uploadFiles(files, fileNames, path);
   }
 
   @override

@@ -4,15 +4,13 @@ abstract class StorageDataSource {
   Future<void> uploadPdf(
     Uint8List pdfBytes,
     String fileName,
-    String uid,
-    bool isSigned,
+    String path,
   );
 
   Future<void> uploadFiles(
     List<Uint8List> files,
     List<String> fileNames,
-    String uid,
-    String folder,
+    String path,
   );
 
   Future<void> deleteAllUserFiles(String uid);
