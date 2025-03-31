@@ -10,7 +10,6 @@ import '../../data/datasource/firebase/firebase_user_data_source.dart';
 import '../../data/datasource/theme_data_source.dart';
 import '../../data/datasource/local/shared_prefs_theme_data_source.dart';
 import '../../data/datasource/firebase/firebase_theme_data_source.dart';
-import '../../data/services/pdf_service.dart';
 import 'data_providers.dart';
 import '../../core/providers/interface_providers.dart';
 
@@ -44,11 +43,6 @@ final storageDataSourceProvider = Provider<StorageDataSource>((ref) {
   return FirebaseStorageDataSource(
     storage: ref.watch(firebaseStorageProvider),
   );
-});
-
-// PDF service
-final pdfServiceProvider = Provider<PdfService>((ref) {
-  return PdfService();
 });
 
 // Theme data sources

@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edconnect_admin/data/datasource/auth_data_source.dart';
 import 'package:edconnect_admin/data/datasource/storage_data_source.dart';
 import 'package:edconnect_admin/data/datasource/user_data_source.dart';
-import 'package:edconnect_admin/data/services/pdf_service.dart';
+import 'package:edconnect_admin/domain/services/pdf_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/interfaces/auth_repository.dart';
 import '../../core/models/app_user.dart';
@@ -16,14 +16,12 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   final AuthDataSource _authDataSource;
   final UserDataSource _userDataSource;
   final StorageDataSource _storageDataSource;
-  final PdfService _pdfService;
   final FirebaseFirestore _firestore;
 
   FirebaseAuthRepositoryImpl(
     this._authDataSource,
     this._userDataSource,
-    this._storageDataSource,
-    this._pdfService, {
+    this._storageDataSource, {
     FirebaseFirestore? firestore,
   }) : _firestore = firestore ?? FirebaseFirestore.instance;
 
@@ -70,7 +68,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       if (hasSignature) {
         // Generate signed PDF
         final keyPair = generateRSAKeyPair();
-        pdfBytes = await _pdfService.generatePdf(
+        pdfBytes = await PdfService.generateRegistrationPdf(
           flattenedFields,
           true,
           uid,
@@ -122,7 +120,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         );
       } else {
         // Generate unsigned PDF
-        pdfBytes = await _pdfService.generatePdf(
+        pdfBytes = await PdfService.generateRegistrationPdf(
           flattenedFields,
           false,
           uid,
@@ -245,7 +243,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       if (hasSignature) {
         // Generate signed PDF
         final keyPair = generateRSAKeyPair();
-        pdfBytes = await _pdfService.generatePdf(
+        pdfBytes = await PdfService.generateRegistrationPdf(
           flattenedFields,
           true,
           signInResult,
@@ -281,7 +279,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         );
       } else {
         // Generate unsigned PDF
-        pdfBytes = await _pdfService.generatePdf(
+        pdfBytes = await PdfService.generateRegistrationPdf(
           flattenedFields,
           false,
           signInResult,

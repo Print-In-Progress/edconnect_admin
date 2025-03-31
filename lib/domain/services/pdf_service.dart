@@ -6,7 +6,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:pointycastle/export.dart' as pc;
 
 class PdfService {
-  Future<Uint8List> generatePdf(
+  static Future<Uint8List> generateRegistrationPdf(
       List<BaseRegistrationField> flattenedRegistrationList,
       bool signed,
       String uid,

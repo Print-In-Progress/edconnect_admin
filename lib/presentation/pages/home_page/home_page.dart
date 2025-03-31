@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../constants/database_constants.dart';
-import '../../../../services/url_service.dart';
+import '../../../domain/services/url_service.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});

@@ -5,7 +5,7 @@ import 'package:edconnect_admin/core/interfaces/group_repository.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/core/utils/validation_utils.dart';
 import 'package:edconnect_admin/data/datasource/storage_data_source.dart';
-import 'package:edconnect_admin/data/services/pdf_service.dart';
+import 'package:edconnect_admin/domain/services/pdf_service.dart';
 import 'package:edconnect_admin/domain/utils/registration_utils.dart';
 import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import 'package:edconnect_admin/utils/crypto_utils.dart';
@@ -16,16 +16,14 @@ import '../user_data_source.dart';
 class FirebaseUserDataSource implements UserDataSource {
   final FirebaseFirestore _firestore;
   final StorageDataSource _storageDataSource;
-  final PdfService _pdfService;
   final GroupRepository _groupRepository;
 
-  FirebaseUserDataSource(
-      {FirebaseFirestore? firestore,
-      required StorageDataSource storageDataSource,
-      required GroupRepository groupRepository})
-      : _firestore = firestore ?? FirebaseFirestore.instance,
+  FirebaseUserDataSource({
+    FirebaseFirestore? firestore,
+    required StorageDataSource storageDataSource,
+    required GroupRepository groupRepository,
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
         _storageDataSource = storageDataSource,
-        _pdfService = PdfService(),
         _groupRepository = groupRepository;
 
   @override
@@ -106,7 +104,7 @@ class FirebaseUserDataSource implements UserDataSource {
   ) async {
     // Generate key pair and PDF
     final keyPair = generateRSAKeyPair();
-    final pdfBytes = await _pdfService.generatePdf(
+    final pdfBytes = await PdfService.generateRegistrationPdf(
       flattenedFields,
       true,
       user.id,
@@ -147,7 +145,7 @@ class FirebaseUserDataSource implements UserDataSource {
     AppUser user,
   ) async {
     // Generate PDF without signature
-    final pdfBytes = await _pdfService.generatePdf(
+    final pdfBytes = await PdfService.generateRegistrationPdf(
       flattenedFields,
       false,
       user.id,

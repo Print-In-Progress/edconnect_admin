@@ -19,7 +19,6 @@ final authRepositoryImplProvider = Provider<AuthRepository>((ref) {
     ref.watch(authDataSourceProvider),
     ref.watch(userDataSourceProvider),
     ref.watch(storageDataSourceProvider),
-    ref.watch(pdfServiceProvider),
   );
 });
 

@@ -1,5 +1,5 @@
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
-import 'package:edconnect_admin/services/url_service.dart';
+import 'package:edconnect_admin/domain/services/url_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
