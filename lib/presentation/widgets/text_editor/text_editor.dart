@@ -5,6 +5,7 @@ import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edconnect_admin/domain/entities/media_selection_options.dart';
 import 'package:edconnect_admin/domain/entities/storage_file.dart';
+import 'package:edconnect_admin/domain/entities/storage_module.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/presentation/widgets/common/media_selector_dialog.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';

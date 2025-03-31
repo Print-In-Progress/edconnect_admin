@@ -1,4 +1,4 @@
-import 'package:edconnect_admin/constants/database_constants.dart';
+import 'package:edconnect_admin/domain/entities/storage_module.dart';
 import 'package:flutter/material.dart';
 
 enum MediaSource {
@@ -27,19 +27,4 @@ class MediaSelectionOptions {
     required this.allowedContentTypes,
     this.maxFileSize,
   });
-}
-
-enum StorageModule {
-  articles('Articles', '$customerSpecificCollectionFiles/articles'),
-  personalStorage(
-      'Personal Storage', '$customerSpecificCollectionFiles/personal_storage'),
-  library('Library', '$customerSpecificCollectionFiles/library'),
-  registrationFiles('Registration Files',
-      '$customerSpecificCollectionFiles/registration_files'),
-  ;
-
-  final String displayName;
-  final String path;
-
-  const StorageModule(this.displayName, this.path);
 }

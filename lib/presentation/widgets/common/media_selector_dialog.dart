@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/domain/entities/media_selection_options.dart';
 import 'package:edconnect_admin/domain/entities/storage_file.dart';
+import 'package:edconnect_admin/domain/entities/storage_module.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
