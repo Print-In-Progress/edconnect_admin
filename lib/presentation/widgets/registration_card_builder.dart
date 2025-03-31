@@ -1,4 +1,4 @@
-import 'package:edconnect_admin/models/registration_fields.dart';
+import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import 'package:edconnect_admin/presentation/widgets/common/forms.dart';
 import 'package:edconnect_admin/presentation/widgets/common/signature_button.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';

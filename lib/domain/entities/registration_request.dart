@@ -1,4 +1,4 @@
-import '../../models/registration_fields.dart';
+import 'registration_fields.dart';
 
 class RegistrationRequest {
   final String email;

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:edconnect_admin/models/registration_fields.dart';
+import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import '../../core/interfaces/user_repository.dart';
 import '../../core/models/app_user.dart';
 import '../datasource/user_data_source.dart';

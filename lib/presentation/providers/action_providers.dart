@@ -1,10 +1,12 @@
+import 'package:edconnect_admin/domain/entities/media_selection_options.dart';
+import 'package:edconnect_admin/domain/entities/storage_file.dart';
 import 'package:edconnect_admin/domain/usecases/auth/delete_account_use_case.dart';
 import 'package:edconnect_admin/domain/usecases/auth/sign_in_usecase.dart';
 import 'package:edconnect_admin/domain/usecases/auth/sign_out_use_case.dart';
 import 'package:edconnect_admin/domain/usecases/auth/sign_up_usecase.dart';
 import 'package:edconnect_admin/domain/usecases/auth/user_credential_repository.dart';
 import 'package:edconnect_admin/domain/usecases/auth/user_profile_use_case.dart';
-import 'package:edconnect_admin/models/registration_fields.dart';
+import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/utils/validation_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -351,4 +353,25 @@ final deleteAccountProvider =
 final registrationFieldsProvider =
     FutureProvider<List<BaseRegistrationField>>((ref) {
   return ref.read(getRegistrationFieldsUseCaseProvider).execute();
+});
+
+// ----------------- FILE ACTIONS -----------------
+final storageFilesProvider =
+    FutureProvider.family<List<StorageFile>, String>((ref, path) async {
+  final storageRepo = ref.watch(storageRepositoryProvider);
+  return await storageRepo.listFiles(path);
+});
+
+// Multiple modules storage files provider
+final moduleStorageFilesProvider =
+    FutureProvider.family<List<StorageFile>, Set<StorageModule>>(
+        (ref, modules) async {
+  final storageRepo = ref.watch(storageRepositoryProvider);
+
+  // Get files from all selected modules
+  final filesLists = await Future.wait(
+      modules.map((module) => storageRepo.listFiles(module.path)));
+
+  // Combine all files into a single list
+  return filesLists.expand((files) => files).toList();
 });

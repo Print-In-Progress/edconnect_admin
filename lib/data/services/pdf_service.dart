@@ -1,4 +1,4 @@
-import 'package:edconnect_admin/models/registration_fields.dart';
+import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import 'package:edconnect_admin/utils/crypto_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';

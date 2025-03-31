@@ -1,5 +1,5 @@
 import 'package:edconnect_admin/core/models/app_user.dart';
-import 'package:edconnect_admin/models/registration_fields.dart';
+import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 
 abstract class UserRepository {
   Future<void> saveUserDetails(AppUser user, bool withSignedPdf);

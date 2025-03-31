@@ -1,5 +1,5 @@
 import 'package:edconnect_admin/core/interfaces/user_repository.dart';
-import 'package:edconnect_admin/models/registration_fields.dart';
+import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 
 class GetRegistrationFieldsUseCase {
   final UserRepository _userRepository;

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:edconnect_admin/constants/database_constants.dart';
+import 'package:edconnect_admin/domain/entities/storage_file.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../storage_data_source.dart';
 
@@ -36,6 +37,67 @@ class FirebaseStorageDataSource implements StorageDataSource {
         await storageRef.putData(files[i]);
       }
     }
+  }
+
+  @override
+  Future<StorageFile> uploadFile(
+    Uint8List fileBytes,
+    String fileName,
+    String path,
+    String contentType,
+  ) async {
+    final fullPath = '$customerSpecificCollectionFiles/$path/$fileName';
+    final ref = _storage.ref().child(fullPath);
+
+    final uploadTask = await ref.putData(
+      fileBytes,
+      SettableMetadata(contentType: contentType),
+    );
+
+    final url = await ref.getDownloadURL();
+
+    return StorageFile(
+      id: fullPath,
+      name: fileName,
+      url: url,
+      contentType: contentType,
+      size: uploadTask.totalBytes,
+    );
+  }
+
+  @override
+  Future<List<StorageFile>> listFiles(String path) async {
+    final fullPath = '$customerSpecificCollectionFiles/$path';
+    final result = await _storage.ref().child(fullPath).listAll();
+
+    final files = <StorageFile>[];
+    for (var item in result.items) {
+      final url = await item.getDownloadURL();
+      final data = await item.getMetadata();
+
+      files.add(StorageFile(
+        id: item.fullPath,
+        name: item.name,
+        url: url,
+        contentType: data.contentType ?? 'application/octet-stream',
+        size: data.size ?? 0,
+      ));
+    }
+
+    return files;
+  }
+
+  @override
+  Future<String> getFileUrl(String path) async {
+    return await _storage.ref().child(path).getDownloadURL();
+  }
+
+  @override
+  Future<void> deleteFile(String path) async {
+    await _storage
+        .ref()
+        .child("$customerSpecificCollectionFiles/$path")
+        .delete();
   }
 
   @override

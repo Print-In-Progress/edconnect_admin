@@ -7,7 +7,7 @@ import 'package:edconnect_admin/core/utils/validation_utils.dart';
 import 'package:edconnect_admin/data/datasource/storage_data_source.dart';
 import 'package:edconnect_admin/data/services/pdf_service.dart';
 import 'package:edconnect_admin/domain/utils/registration_utils.dart';
-import 'package:edconnect_admin/models/registration_fields.dart';
+import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import 'package:edconnect_admin/utils/crypto_utils.dart';
 import 'package:flutter/material.dart';
 import '../../../constants/database_constants.dart';

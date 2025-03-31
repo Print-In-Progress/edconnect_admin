@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:edconnect_admin/domain/entities/storage_file.dart';
+
 abstract class StorageDataSource {
   Future<void> uploadPdf(
     Uint8List pdfBytes,
@@ -14,4 +16,15 @@ abstract class StorageDataSource {
   );
 
   Future<void> deleteAllUserFiles(String uid);
+  Future<List<StorageFile>> listFiles(String path);
+
+  Future<StorageFile> uploadFile(
+    Uint8List fileBytes,
+    String fileName,
+    String path,
+    String contentType,
+  );
+
+  Future<String> getFileUrl(String path);
+  Future<void> deleteFile(String path);
 }

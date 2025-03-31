@@ -3,10 +3,14 @@
 import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edconnect_admin/domain/entities/media_selection_options.dart';
+import 'package:edconnect_admin/domain/entities/storage_file.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
-import 'package:edconnect_admin/presentation/widgets/text_editor/insert_dialog.dart';
+import 'package:edconnect_admin/presentation/widgets/common/media_selector_dialog.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
+import 'package:edconnect_admin/presentation/widgets/text_editor/dialogs/insert_link_dialog.dart';
+import 'package:edconnect_admin/presentation/widgets/text_editor/dialogs/insert_table_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -65,7 +69,6 @@ class _PIPStandardTextEditorState extends ConsumerState<PIPStandardTextEditor> {
 
   final HtmlEditorController controller = HtmlEditorController();
   TextEditingController _titleController = TextEditingController();
-  final TextEditingController _youtubeEmbedController = TextEditingController();
 
   final MenuController _tableMenuController = MenuController();
 
@@ -107,8 +110,25 @@ class _PIPStandardTextEditorState extends ConsumerState<PIPStandardTextEditor> {
   @override
   void dispose() {
     _titleController.dispose();
-    _youtubeEmbedController.dispose();
     super.dispose();
+  }
+
+  String _getYoutubeEmbedUrl(String url) {
+    String embedLink = '';
+    if (url.contains('watch?v=') && url.contains('list')) {
+      List<String> splitLink = url.trim().split('&');
+      url = splitLink[0].replaceAll('watch?v=', 'embed/');
+    } else if (url.contains('watch?v=')) {
+      url = url.replaceAll('watch?v=', 'embed/');
+    } else if (url.contains('youtu.be')) {
+      List<String> splitLink = url.trim().split("/");
+      url = "https://www.youtube.com/embed/${splitLink[3]}";
+    }
+    if (url.contains('iframe')) {
+      return url;
+    }
+
+    return embedLink;
   }
 
   @override
@@ -1134,47 +1154,136 @@ class _PIPStandardTextEditorState extends ConsumerState<PIPStandardTextEditor> {
                               await showDialog(
                                 context: context,
                                 builder: (context) => PointerInterceptor(
-                                    child: InsertLinkDialog(
-                                        htmlController: controller)),
+                                    child:
+                                        LinkDialog(htmlController: controller)),
                               );
                             },
                             icon: const Icon(Icons.link)),
                         IconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .textEditorTooltipInsertImage,
-                            onPressed: () async {
-                              await showDialog(
-                                context: context,
-                                builder: (context) => PointerInterceptor(
-                                    child: InsertImage(
-                                        htmlController: controller)),
+                          tooltip: AppLocalizations.of(context)!
+                              .textEditorTooltipInsertImage,
+                          onPressed: () async {
+                            final file = await showDialog<StorageFile>(
+                              context: context,
+                              builder: (context) => PointerInterceptor(
+                                child: MediaSelectorDialog(
+                                  options: MediaSelectionOptions(
+                                    allowedSources: [
+                                      MediaSource.local,
+                                      MediaSource.web,
+                                      MediaSource.storage
+                                    ],
+                                    allowedModules: [
+                                      StorageModule.articles,
+                                      StorageModule.library,
+                                      StorageModule.personalStorage,
+                                    ],
+                                    mediaType: MediaType.image,
+                                    allowedContentTypes: [
+                                      'image/jpeg',
+                                      'image/png',
+                                      'image/gif'
+                                    ],
+                                  ),
+                                  onFileSelected: (file) =>
+                                      Navigator.pop(context, file),
+                                ),
+                              ),
+                            );
+
+                            if (file != null) {
+                              controller.insertNetworkImage(
+                                file.url,
+                                filename: file.name,
                               );
-                            },
-                            icon: const Icon(Icons.image_outlined)),
+                            }
+                          },
+                          icon: const Icon(Icons.image_outlined),
+                        ),
                         IconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .textEditorTooltipInsertInsertVideo,
-                            onPressed: () async {
-                              await showDialog(
-                                context: context,
-                                builder: (context) => PointerInterceptor(
-                                    child: InsertVideo(
-                                        htmlController: controller)),
-                              );
-                            },
-                            icon: const Icon(Icons.videocam_outlined)),
+                          tooltip: AppLocalizations.of(context)!
+                              .textEditorTooltipInsertInsertVideo,
+                          onPressed: () async {
+                            final file = await showDialog<StorageFile>(
+                              context: context,
+                              builder: (context) => MediaSelectorDialog(
+                                options: MediaSelectionOptions(
+                                  allowedSources: [
+                                    MediaSource.local,
+                                    MediaSource.web,
+                                    MediaSource.storage
+                                  ],
+                                  allowedModules: [
+                                    StorageModule.articles,
+                                    StorageModule.library,
+                                    StorageModule.personalStorage,
+                                  ],
+                                  mediaType: MediaType.video,
+                                  allowedContentTypes: [
+                                    'video/mp4',
+                                    'video/webm',
+                                    'video/ogg'
+                                  ],
+                                ),
+                                onFileSelected: (file) =>
+                                    Navigator.pop(context, file),
+                              ),
+                            );
+
+                            if (file != null) {
+                              if (file.url.contains('youtube.com') ||
+                                  file.url.contains('youtu.be')) {
+                                final embedUrl = _getYoutubeEmbedUrl(file.url);
+                                controller.insertHtml(
+                                  "<iframe src=\"$embedUrl\" allowfullscreen frameborder=\"0\"> </iframe>",
+                                );
+                              } else {
+                                controller.insertHtml(
+                                  "<video src=\"${file.url}\" width=\"100%\" controls></video>",
+                                );
+                              }
+                            }
+                          },
+                          icon: const Icon(Icons.videocam_outlined),
+                        ),
                         IconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .textEditorTooltipInsertInsertAudio,
-                            onPressed: () async {
-                              await showDialog(
-                                context: context,
-                                builder: (context) => PointerInterceptor(
-                                    child: InsertAudio(
-                                        htmlController: controller)),
+                          tooltip: AppLocalizations.of(context)!
+                              .textEditorTooltipInsertInsertAudio,
+                          onPressed: () async {
+                            final file = await showDialog<StorageFile>(
+                              context: context,
+                              builder: (context) => MediaSelectorDialog(
+                                options: MediaSelectionOptions(
+                                  allowedSources: [
+                                    MediaSource.local,
+                                    MediaSource.web,
+                                    MediaSource.storage
+                                  ],
+                                  allowedModules: [
+                                    StorageModule.articles,
+                                    StorageModule.library,
+                                    StorageModule.personalStorage,
+                                  ],
+                                  mediaType: MediaType.audio,
+                                  allowedContentTypes: [
+                                    'audio/mp3',
+                                    'audio/wav',
+                                    'audio/ogg'
+                                  ],
+                                ),
+                                onFileSelected: (file) =>
+                                    Navigator.pop(context, file),
+                              ),
+                            );
+
+                            if (file != null) {
+                              controller.insertHtml(
+                                "<audio src=\"${file.url}\" controls></audio>",
                               );
-                            },
-                            icon: const Icon(Icons.audiotrack_outlined)),
+                            }
+                          },
+                          icon: const Icon(Icons.audiotrack_outlined),
+                        ),
                       ],
                     ),
                     // The following Button should be used for debugging purposes only

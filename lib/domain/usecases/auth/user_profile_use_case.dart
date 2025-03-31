@@ -1,6 +1,6 @@
 import 'package:edconnect_admin/core/interfaces/user_repository.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
-import 'package:edconnect_admin/models/registration_fields.dart';
+import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 
 class UserProfileDataUseCase {
   final UserRepository _userRepository;

@@ -1,4 +1,4 @@
-import 'package:edconnect_admin/models/registration_fields.dart';
+import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 
 bool passwordConfirmed(String password, String confirmedPassword) {
   if (password.trim() == confirmedPassword.trim()) {

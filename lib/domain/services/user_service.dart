@@ -2,7 +2,7 @@ import 'package:edconnect_admin/core/interfaces/user_repository.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/domain/usecases/auth/user_credential_repository.dart';
 import 'package:edconnect_admin/domain/usecases/auth/user_profile_use_case.dart';
-import 'package:edconnect_admin/models/registration_fields.dart';
+import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 
 class UserService {
   final UserCredentialsUseCase _credentialsUseCase;
