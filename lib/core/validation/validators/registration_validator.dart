@@ -1,4 +1,3 @@
-import 'package:edconnect_admin/l10n/app_localizations.dart';
 import '../../errors/domain_exception.dart';
 import '../base_validator.dart';
 import '../../../domain/entities/registration_request.dart';
@@ -6,23 +5,18 @@ import 'text_field_validator.dart';
 import 'registration_field_validator.dart';
 
 class RegistrationValidator implements Validator<RegistrationRequest> {
-  final AppLocalizations l10n;
   final TextFieldValidator _emailValidator;
   final TextFieldValidator _nameValidator;
   final TextFieldValidator _passwordValidator;
   final RegistrationFieldValidator _fieldValidator;
 
-  RegistrationValidator(this.l10n)
-      : _emailValidator =
-            TextFieldValidator(l10n: l10n, type: TextFieldType.email),
-        _nameValidator =
-            TextFieldValidator(l10n: l10n, type: TextFieldType.name),
+  RegistrationValidator()
+      : _emailValidator = TextFieldValidator(type: TextFieldType.email),
+        _nameValidator = TextFieldValidator(type: TextFieldType.name),
         _passwordValidator = TextFieldValidator(
-          l10n: l10n,
           type: TextFieldType.password,
-          minLength: 8,
         ),
-        _fieldValidator = RegistrationFieldValidator(l10n);
+        _fieldValidator = RegistrationFieldValidator();
 
   @override
   void validate(RegistrationRequest request) {
@@ -32,8 +26,8 @@ class RegistrationValidator implements Validator<RegistrationRequest> {
     _passwordValidator.validate(request.password);
 
     if (request.password != request.confirmedPassword) {
-      throw DomainException(
-          message: 'Password and confirmed password do not match',
+      throw const DomainException(
+          code: ErrorCode.passwordsDoNotMatch, // Add this to ErrorCode enum
           type: ExceptionType.validation);
     }
 

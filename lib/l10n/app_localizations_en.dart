@@ -149,6 +149,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationSignatureMissing => 'Signature is required';
 
   @override
+  String get validationTextTooShort => 'Text is too short';
+
+  @override
+  String get validationTextTooLong => 'Text is too long';
+
+  @override
   String get termsAndConditionsPrefix => 'I agree to the ';
 
   @override
@@ -192,6 +198,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorInvalidPassword => 'Invalid password';
+
+  @override
+  String get errorPasswordMissingNumber => 'Password must contain at least one number';
+
+  @override
+  String get errorPasswordMissingSpecial => 'Password must contain at least one special character';
+
+  @override
+  String get errorPasswordsDoNotMatch => 'Passwords do not match';
 
   @override
   String get errorEmailAlreadyInUse => 'Email already in use';

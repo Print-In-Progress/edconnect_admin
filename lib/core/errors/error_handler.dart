@@ -1,60 +1,58 @@
-import 'package:edconnect_admin/core/errors/domain_exception.dart';
-import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'domain_exception.dart';
 
 class ErrorHandler {
-  static DomainException handle(dynamic error, BuildContext context) {
+  static DomainException handle(dynamic error) {
     if (error is DomainException) return error;
 
     // Handle Firebase Auth Errors
     if (error is FirebaseAuthException) {
-      return _handleFirebaseAuthError(error, context);
+      return _handleFirebaseAuthError(error);
     }
 
+    // Handle Network Errors
     if (error.toString().contains('SocketException') ||
         error.toString().contains('TimeoutException')) {
       return DomainException(
-        message: AppLocalizations.of(context)!.errorNetwork,
+        code: ErrorCode.networkError,
         type: ExceptionType.network,
+        originalError: error,
       );
     }
 
     // Handle Validation Errors
     if (error.toString().contains('SignatureMissing')) {
-      return DomainException(
-        message: AppLocalizations.of(context)!.validationSignatureMissing,
+      return const DomainException(
+        code: ErrorCode.signatureMissing,
         type: ExceptionType.validation,
       );
     }
 
     if (error.toString().contains('QuestionMissing')) {
-      return DomainException(
-        message: AppLocalizations.of(context)!.validationRequiredSnackbar,
+      return const DomainException(
+        code: ErrorCode.questionMissing,
         type: ExceptionType.validation,
       );
     }
 
     // Default error
     return DomainException(
-      message: AppLocalizations.of(context)!.errorUnexpected,
+      code: ErrorCode.unexpected,
       type: ExceptionType.unexpected,
       originalError: error,
     );
   }
 
-  static DomainException _handleFirebaseAuthError(
-      FirebaseAuthException error, BuildContext context) {
-    final message = switch (error.code) {
-      'email-already-in-use' =>
-        AppLocalizations.of(context)!.errorEmailAlreadyInUse,
-      'wrong-password' => AppLocalizations.of(context)!.errorInvalidPassword,
-      'user-not-found' => AppLocalizations.of(context)!.errorUserNotFound,
-      _ => AppLocalizations.of(context)!.errorUnexpected
+  static DomainException _handleFirebaseAuthError(FirebaseAuthException error) {
+    final code = switch (error.code) {
+      'email-already-in-use' => ErrorCode.emailAlreadyInUse,
+      'wrong-password' => ErrorCode.wrongPassword,
+      'user-not-found' => ErrorCode.userNotFound,
+      _ => ErrorCode.unexpected
     };
 
     return DomainException(
-      message: message,
+      code: code,
       type: ExceptionType.auth,
       originalError: error,
     );

@@ -371,6 +371,18 @@ abstract class AppLocalizations {
   /// **'Signature is required'**
   String get validationSignatureMissing;
 
+  /// Validation section - Text too short message
+  ///
+  /// In en, this message translates to:
+  /// **'Text is too short'**
+  String get validationTextTooShort;
+
+  /// Validation section - Text too long message
+  ///
+  /// In en, this message translates to:
+  /// **'Text is too long'**
+  String get validationTextTooLong;
+
   /// Terms section - Text before Terms & Conditions link
   ///
   /// In en, this message translates to:
@@ -460,6 +472,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid password'**
   String get errorInvalidPassword;
+
+  /// Validation section - Password missing number message
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one number'**
+  String get errorPasswordMissingNumber;
+
+  /// Validation section - Password missing special character message
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least one special character'**
+  String get errorPasswordMissingSpecial;
+
+  /// Validation section - Passwords do not match message
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get errorPasswordsDoNotMatch;
 
   /// Validation section - Email already registered message
   ///

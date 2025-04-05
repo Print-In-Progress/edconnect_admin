@@ -1,16 +1,47 @@
-enum ExceptionType { validation, auth, network, storage, database, unexpected }
+enum ErrorCode {
+  // Validation errors
+  signatureMissing,
+  questionMissing,
+  fieldRequired,
+  fieldTooShort,
+  fieldTooLong,
+  invalidEmail,
+
+  // Auth errors
+  emailAlreadyInUse,
+  wrongPassword,
+  userNotFound,
+  passwordMissingNumber,
+  passwordMissingSpecial,
+  passwordsDoNotMatch,
+
+  // Network errors
+  networkError,
+
+  // Generic errors
+  unexpected
+}
+
+enum ExceptionType {
+  validation,
+  auth,
+  network,
+  storage,
+  database,
+  unexpected,
+}
 
 class DomainException implements Exception {
-  final String message;
+  final ErrorCode code;
   final ExceptionType type;
   final dynamic originalError;
 
   const DomainException({
-    required this.message,
+    required this.code,
     required this.type,
     this.originalError,
   });
 
   @override
-  String toString() => message;
+  String toString() => code.toString();
 }

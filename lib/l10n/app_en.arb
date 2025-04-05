@@ -190,6 +190,14 @@
     "@validationSignatureMissing": {
         "description": "Validation section - Signature field required message"
     },
+    "validationTextTooShort": "Text is too short",
+    "@validationTextTooShort": {
+        "description": "Validation section - Text too short message"
+    },
+    "validationTextTooLong": "Text is too long",
+    "@validationTextTooLong": {
+        "description": "Validation section - Text too long message"
+    },
     "termsAndConditionsPrefix": "I agree to the ",
     "@termsAndConditionsPrefix": {
         "description": "Terms section - Text before Terms & Conditions link"
@@ -249,6 +257,18 @@
     "errorInvalidPassword": "Invalid password",
     "@errorInvalidPassword": {
         "description": "Validation section - Invalid password message"
+    },
+    "errorPasswordMissingNumber": "Password must contain at least one number",
+    "@errorPasswordMissingNumber": {
+        "description": "Validation section - Password missing number message"
+    },
+    "errorPasswordMissingSpecial": "Password must contain at least one special character",
+    "@errorPasswordMissingSpecial": {
+        "description": "Validation section - Password missing special character message"
+    },
+    "errorPasswordsDoNotMatch": "Passwords do not match",
+    "@errorPasswordsDoNotMatch": {
+        "description": "Validation section - Passwords do not match message"
     },
     "errorEmailAlreadyInUse": "Email already in use",
     "@errorEmailAlreadyInUse": {

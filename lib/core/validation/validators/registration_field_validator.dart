@@ -1,14 +1,9 @@
-import 'package:edconnect_admin/l10n/app_localizations.dart';
 import '../../errors/domain_exception.dart';
 import '../base_validator.dart';
 import '../../../domain/entities/registration_fields.dart';
 
 class RegistrationFieldValidator
     implements Validator<List<BaseRegistrationField>> {
-  final AppLocalizations l10n;
-
-  RegistrationFieldValidator(this.l10n);
-
   @override
   void validate(List<BaseRegistrationField> fields) {
     final flattenedFields = _flattenFields(fields);
@@ -33,15 +28,13 @@ class RegistrationFieldValidator
         var parentField =
             fields.firstWhere((element) => element.id == field.parentUid);
         if (parentField.checked == true && field.checked == false) {
-          throw DomainException(
-              message: l10n.validationSignatureMissing,
-              type: ExceptionType.validation);
+          throw const DomainException(
+              code: ErrorCode.signatureMissing, type: ExceptionType.validation);
         }
       } else if (field is RegistrationField && field.type == 'signature') {
         if (field.checked == false) {
-          throw DomainException(
-              message: l10n.validationSignatureMissing,
-              type: ExceptionType.validation);
+          throw const DomainException(
+              code: ErrorCode.signatureMissing, type: ExceptionType.validation);
         }
       }
     }
@@ -53,15 +46,13 @@ class RegistrationFieldValidator
         var parentField =
             fields.firstWhere((element) => element.id == field.parentUid);
         if (parentField.checked == true && field.response!.text.isEmpty) {
-          throw DomainException(
-              message: l10n.validationRequiredSnackbar,
-              type: ExceptionType.validation);
+          throw const DomainException(
+              code: ErrorCode.questionMissing, type: ExceptionType.validation);
         }
       } else if (field is RegistrationField && field.type == 'free_response') {
         if (field.response!.text.isEmpty) {
-          throw DomainException(
-              message: l10n.validationRequiredSnackbar,
-              type: ExceptionType.validation);
+          throw const DomainException(
+              code: ErrorCode.questionMissing, type: ExceptionType.validation);
         }
       }
     }
