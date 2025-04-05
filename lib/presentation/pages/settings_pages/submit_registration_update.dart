@@ -4,7 +4,7 @@ import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:edconnect_admin/presentation/widgets/registration_card_builder.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SubmitRegistrationUpdate extends ConsumerStatefulWidget {
@@ -33,11 +33,11 @@ class _SubmitRegistrationUpdateState
   String _getErrorMessage(String error) {
     switch (error) {
       case 'SignatureMissing':
-        return AppLocalizations.of(context)!.authPagesSignatureMissing;
+        return AppLocalizations.of(context)!.validationSignatureMissing;
       case 'QuestionMissing':
-        return AppLocalizations.of(context)!.authPagesFieldMissing;
+        return AppLocalizations.of(context)!.validationRequired;
       default:
-        return AppLocalizations.of(context)!.globalUnexpectedErrorLabel;
+        return AppLocalizations.of(context)!.errorUnexpected;
     }
   }
 
@@ -77,8 +77,7 @@ class _SubmitRegistrationUpdateState
           _resetForm();
           successMessage(
             context,
-            AppLocalizations.of(context)!
-                .settingsPageSuccessOnPersonalDataChangedSnackbarContent,
+            AppLocalizations.of(context)!.successProfileUpdated,
           );
           Navigator.of(context).pop();
         },
@@ -224,7 +223,7 @@ class _SubmitRegistrationUpdateState
                                         }
                                       },
                                       child: Text(AppLocalizations.of(context)!
-                                          .globalSubmitButtonLabel),
+                                          .globalSubmit),
                                     ),
                                   if (updateState.isLoading)
                                     const CircularProgressIndicator(),

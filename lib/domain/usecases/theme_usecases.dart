@@ -71,7 +71,7 @@ class RefreshRemoteThemeUseCase {
 
     if (needsRefresh) {
       if (_themeRepository is ThemeRepositoryImpl) {
-        await (_themeRepository as ThemeRepositoryImpl).refreshFromRemote();
+        await (_themeRepository).refreshFromRemote();
       }
     }
   }

@@ -7,7 +7,7 @@ import 'package:edconnect_admin/presentation/pages/settings_pages/settings_updat
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AccountOverview extends ConsumerStatefulWidget {
@@ -55,7 +55,7 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                 actionsIconTheme: const IconThemeData(color: Colors.white),
                 iconTheme: const IconThemeData(color: Colors.white),
                 title: Text(
-                  AppLocalizations.of(context)!.globalSettingsLabel,
+                  AppLocalizations.of(context)!.navSettings,
                   style: const TextStyle(color: Colors.white),
                 ),
               )
@@ -86,8 +86,7 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                         Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(
-                            AppLocalizations.of(context)!
-                                .settingsPageManageAccountCardLabel,
+                            AppLocalizations.of(context)!.settingsManageAccount,
                             style: const TextStyle(color: Colors.blue),
                           ),
                         ),
@@ -106,7 +105,7 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                             children: [
                               Text(
                                 AppLocalizations.of(context)!
-                                    .settingsPageChangeNameButtonLabel,
+                                    .settingsChangeName,
                                 style: TextStyle(
                                   fontSize: 17,
                                   color: theme.isDarkMode
@@ -189,7 +188,7 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                             children: [
                               Text(
                                 AppLocalizations.of(context)!
-                                    .globalPasswordLabel,
+                                    .settingsChangePassword,
                                 style: TextStyle(
                                   fontSize: 17,
                                   color: theme.isDarkMode
@@ -234,7 +233,7 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                                 child: Text(
                                   // Resubmit Questionnaire
                                   AppLocalizations.of(context)!
-                                      .settingsPageResubmitQuestionaire,
+                                      .settingsUpdateRegistrationQuestionaire,
                                   style: TextStyle(
                                     fontSize: 17,
                                     overflow: TextOverflow.ellipsis,
@@ -321,15 +320,13 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                       Padding(
                         padding: const EdgeInsets.all(10),
                         child: Text(
-                          AppLocalizations.of(context)!
-                              .settingsPageAppearanceCardLabel,
+                          AppLocalizations.of(context)!.settingsAppearance,
                           style: const TextStyle(color: Colors.blue),
                         ),
                       ),
                       SwitchListTile(
                         title: Text(
-                          AppLocalizations.of(context)!
-                              .settingsPageEnableDarkModeSwitchTileLabel,
+                          AppLocalizations.of(context)!.settingsDarkMode,
                           style: TextStyle(
                             color: theme.isDarkMode
                                 ? Colors.white
@@ -363,8 +360,7 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                AppLocalizations.of(context)!
-                                    .globalLogoutButtonLabel,
+                                AppLocalizations.of(context)!.globalLogout,
                                 style: const TextStyle(
                                     color: Colors.red, fontSize: 17),
                               ),
@@ -386,7 +382,7 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                             children: [
                               Text(
                                 AppLocalizations.of(context)!
-                                    .settingsPageDeletePIPAccountButtonLabel,
+                                    .globalDeleteAccount,
                                 style: const TextStyle(
                                     color: Colors.red, fontSize: 17),
                               ),
@@ -419,15 +415,12 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
         final deleteAccountState = ref.watch(deleteAccountProvider);
 
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.globalReauthenticateLabel),
+          title: Text(AppLocalizations.of(context)!.globalReauthenticate),
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(AppLocalizations.of(context)!
-                  .settingsPageAccountDeleteDialogContent),
-              Text(AppLocalizations.of(context)!
-                  .settingsPageActionRequiresReauthentification),
+              Text(AppLocalizations.of(context)!.settingsDeleteDialogBody),
               TextFormField(
                 obscureText: !reauthenticatePasswordVisible,
                 controller: _reauthenticatePasswordController,
@@ -443,7 +436,7 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                           !reauthenticatePasswordVisible;
                     }),
                   ),
-                  hintText: AppLocalizations.of(context)!.globalPasswordLabel,
+                  hintText: AppLocalizations.of(context)!.authPasswordLabel,
                 ),
               ),
             ],
@@ -466,8 +459,7 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                     Navigator.of(context).pop(); // Pop settings page
                     successMessage(
                       context,
-                      AppLocalizations.of(context)!
-                          .settingsPageSuccessOnDeleteAccountSnackbarLabel,
+                      AppLocalizations.of(context)!.successDefault,
                     );
                   } catch (e) {
                     if (!context.mounted) return;

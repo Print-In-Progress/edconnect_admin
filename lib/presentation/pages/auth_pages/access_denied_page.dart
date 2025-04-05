@@ -1,7 +1,7 @@
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 
 class AccessDeniedPage extends StatelessWidget {
   const AccessDeniedPage({super.key});
@@ -19,19 +19,19 @@ class AccessDeniedPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(20),
+              Padding(
+                padding: const EdgeInsets.all(20),
                 child: Text(
-                  '403 - Access Denied',
-                  style: TextStyle(color: Colors.red, fontSize: 50),
+                  AppLocalizations.of(context)!.errorAccessDenied,
+                  style: const TextStyle(color: Colors.red, fontSize: 50),
                 ),
               ),
               Text(
-                AppLocalizations.of(context)!.authPagesAccessDeniedErrorMessage,
+                AppLocalizations.of(context)!.errorAccessDeniedMessage,
                 style: const TextStyle(fontSize: 15),
               ),
               PIPResponsiveRaisedButton(
-                  label: AppLocalizations.of(context)!.globalBackToLoginLabel,
+                  label: AppLocalizations.of(context)!.globalBackToLogin,
                   onPressed: () {
                     FirebaseAuth.instance.signOut();
                   },

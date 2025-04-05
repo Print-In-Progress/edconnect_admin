@@ -4,7 +4,7 @@ import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AccountName extends ConsumerStatefulWidget {
@@ -55,7 +55,7 @@ class _AccountNameState extends ConsumerState<AccountName> {
                     actionsIconTheme: const IconThemeData(color: Colors.white),
                     iconTheme: const IconThemeData(color: Colors.white),
                     title: Text(
-                      AppLocalizations.of(context)!.globalSettingsLabel,
+                      AppLocalizations.of(context)!.navSettings,
                       style: const TextStyle(color: Colors.white),
                     ),
                   )
@@ -84,7 +84,7 @@ class _AccountNameState extends ConsumerState<AccountName> {
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return AppLocalizations.of(context)!
-                                        .globalEmptyFormFieldErrorLabel;
+                                        .validationRequired;
                                   } else {
                                     return null;
                                   }
@@ -106,7 +106,7 @@ class _AccountNameState extends ConsumerState<AccountName> {
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return AppLocalizations.of(context)!
-                                        .globalEmptyFormFieldErrorLabel;
+                                        .validationRequired;
                                   } else {
                                     return null;
                                   }
@@ -126,8 +126,8 @@ class _AccountNameState extends ConsumerState<AccountName> {
                                   const EdgeInsets.symmetric(horizontal: 25.0),
                               child: PIPResponsiveRaisedButton(
                                   fontWeight: FontWeight.w600,
-                                  label: AppLocalizations.of(context)!
-                                      .globalSaveChangesButtonLabel,
+                                  label:
+                                      AppLocalizations.of(context)!.globalSave,
                                   onPressed: () async {
                                     try {
                                       if (_formKey.currentState!.validate()) {
@@ -147,7 +147,7 @@ class _AccountNameState extends ConsumerState<AccountName> {
                                         successMessage(
                                           context,
                                           AppLocalizations.of(context)!
-                                              .settingsPageSuccessOnPersonalDataChangedSnackbarContent,
+                                              .successProfileUpdated,
                                         );
                                         Navigator.of(context).pop();
                                       }
@@ -156,7 +156,7 @@ class _AccountNameState extends ConsumerState<AccountName> {
                                       errorMessage(
                                         context,
                                         AppLocalizations.of(context)!
-                                            .globalUnexpectedErrorLabel,
+                                            .errorUnexpected,
                                       );
                                     }
                                   },

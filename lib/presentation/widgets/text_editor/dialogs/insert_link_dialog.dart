@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 
 class LinkDialog extends ConsumerStatefulWidget {
@@ -37,7 +37,7 @@ class _LinkDialogState extends ConsumerState<LinkDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppLocalizations.of(context)!.textEditorInsertLinkDialogTitle,
+              AppLocalizations.of(context)!.textEditorInsertLink,
               style:
                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
             ),
@@ -45,10 +45,8 @@ class _LinkDialogState extends ConsumerState<LinkDialog> {
             TextField(
               controller: _textController,
               decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!
-                    .textEditorTextToDisplayTextFieldLabel,
                 hintText: AppLocalizations.of(context)!
-                    .textEditorTextToDisplayTextFieldLabel,
+                    .textEditorInsertLinkTextToDisplay,
               ),
             ),
             const SizedBox(height: 16),

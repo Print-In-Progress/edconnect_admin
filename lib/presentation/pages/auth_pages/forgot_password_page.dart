@@ -3,7 +3,7 @@ import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
@@ -20,11 +20,11 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.globalEmptyFormFieldErrorLabel;
+      return AppLocalizations.of(context)!.validationRequired;
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email address';
+      return AppLocalizations.of(context)!.validationEmail;
     }
     return null;
   }
@@ -40,8 +40,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       if (!mounted) return;
       successMessage(
         context,
-        AppLocalizations.of(context)!
-            .forgotPasswordPageSuccessLinkSendSnackbarMessage,
+        AppLocalizations.of(context)!.successResetPasswordEmailSent,
       );
       Navigator.of(context).pop();
     } catch (e) {
@@ -93,10 +92,15 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                           children: [
                             const SizedBox(height: 10),
                             Text(
-                              AppLocalizations.of(context)!
-                                  .forgotPasswordPagePasswordResetLabel,
+                              AppLocalizations.of(context)!.authResetPassword,
                               textAlign: TextAlign.center,
                               style: const TextStyle(fontSize: 20),
+                            ),
+                            Text(
+                              AppLocalizations.of(context)!
+                                  .authResetPasswordBody,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 15),
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
@@ -106,7 +110,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                             const SizedBox(height: 10),
                             PIPResponsiveRaisedButton(
                               label: AppLocalizations.of(context)!
-                                  .forgotPasswordPageResetPasswordButtonLabel,
+                                  .authResetPasswordSendEmail,
                               onPressed: () {
                                 resetPasswordState.isLoading
                                     ? null
@@ -125,7 +129,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                             const SizedBox(height: 10),
                             PIPResponsiveTextButton(
                               label: AppLocalizations.of(context)!
-                                  .globalBackToLoginLabel,
+                                  .globalBackToLogin,
                               color: Colors.grey[600],
                               fontWeight: FontWeight.w700,
                               onPressed: () => Navigator.of(context).pop(),

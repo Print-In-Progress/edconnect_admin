@@ -5,7 +5,7 @@ import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/card.dart';
 import 'package:edconnect_admin/domain/services/url_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PIPCancelButton extends StatelessWidget {
@@ -17,7 +17,7 @@ class PIPCancelButton extends StatelessWidget {
         Navigator.of(context).pop();
       },
       label: Text(
-        AppLocalizations.of(context)!.globalCancelButtonLabel,
+        AppLocalizations.of(context)!.globalCancel,
         style: const TextStyle(
           color: Color(0xFFFF0000),
           fontWeight: FontWeight.w600,
@@ -273,7 +273,7 @@ class AccountPopUpMenuButton extends ConsumerWidget {
         ));
       },
       child: Text(
-        AppLocalizations.of(context)!.settingsPageManageAccountButtonLabel,
+        AppLocalizations.of(context)!.settingsManageAccount,
         style: const TextStyle(fontSize: 18),
       ),
     );
@@ -300,7 +300,7 @@ class AccountPopUpMenuButton extends ConsumerWidget {
         await ref.read(signOutStateProvider.notifier).signOut();
       },
       label: Text(
-        AppLocalizations.of(context)!.globalLogoutButtonLabel,
+        AppLocalizations.of(context)!.globalLogout,
         style: const TextStyle(fontSize: 18),
       ),
     );
@@ -315,7 +315,7 @@ class AccountPopUpMenuButton extends ConsumerWidget {
             onPressed: () =>
                 UrlService.launchWebUrl('https://printinprogress.net/legal'),
             child: Text(
-              AppLocalizations.of(context)!.globalPrivacyPolicyLabel,
+              AppLocalizations.of(context)!.privacyPolicyLinkText,
               style: const TextStyle(fontSize: 8.7),
             ),
           ),
@@ -326,7 +326,7 @@ class AccountPopUpMenuButton extends ConsumerWidget {
             onPressed: () =>
                 UrlService.launchWebUrl('https://printinprogress.net/legal'),
             child: Text(
-              AppLocalizations.of(context)!.globalToSLabel,
+              AppLocalizations.of(context)!.globalToS,
               style: const TextStyle(fontSize: 8.7),
             ),
           ),

@@ -2,7 +2,7 @@ import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChangeEmail extends ConsumerStatefulWidget {
@@ -24,7 +24,7 @@ class _ChangeEmailState extends ConsumerState<ChangeEmail> {
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.globalEmptyFormFieldErrorLabel;
+      return AppLocalizations.of(context)!.validationRequired;
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
@@ -45,9 +45,7 @@ class _ChangeEmailState extends ConsumerState<ChangeEmail> {
         },
         data: (_) {
           successMessage(
-              context,
-              AppLocalizations.of(context)!
-                  .settingsPageSuccessOnEmailChangedSnackbarContent);
+              context, AppLocalizations.of(context)!.successEmailChanged);
           Navigator.of(context).pop();
         },
       );
@@ -77,7 +75,7 @@ class _ChangeEmailState extends ConsumerState<ChangeEmail> {
                   actionsIconTheme: const IconThemeData(color: Colors.white),
                   iconTheme: const IconThemeData(color: Colors.white),
                   title: Text(
-                    AppLocalizations.of(context)!.globalSettingsLabel,
+                    AppLocalizations.of(context)!.navSettings,
                     style: const TextStyle(color: Colors.white),
                   ),
                 )
@@ -132,7 +130,7 @@ class _ChangeEmailState extends ConsumerState<ChangeEmail> {
                                 child: updateEmailState.isLoading
                                     ? const CircularProgressIndicator()
                                     : Text(AppLocalizations.of(context)!
-                                        .globalSaveChangesButtonLabel),
+                                        .globalSave),
                               ),
                             ),
                             const SizedBox(height: 10),

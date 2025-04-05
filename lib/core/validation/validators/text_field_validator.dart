@@ -1,4 +1,5 @@
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
+
 import '../../errors/domain_exception.dart';
 import '../base_validator.dart';
 

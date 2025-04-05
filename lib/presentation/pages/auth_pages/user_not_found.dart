@@ -2,7 +2,7 @@ import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/domain/services/url_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 
 class UserNotFoundPage extends StatelessWidget {
   const UserNotFoundPage({super.key});
@@ -20,19 +20,19 @@ class UserNotFoundPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(20),
+              Padding(
+                padding: const EdgeInsets.all(20),
                 child: Text(
-                  '404 - User Not Found',
-                  style: TextStyle(color: Colors.red, fontSize: 50),
+                  AppLocalizations.of(context)!.errorUserNotFound,
+                  style: const TextStyle(color: Colors.red, fontSize: 50),
                 ),
               ),
               Text(
-                AppLocalizations.of(context)!.authPagesUserNotFoundErrorMessage,
+                AppLocalizations.of(context)!.errorUserNotFoundMessage,
                 style: const TextStyle(fontSize: 15),
               ),
               PIPResponsiveRaisedButton(
-                  label: AppLocalizations.of(context)!.globalBackToLoginLabel,
+                  label: AppLocalizations.of(context)!.globalBackToLogin,
                   onPressed: () {
                     FirebaseAuth.instance.signOut();
                   },

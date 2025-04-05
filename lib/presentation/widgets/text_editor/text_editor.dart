@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 
 class PIPStandardTextEditor extends ConsumerStatefulWidget {
   final String title;
@@ -190,8 +190,7 @@ class _PIPStandardTextEditorState extends ConsumerState<PIPStandardTextEditor> {
                     ),
                     TextButton.icon(
                         label: Text(
-                          AppLocalizations.of(context)!
-                              .globalSaveChangesButtonLabel,
+                          AppLocalizations.of(context)!.globalSave,
                           style: const TextStyle(color: Colors.green),
                         ),
                         onPressed: () async {
@@ -203,8 +202,7 @@ class _PIPStandardTextEditorState extends ConsumerState<PIPStandardTextEditor> {
                           }).then((value) {
                             successMessage(
                               context,
-                              AppLocalizations.of(context)!
-                                  .globalSuccessSnackbarLabel,
+                              AppLocalizations.of(context)!.successDataSaved,
                             );
                           }).catchError((e) {
                             errorMessage(context, e);
@@ -1117,8 +1115,6 @@ class _PIPStandardTextEditorState extends ConsumerState<PIPStandardTextEditor> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Tooltip(
-                          message: AppLocalizations.of(context)!
-                              .textEditorTooltipInsertTable,
                           child: MenuAnchor(
                               controller: _tableMenuController,
                               builder: (context, controller, child) {
@@ -1149,8 +1145,6 @@ class _PIPStandardTextEditorState extends ConsumerState<PIPStandardTextEditor> {
                               ]),
                         ),
                         IconButton(
-                            tooltip: AppLocalizations.of(context)!
-                                .textEditorTooltipInsertLink,
                             onPressed: () async {
                               await showDialog(
                                 context: context,
@@ -1162,7 +1156,7 @@ class _PIPStandardTextEditorState extends ConsumerState<PIPStandardTextEditor> {
                             icon: const Icon(Icons.link)),
                         IconButton(
                           tooltip: AppLocalizations.of(context)!
-                              .textEditorTooltipInsertImage,
+                              .mediaSelectorInsertImage,
                           onPressed: () async {
                             final file = await showDialog<StorageFile>(
                               context: context,
@@ -1202,8 +1196,6 @@ class _PIPStandardTextEditorState extends ConsumerState<PIPStandardTextEditor> {
                           icon: const Icon(Icons.image_outlined),
                         ),
                         IconButton(
-                          tooltip: AppLocalizations.of(context)!
-                              .textEditorTooltipInsertInsertVideo,
                           onPressed: () async {
                             final file = await showDialog<StorageFile>(
                               context: context,
@@ -1248,8 +1240,6 @@ class _PIPStandardTextEditorState extends ConsumerState<PIPStandardTextEditor> {
                           icon: const Icon(Icons.videocam_outlined),
                         ),
                         IconButton(
-                          tooltip: AppLocalizations.of(context)!
-                              .textEditorTooltipInsertInsertAudio,
                           onPressed: () async {
                             final file = await showDialog<StorageFile>(
                               context: context,

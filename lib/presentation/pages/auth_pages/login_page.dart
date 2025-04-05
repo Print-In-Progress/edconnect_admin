@@ -6,7 +6,7 @@ import 'package:edconnect_admin/presentation/pages/auth_pages/forgot_password_pa
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -97,14 +97,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         const SizedBox(
                           height: 10,
                         ),
-                        Text(
-                          AppLocalizations.of(context)!
-                              .authPagesLoginWelcomeLabelTwo,
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
 
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -124,7 +116,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 25.0),
                           child: PIPPasswordForm(
                               label: AppLocalizations.of(context)!
-                                  .globalPasswordLabel,
+                                  .authPasswordLabel,
                               width: MediaQuery.of(context).size.width,
                               controller: _passwordController,
                               passwordVisible: _passwordVisible,
@@ -156,7 +148,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 },
                                 child: Text(
                                   AppLocalizations.of(context)!
-                                      .authPagesForgotPasswordButtonLabel,
+                                      .authForgotPassword,
                                   style: const TextStyle(
                                       color: Colors.blue,
                                       fontWeight: FontWeight.bold),
@@ -167,8 +159,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                         const SizedBox(height: 15),
                         PIPResponsiveRaisedButton(
-                          label: AppLocalizations.of(context)!
-                              .authPagesLoginButtonLabel,
+                          label: AppLocalizations.of(context)!.authLoginTitle,
                           onPressed: () {
                             if (!loginState.isLoading) {
                               _handleLogin();
@@ -228,7 +219,7 @@ Widget _buildLogoSection(String logoUrl, isDarkMode) {
                       ),
                       errorWidget: (context, url, error) => Center(
                         child: Text(AppLocalizations.of(context)!
-                            .globalImgCouldNotBeFound),
+                            .errorImgCouldNotBeFound),
                       ),
                     )
                   : Image.asset('assets/edconnect_logo.png'))),

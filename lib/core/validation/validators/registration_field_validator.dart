@@ -1,4 +1,4 @@
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import '../../errors/domain_exception.dart';
 import '../base_validator.dart';
 import '../../../domain/entities/registration_fields.dart';
@@ -34,13 +34,13 @@ class RegistrationFieldValidator
             fields.firstWhere((element) => element.id == field.parentUid);
         if (parentField.checked == true && field.checked == false) {
           throw DomainException(
-              message: l10n.authPagesSignatureMissing,
+              message: l10n.validationSignatureMissing,
               type: ExceptionType.validation);
         }
       } else if (field is RegistrationField && field.type == 'signature') {
         if (field.checked == false) {
           throw DomainException(
-              message: l10n.authPagesSignatureMissing,
+              message: l10n.validationSignatureMissing,
               type: ExceptionType.validation);
         }
       }
@@ -54,13 +54,13 @@ class RegistrationFieldValidator
             fields.firstWhere((element) => element.id == field.parentUid);
         if (parentField.checked == true && field.response!.text.isEmpty) {
           throw DomainException(
-              message: l10n.authPagesFieldMissing,
+              message: l10n.validationRequiredSnackbar,
               type: ExceptionType.validation);
         }
       } else if (field is RegistrationField && field.type == 'free_response') {
         if (field.response!.text.isEmpty) {
           throw DomainException(
-              message: l10n.authPagesFieldMissing,
+              message: l10n.validationRequiredSnackbar,
               type: ExceptionType.validation);
         }
       }

@@ -5,7 +5,7 @@ import 'package:edconnect_admin/presentation/pages/auth_pages/forgot_password_pa
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AccountPassword extends ConsumerStatefulWidget {
@@ -43,8 +43,7 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
       if (!mounted) return;
       successMessage(
         context,
-        AppLocalizations.of(context)!
-            .settingsPageSuccessOnPasswordChangedSnackbarLabel,
+        AppLocalizations.of(context)!.successPasswordChanged,
       );
       Navigator.of(context).pop();
     } catch (e) {
@@ -88,7 +87,7 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
                   actionsIconTheme: const IconThemeData(color: Colors.white),
                   iconTheme: const IconThemeData(color: Colors.white),
                   title: Text(
-                    AppLocalizations.of(context)!.globalSettingsLabel,
+                    AppLocalizations.of(context)!.navSettings,
                     style: const TextStyle(color: Colors.white),
                   ),
                 )
@@ -114,7 +113,7 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
                               padding: const EdgeInsets.all(10.0),
                               child: PIPPasswordForm(
                                   label: AppLocalizations.of(context)!
-                                      .settingsPageCurrentPasswordHintText,
+                                      .authResetPassword,
                                   width: MediaQuery.of(context).size.width,
                                   controller: _currentPasswordController,
                                   passwordVisible: _currentPasswordVisible,
@@ -129,7 +128,7 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
                               padding: const EdgeInsets.all(10.0),
                               child: PIPPasswordForm(
                                   label: AppLocalizations.of(context)!
-                                      .settingsPageNewPasswordHintText,
+                                      .settingsNewPassword,
                                   width: MediaQuery.of(context).size.width,
                                   controller: _newPasswordController,
                                   passwordVisible: _newPasswordVisible,
@@ -176,7 +175,7 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
                                     },
                                     child: Text(
                                       AppLocalizations.of(context)!
-                                          .authPagesForgotPasswordButtonLabel,
+                                          .authForgotPassword,
                                       style: const TextStyle(
                                           color: Colors.blue,
                                           fontWeight: FontWeight.bold),
@@ -192,8 +191,8 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
                                   const EdgeInsets.symmetric(horizontal: 25.0),
                               child: PIPResponsiveRaisedButton(
                                   fontWeight: FontWeight.w600,
-                                  label: AppLocalizations.of(context)!
-                                      .globalApplyChangesButtonLabel,
+                                  label:
+                                      AppLocalizations.of(context)!.globalSave,
                                   onPressed: _updatePassword,
                                   width: MediaQuery.of(context).size.width),
                             ),

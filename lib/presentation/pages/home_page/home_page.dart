@@ -4,7 +4,7 @@ import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import '../../../../constants/database_constants.dart';
 import '../../../domain/services/url_service.dart';
 
@@ -195,8 +195,7 @@ class HomePage extends ConsumerWidget {
         TextButton(
             onPressed: () =>
                 UrlService.launchWebUrl('https://printinprogress.net/legal'),
-            child: Text(
-                AppLocalizations.of(context)!.homePageLegalNoticeButtonLabel,
+            child: Text(AppLocalizations.of(context)!.globalLegalNotice,
                 style: TextStyle(
                     fontSize: 12,
                     color: isDarkMode

@@ -1,7 +1,7 @@
 import 'package:edconnect_admin/core/errors/domain_exception.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ErrorHandler {
   static DomainException handle(dynamic error, BuildContext context) {
@@ -12,12 +12,10 @@ class ErrorHandler {
       return _handleFirebaseAuthError(error, context);
     }
 
-    // Handle Network Errors
     if (error.toString().contains('SocketException') ||
         error.toString().contains('TimeoutException')) {
       return DomainException(
-        message:
-            AppLocalizations.of(context)!.globalNoInternetConnectionErrorLabel,
+        message: AppLocalizations.of(context)!.errorNetwork,
         type: ExceptionType.network,
       );
     }
@@ -25,21 +23,21 @@ class ErrorHandler {
     // Handle Validation Errors
     if (error.toString().contains('SignatureMissing')) {
       return DomainException(
-        message: AppLocalizations.of(context)!.authPagesSignatureMissing,
+        message: AppLocalizations.of(context)!.validationSignatureMissing,
         type: ExceptionType.validation,
       );
     }
 
     if (error.toString().contains('QuestionMissing')) {
       return DomainException(
-        message: AppLocalizations.of(context)!.authPagesFieldMissing,
+        message: AppLocalizations.of(context)!.validationRequiredSnackbar,
         type: ExceptionType.validation,
       );
     }
 
     // Default error
     return DomainException(
-      message: AppLocalizations.of(context)!.globalUnexpectedErrorLabel,
+      message: AppLocalizations.of(context)!.errorUnexpected,
       type: ExceptionType.unexpected,
       originalError: error,
     );
@@ -49,11 +47,10 @@ class ErrorHandler {
       FirebaseAuthException error, BuildContext context) {
     final message = switch (error.code) {
       'email-already-in-use' =>
-        AppLocalizations.of(context)!.firebaseAuthErrorMessageEmailAlreadyInUse,
-      'wrong-password' => 'Invalid password',
-      'user-not-found' =>
-        AppLocalizations.of(context)!.authPagesUserNotFoundErrorMessage,
-      _ => AppLocalizations.of(context)!.globalUnexpectedErrorLabel
+        AppLocalizations.of(context)!.errorEmailAlreadyInUse,
+      'wrong-password' => AppLocalizations.of(context)!.errorInvalidPassword,
+      'user-not-found' => AppLocalizations.of(context)!.errorUserNotFound,
+      _ => AppLocalizations.of(context)!.errorUnexpected
     };
 
     return DomainException(

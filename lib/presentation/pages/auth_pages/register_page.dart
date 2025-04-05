@@ -10,7 +10,7 @@ import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/terms_and_conditions_checkbox.dart';
 import 'package:edconnect_admin/presentation/widgets/registration_card_builder.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
@@ -103,8 +103,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             // Success case
             successMessage(
               context,
-              AppLocalizations.of(context)!
-                  .authPagesRegisterSuccessSnackbarLabel,
+              AppLocalizations.of(context)!.successRegistration,
             );
           }
         },
@@ -159,7 +158,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                                       Center(
                                                 child: Text(AppLocalizations.of(
                                                         context)!
-                                                    .globalImgCouldNotBeFound),
+                                                    .errorImgCouldNotBeFound),
                                               ),
                                             )
                                           : Image.asset(
@@ -232,7 +231,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           ),
                           PIPPasswordForm(
                               label: AppLocalizations.of(context)!
-                                  .globalPasswordLabel,
+                                  .authPasswordLabel,
                               width: MediaQuery.of(context).size.width,
                               controller: _passwordController,
                               passwordVisible: _passwordVisible,
@@ -347,7 +346,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                 errorMessage(
                                   context,
                                   AppLocalizations.of(context)!
-                                      .authPagesRegisterAcceptToSAndPrivacyPolicyErrorMessage,
+                                      .errorPagesRegisterAcceptToSAndPrivacyPolicy,
                                 );
                               }
                             },
@@ -366,8 +365,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           const SizedBox(height: 10),
 
                           PIPResponsiveTextButton(
-                            label: AppLocalizations.of(context)!
-                                .authPagesLoginButtonLabel,
+                            label: AppLocalizations.of(context)!.authLoginTitle,
                             color: Colors.grey[600],
                             fontWeight: FontWeight.w700,
                             onPressed: widget.showLoginPage,

@@ -7,7 +7,7 @@ import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 
 class MediaSelectorDialog extends ConsumerStatefulWidget {
   final MediaSelectionOptions options;
@@ -373,12 +373,9 @@ class _MediaSelectorDialogState extends ConsumerState<MediaSelectorDialog> {
 
   String _getDialogTitle() {
     return switch (widget.options.mediaType) {
-      MediaType.image =>
-        AppLocalizations.of(context)!.textEditorInsertImageDialogTitle,
-      MediaType.video =>
-        AppLocalizations.of(context)!.textEditorInsertVideoDialogTitle,
-      MediaType.audio =>
-        AppLocalizations.of(context)!.textEditorInsertAudioDialogTitle,
+      MediaType.image => AppLocalizations.of(context)!.mediaSelectorInsertImage,
+      MediaType.video => AppLocalizations.of(context)!.mediaSelectorInsertAudio,
+      MediaType.audio => AppLocalizations.of(context)!.mediaSelectorInsertAudio,
     };
   }
 

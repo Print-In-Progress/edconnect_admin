@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 
 class PIPOutlinedBorderInputForm extends StatelessWidget {
   final String label;
@@ -33,7 +33,7 @@ class PIPOutlinedBorderInputForm extends StatelessWidget {
             controller: controller,
             decoration: InputDecoration(
               errorText: validate
-                  ? AppLocalizations.of(context)!.globalEmptyFormFieldErrorLabel
+                  ? AppLocalizations.of(context)!.validationRequired
                   : null,
               filled: true,
               border:
@@ -53,7 +53,7 @@ class PIPOutlinedBorderInputForm extends StatelessWidget {
             controller: controller,
             decoration: InputDecoration(
               errorText: validate
-                  ? AppLocalizations.of(context)!.globalEmptyFormFieldErrorLabel
+                  ? AppLocalizations.of(context)!.validationRequired
                   : null,
               filled: true,
               border:
@@ -74,7 +74,7 @@ class PIPOutlinedBorderInputForm extends StatelessWidget {
             controller: controller,
             decoration: InputDecoration(
               errorText: validate
-                  ? AppLocalizations.of(context)!.globalEmptyFormFieldErrorLabel
+                  ? AppLocalizations.of(context)!.validationRequired
                   : null,
               filled: true,
               border:
@@ -92,7 +92,7 @@ class PIPOutlinedBorderInputForm extends StatelessWidget {
             controller: controller,
             decoration: InputDecoration(
               errorText: validate
-                  ? AppLocalizations.of(context)!.globalEmptyFormFieldErrorLabel
+                  ? AppLocalizations.of(context)!.validationRequired
                   : null,
               filled: true,
               border:

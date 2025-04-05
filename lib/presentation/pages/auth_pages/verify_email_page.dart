@@ -4,7 +4,7 @@ import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import '../home_page/home_page.dart';
 import 'user_not_found.dart';
 import '../../providers/theme_provider.dart';
@@ -93,14 +93,12 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: Text(
-                      AppLocalizations.of(context)!
-                          .authPagesVerifyEmailPageTitle,
+                      AppLocalizations.of(context)!.authVerifyEmailTitle,
                       style: const TextStyle(color: Colors.green, fontSize: 50),
                     ),
                   ),
                   Text(
-                    AppLocalizations.of(context)!
-                        .authPagesVerifyEmailPageContent,
+                    AppLocalizations.of(context)!.authVerifyEmailBody,
                     style: const TextStyle(fontSize: 15),
                   ),
                   const SizedBox(height: 15),
@@ -108,15 +106,14 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                     onPressed: canResendEmail ? sendVerificationEmail : null,
                     icon: const Icon(Icons.email),
                     label: Text(AppLocalizations.of(context)!
-                        .globalResendEmailButtonLabel),
+                        .authResendVerificationEmail),
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton.icon(
                     onPressed: () =>
                         ref.read(signOutStateProvider.notifier).signOut(),
                     icon: const Icon(Icons.cancel),
-                    label: Text(
-                        AppLocalizations.of(context)!.globalCancelButtonLabel),
+                    label: Text(AppLocalizations.of(context)!.globalCancel),
                   ),
                 ],
               ),

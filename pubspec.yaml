@@ -38,51 +38,51 @@ dependencies:
     sdk: flutter
 
   # Firebase Dependencies
-  firebase_core:
-  firebase_dart:
-  firebase_auth:
-  firebase_storage:
-  cloud_firestore:
-  cloud_functions:
-  firebase_messaging: ^14.6.9
+  firebase_core: ^3.13.0
+  firebase_dart: ^1.3.4
+  firebase_auth: ^5.5.2
+  firebase_storage: ^12.4.5
+  cloud_firestore: ^5.6.6
+  cloud_functions: ^5.4.0
+  firebase_messaging: ^15.2.5
 
 
   # Html Dependencies
-  html_editor_enhanced: ^2.5.1
-  pointer_interceptor: ^0.9.3+3
-  desktop_drop: ^0.4.4
+  html_editor_enhanced: ^2.6.0
+  pointer_interceptor: ^0.10.1+2
+  desktop_drop: ^0.5.0
   # Other Dependencies
-  image_cropper: ^5.0.1
-  drag_and_drop_lists: ^0.3.3
-  share_plus: ^7.2.1
-  pdf: ^3.10.7
-  file_picker: ^5.5.0
-  pointycastle:
-  flex_color_picker: ^3.0.2
-  printing: ^5.11.1
+  image_cropper: ^9.1.0
+  drag_and_drop_lists: ^0.4.2
+  share_plus: ^10.1.4
+  pdf: ^3.11.3
+  file_picker: ^8.3.7
+  pointycastle: ^3.9.1
+  flex_color_picker: ^3.7.0
+  printing: ^5.14.2
 
-  intl:
+  intl: ^0.19.0
   reorderable_grid: ^1.0.10
-  http: ^1.1.0
-  crypto:
-  fl_chart: ^0.64.0
-  video_player: ^2.8.1
-  chewie: ^1.7.1
-  just_audio: ^0.9.35
-  rxdart: ^0.27.7
-  audio_video_progress_bar: ^2.0.1
-  cached_network_image: ^3.3.0
-  shared_preferences: 
-  connectivity_plus:
-  flutter_riverpod:
-  url_launcher:
-  flutter_launcher_icons: "^0.13.1"
-  flutter_native_splash: ^2.3.2
+  http: ^1.3.0
+  crypto: ^3.0.6
+  fl_chart: ^0.70.2
+  video_player: ^2.9.5
+  chewie: ^1.11.1
+  just_audio: ^0.9.46
+  rxdart: ^0.28.0
+  audio_video_progress_bar: ^2.0.3
+  cached_network_image: ^3.4.1
+  shared_preferences: ^2.5.3 
+  connectivity_plus: ^6.1.3
+  flutter_riverpod: ^2.6.1
+  url_launcher: ^6.3.1
+  flutter_launcher_icons: ^0.14.3
+  flutter_native_splash: ^2.4.5
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
@@ -93,20 +93,19 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
+ 
 # The following section is specific to Flutter packages.
 flutter:
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
-  generate: true
   uses-material-design: true
-
+  generate: true
   # To add assets to your application, add an assets section, like this:
   assets:
       - assets/placeholder_dark_mode_template_en.png
@@ -170,3 +169,4 @@ flutter_launcher_icons:
   macos:
     generate: false
     image_path: "assets/light_mode_template_en.png"
+

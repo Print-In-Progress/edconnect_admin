@@ -6,7 +6,7 @@ import '../../data/repositories/navigation_repository_impl.dart';
 import '../../domain/entities/navigation_item.dart';
 import '../../domain/services/permission_service.dart';
 import '../providers/state_providers.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 
 // Navigation repository provider
 final navigationRepositoryProvider = Provider<NavigationRepository>((ref) {
@@ -132,17 +132,17 @@ class NavRailLocalizationHelper {
     final l10n = AppLocalizations.of(context)!;
 
     final Map<String, String> navigationTitles = {
-      'dashboard': l10n.homePageDashboardAdminMenuButton,
-      'articles': l10n.homePageManageArticlesAdminMenuButton,
-      'events': l10n.homePageManageEventsAdminMenuButton,
-      'users': l10n.homePageManageManageUsersAdminMenuButton,
-      'comments': l10n.homePageManageCommentsAdminMenuButton,
-      'digital_library': l10n.homePagedigitalLibraryButtonLabel,
-      'media': l10n.homePageSavedMediaAdminMenuButton,
-      'push_notifications': l10n.homePageSendPushNotificationsAdminMenuButton,
-      'admin_settings': l10n.homePageAdminSettingsButtonLabel,
-      'surveys': l10n.homePageSurveyButtonLabel,
-      'survey_sorter': l10n.homePageSorterButtonLabel,
+      'dashboard': l10n.navDashboard,
+      'articles': l10n.navArticles,
+      'events': l10n.navEvents,
+      'users': l10n.navUsers,
+      'comments': l10n.navComments,
+      'digital_library': l10n.navDigitalLibrary,
+      'media': l10n.navMedia,
+      'push_notifications': l10n.navPushNotifications,
+      'admin_settings': l10n.navAdminSettings,
+      'surveys': l10n.navSurveys,
+      'survey_sorter': l10n.navSurveySorter,
     };
 
     return navigationTitles[id] ?? id;
