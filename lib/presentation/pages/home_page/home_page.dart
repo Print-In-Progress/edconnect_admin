@@ -5,7 +5,7 @@ import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
-import '../../../../constants/database_constants.dart';
+import '../../../core/constants/database_constants.dart';
 import '../../../domain/services/url_service.dart';
 
 class HomePage extends ConsumerWidget {

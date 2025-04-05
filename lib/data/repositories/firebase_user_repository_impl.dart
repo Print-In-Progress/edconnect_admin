@@ -6,7 +6,7 @@ import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import '../../core/interfaces/user_repository.dart';
 import '../../core/models/app_user.dart';
 import '../datasource/user_data_source.dart';
-import '../../constants/database_constants.dart';
+import '../../core/constants/database_constants.dart';
 
 class FirebaseUserRepositoryImpl implements UserRepository {
   final UserDataSource _userDataSource;

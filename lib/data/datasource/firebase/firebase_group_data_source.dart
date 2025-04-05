@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:edconnect_admin/constants/database_constants.dart';
+import 'package:edconnect_admin/core/constants/database_constants.dart';
 import 'package:edconnect_admin/data/datasource/group_data_source.dart';
 
 class FirebaseGroupDataSource implements GroupDataSource {

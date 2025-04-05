@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edconnect_admin/data/datasource/theme_data_source.dart';
-import '../../../constants/database_constants.dart';
+import '../../../core/constants/database_constants.dart';
 
 class FirebaseRemoteThemeDataSource implements RemoteThemeDataSource {
   final FirebaseFirestore _firestore;

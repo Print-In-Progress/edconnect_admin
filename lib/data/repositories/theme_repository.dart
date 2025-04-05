@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../core/interfaces/theme_repository.dart';
 import '../datasource/theme_data_source.dart';
-import '../../constants/database_constants.dart';
+import '../../core/constants/database_constants.dart';
 
 class ThemeRepositoryImpl implements ThemeRepository {
   final ThemeDataSource _localDataSource;

@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:edconnect_admin/constants/database_constants.dart';
+import 'package:edconnect_admin/core/constants/database_constants.dart';
 import 'package:edconnect_admin/domain/entities/storage_file.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../storage_data_source.dart';

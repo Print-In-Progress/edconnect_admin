@@ -1,4 +1,4 @@
-import 'package:edconnect_admin/constants/database_constants.dart';
+import 'package:edconnect_admin/core/constants/database_constants.dart';
 
 enum StorageModule {
   articles('Articles', '$customerSpecificCollectionFiles/articles'),

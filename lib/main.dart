@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:edconnect_admin/constants/database_constants.dart';
+import 'package:edconnect_admin/core/constants/database_constants.dart';
 import 'package:edconnect_admin/presentation/pages/home_page/main_page.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:firebase_core/firebase_core.dart';

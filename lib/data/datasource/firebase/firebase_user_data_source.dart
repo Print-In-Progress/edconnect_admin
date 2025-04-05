@@ -10,7 +10,7 @@ import 'package:edconnect_admin/domain/services/pdf_service.dart';
 import 'package:edconnect_admin/domain/utils/registration_utils.dart';
 import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import 'package:flutter/material.dart';
-import '../../../constants/database_constants.dart';
+import '../../../core/constants/database_constants.dart';
 import '../user_data_source.dart';
 
 class FirebaseUserDataSource implements UserDataSource {

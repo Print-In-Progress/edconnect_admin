@@ -14,7 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/interfaces/auth_repository.dart';
 import '../../core/models/app_user.dart';
 import '../../domain/entities/registration_request.dart';
-import '../../constants/database_constants.dart';
+import '../../core/constants/database_constants.dart';
 
 class FirebaseAuthRepositoryImpl implements AuthRepository {
   final AuthDataSource _authDataSource;
