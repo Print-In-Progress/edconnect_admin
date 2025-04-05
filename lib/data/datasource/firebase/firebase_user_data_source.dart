@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edconnect_admin/core/interfaces/group_repository.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/core/utils/crypto_utils.dart';
-import 'package:edconnect_admin/domain/utils/validation_utils.dart';
+import 'package:edconnect_admin/core/validation/validators/registration_field_validator.dart';
 import 'package:edconnect_admin/data/datasource/storage_data_source.dart';
 import 'package:edconnect_admin/domain/services/pdf_service.dart';
 import 'package:edconnect_admin/domain/utils/registration_utils.dart';
@@ -76,11 +76,8 @@ class FirebaseUserDataSource implements UserDataSource {
     }).toList();
 
     final flattenedList = flattenRegistrationFields(filteredFields);
-    final validationResult = validateRegistrationFields(flattenedList);
-
-    if (validationResult.isNotEmpty) {
-      throw Exception(validationResult);
-    }
+    final validator = RegistrationFieldValidator();
+    validator.validate(flattenedList);
 
     final hasSignature = flattenedList
         .any((field) => field.type == 'signature' && field.checked == true);

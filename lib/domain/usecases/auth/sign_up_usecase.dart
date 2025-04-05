@@ -6,11 +6,11 @@ class SignUpUseCase {
 
   SignUpUseCase(this._authRepository);
 
-  Future<String?> signUp(RegistrationRequest request) async {
+  Future<void> signUp(RegistrationRequest request) async {
     return await _authRepository.signUp(request);
   }
 
-  Future<String?> signUpWithExistingAuthAccount(
+  Future<void> signUpWithExistingAuthAccount(
       RegistrationRequest request) async {
     return await _authRepository.signUpWithExistingAuthAccount(request);
   }

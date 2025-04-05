@@ -5,7 +5,7 @@ class SignInUseCase {
 
   SignInUseCase(this._authRepository);
 
-  Future<String?> execute(String email, String password) async {
-    return await _authRepository.signInWithEmailAndPassword(email, password);
+  Future<void> execute(String email, String password) async {
+    await _authRepository.signInWithEmailAndPassword(email, password);
   }
 }

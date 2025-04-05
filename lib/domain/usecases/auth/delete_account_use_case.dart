@@ -18,10 +18,7 @@ class DeleteAccountUseCase {
     if (user == null) throw Exception('No authenticated user');
 
     // 1.  reauthenticate
-    final reAuthResult = await _authRepository.reauthenticate(password);
-    if (reAuthResult != null) {
-      throw Exception(reAuthResult);
-    }
+    await _authRepository.reauthenticate(password);
 
     // 2. Anonymize user data (GDPR requirement)
     await _userRepository.anonymizeUserData(user.id);

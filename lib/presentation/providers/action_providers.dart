@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/core/errors/domain_exception.dart';
 import 'package:edconnect_admin/domain/entities/storage_file.dart';
 import 'package:edconnect_admin/domain/entities/storage_module.dart';
 import 'package:edconnect_admin/domain/usecases/auth/delete_account_use_case.dart';
@@ -7,8 +8,6 @@ import 'package:edconnect_admin/domain/usecases/auth/sign_up_usecase.dart';
 import 'package:edconnect_admin/domain/usecases/auth/user_credential_repository.dart';
 import 'package:edconnect_admin/domain/usecases/auth/user_profile_use_case.dart';
 import 'package:edconnect_admin/domain/entities/registration_fields.dart';
-import 'package:edconnect_admin/domain/utils/registration_utils.dart';
-import 'package:edconnect_admin/domain/utils/validation_utils.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/registration_request.dart';
@@ -32,8 +31,7 @@ final checkEmailVerificationProvider = Provider<Future<bool> Function()>((ref) {
   };
 });
 
-// Sign-up notifier.
-class SignUpNotifier extends StateNotifier<AsyncValue<String?>> {
+class SignUpNotifier extends StateNotifier<AsyncValue<void>> {
   final SignUpUseCase _signUpUseCase;
 
   SignUpNotifier(this._signUpUseCase) : super(const AsyncValue.data(null));
@@ -42,11 +40,19 @@ class SignUpNotifier extends StateNotifier<AsyncValue<String?>> {
     state = const AsyncValue.loading();
 
     try {
-      final result = await _signUpUseCase.signUp(request);
-      if (result == null) {
-        state = const AsyncValue.data(null); // Success
+      await _signUpUseCase.signUp(request);
+      state = const AsyncValue.data(null);
+    } on DomainException catch (e) {
+      if (e.code == ErrorCode.authAccountAlreadyExists) {
+        // If account exists in another org, try signing up with existing account
+        try {
+          await _signUpUseCase.signUpWithExistingAuthAccount(request);
+          state = const AsyncValue.data(null);
+        } catch (e) {
+          state = AsyncValue.error(e, StackTrace.current);
+        }
       } else {
-        state = AsyncValue.error(result, StackTrace.current);
+        state = AsyncValue.error(e, StackTrace.current);
       }
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -54,42 +60,11 @@ class SignUpNotifier extends StateNotifier<AsyncValue<String?>> {
   }
 }
 
-// Sign-up provider.
 final signUpNotifierProvider =
-    StateNotifierProvider<SignUpNotifier, AsyncValue<String?>>((ref) {
+    StateNotifierProvider<SignUpNotifier, AsyncValue<void>>((ref) {
   return SignUpNotifier(ref.read(signUpUseCaseProvider));
 });
 
-class SignUpWithExistingAuthAccountNotifier
-    extends StateNotifier<AsyncValue<String?>> {
-  final SignUpUseCase _useCase;
-
-  SignUpWithExistingAuthAccountNotifier(this._useCase)
-      : super(const AsyncValue.data(null));
-
-  Future<void> signUpWithExistingAuthAccount(
-      RegistrationRequest request) async {
-    state = const AsyncValue.loading();
-
-    try {
-      final result = await _useCase.signUpWithExistingAuthAccount(request);
-      if (result == null) {
-        state = const AsyncValue.data(null); // Success
-      } else {
-        state = AsyncValue.error(result, StackTrace.current);
-      }
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-    }
-  }
-}
-
-final signUpWithExistingAuthAccountNotifierProvider = StateNotifierProvider<
-    SignUpWithExistingAuthAccountNotifier, AsyncValue<String?>>((ref) {
-  return SignUpWithExistingAuthAccountNotifier(ref.read(signUpUseCaseProvider));
-});
-
-// Login notifier.
 class LoginNotifier extends StateNotifier<AsyncValue<void>> {
   final SignInUseCase _signInUseCase;
   final Ref _ref;
@@ -104,24 +79,27 @@ class LoginNotifier extends StateNotifier<AsyncValue<void>> {
       // Set auth state to authenticating
       _ref.read(authStatusProvider.notifier).state = AuthStatus.authenticating;
 
-      final result = await _signInUseCase.execute(email, password);
-      if (result != null) {
-        state = AsyncValue.error(result, StackTrace.current);
-        _ref.read(authStatusProvider.notifier).state =
-            AuthStatus.unauthenticated;
-        return;
-      }
+      await _signInUseCase.execute(email, password);
 
       state = const AsyncValue.data(null);
       // Auth state will be automatically updated by the listener in AuthStateNotifier
+    } on DomainException catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+      _ref.read(authStatusProvider.notifier).state = AuthStatus.unauthenticated;
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
       _ref.read(authStatusProvider.notifier).state = AuthStatus.unauthenticated;
     }
   }
 }
 
-// Updated login provider
 final loginStateProvider =
     StateNotifierProvider<LoginNotifier, AsyncValue<void>>((ref) {
   return LoginNotifier(
@@ -130,7 +108,6 @@ final loginStateProvider =
   );
 });
 
-// Sign-out notifier.
 class SignOutNotifier extends StateNotifier<AsyncValue<void>> {
   final SignOutUseCase _signOutUseCase;
 
@@ -141,9 +118,18 @@ class SignOutNotifier extends StateNotifier<AsyncValue<void>> {
 
     try {
       await _signOutUseCase.execute();
-      state = const AsyncValue.data(null); // Success
+      state = const AsyncValue.data(null);
+    } on DomainException catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
     }
   }
 }
@@ -171,29 +157,31 @@ class RegistrationUpdateNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
 
     try {
-      // Get current user
       final user = _ref.read(currentUserProvider).value;
-      if (user == null) throw Exception('No user logged in');
-
-      // Update name first
-      await _useCase.changeName(user.id, firstName, lastName);
-
-      // Convert BaseRegistrationField to RegistrationField and filter valid fields
-      final registrationFields = fields.whereType<RegistrationField>().toList();
-
-      // Flatten and validate fields
-      final flattenedFields = flattenRegistrationFields(registrationFields);
-      final validationError = validateRegistrationFields(flattenedFields);
-      if (validationError.isNotEmpty) {
-        throw Exception(validationError);
+      if (user == null) {
+        throw const DomainException(
+          code: ErrorCode.userNotFound,
+          type: ExceptionType.auth,
+        );
       }
 
-      // Submit registration update
+      await _useCase.changeName(user.id, firstName, lastName);
+
+      final registrationFields = fields.whereType<RegistrationField>().toList();
       await _useCase.submitRegistrationUpdate(user, registrationFields);
 
       state = const AsyncValue.data(null);
+    } on DomainException catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
     }
   }
 }
@@ -218,8 +206,17 @@ class ChangeNameNotifier extends StateNotifier<AsyncValue<void>> {
     try {
       await _useCase.changeName(userId, firstName, lastName);
       state = const AsyncValue.data(null);
+    } on DomainException catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
     }
   }
 }
@@ -238,13 +235,19 @@ class UpdateEmailNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
 
     try {
-      final result = await _useCase.changeEmail(newEmail);
-      if (result != null) {
-        throw Exception(result);
-      }
+      await _useCase.changeEmail(newEmail);
       state = const AsyncValue.data(null);
+    } on DomainException catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
     }
   }
 }
@@ -263,13 +266,17 @@ class ReauthenticateNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
 
     try {
-      final result = await _useCase.reauthenticate(password);
-      if (result != null) {
-        throw Exception(result);
-      }
+      await _useCase.reauthenticate(password);
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
     }
   }
 }
@@ -288,13 +295,17 @@ class ChangePasswordNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
 
     try {
-      final result = await _useCase.changePassword(newPassword);
-      if (result != null) {
-        throw Exception(result);
-      }
+      await _useCase.changePassword(newPassword);
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
     }
   }
 }
@@ -313,13 +324,17 @@ class ResetPasswordNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
 
     try {
-      final result = await _useCase.resetPassword(email);
-      if (result != null) {
-        throw Exception(result);
-      }
+      await _useCase.resetPassword(email);
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
     }
   }
 }

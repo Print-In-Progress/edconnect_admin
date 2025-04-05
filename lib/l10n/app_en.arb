@@ -190,6 +190,10 @@
     "@validationSignatureMissing": {
         "description": "Validation section - Signature field required message"
     },
+    "validationSignatureFailed": "Signature validation failed",
+    "@validationSignatureFailed": {
+        "description": "Validation section - Signature validation failed message"
+    },
     "validationTextTooShort": "Text is too short",
     "@validationTextTooShort": {
         "description": "Validation section - Text too short message"
@@ -273,6 +277,62 @@
     "errorEmailAlreadyInUse": "Email already in use",
     "@errorEmailAlreadyInUse": {
         "description": "Validation section - Email already registered message"
+    },
+    "errorGroupNotFound": "Group not found",
+    "@errorGroupNotFound": {
+        "description": "Error section - Group not found message"
+    },
+    "errorGroupUpdateFailed": "Group update failed",
+    "@errorGroupUpdateFailed": {
+        "description": "Error section - Group update failed message"
+    },
+    "errorGroupDeleteFailed": "Group deletion failed",
+    "@errorGroupDeleteFailed": {
+        "description": "Error section - Group deletion failed message"
+    },
+    "errorGroupCreateFailed": "Group creation failed",
+    "@errorGroupCreateFailed": {
+        "description": "Error section - Group creation failed message"
+    },
+    "errorInvalidGroupOperation": "Invalid group operation",
+    "@errorInvalidGroupOperation": {
+        "description": "Error section - Invalid group operation message"
+    },
+    "errorUserGroupUpdateFailed": "User group update failed",
+    "@errorUserGroupUpdateFailed": {
+        "description": "Error section - User group update failed message"
+    },
+    "errorFileUploadFailed": "File upload failed",
+    "@errorFileUploadFailed": {
+        "description": "Error section - File upload failed message"
+    },
+    "errorFileDeleteFailed": "File deletion failed",
+    "@errorFileDeleteFailed": {
+        "description": "Error section - File deletion failed message"
+    },
+    "errorAuthAccountAlreadyExists": "Auth account already exists",
+    "@errorAuthAccountAlreadyExists": {
+        "description": "Error section - Auth Account Already exists message"
+    },
+    "errorFileNotFound": "File not found",
+    "@errorFileNotFound": {
+        "description": "Error section - File not found message"
+    },
+    "errorInvalidFileType": "Invalid file type",
+    "@errorInvalidFileType": {
+        "description": "Error section - Invalid file type message"
+    },
+    "errorFileTooLarge": "File too large",
+    "@errorFileTooLarge": {
+        "description": "Error section - File too large message"
+    },
+    "errorFileListFailed": "File list retrieval failed",
+    "@errorFileListFailed": {
+        "description": "Error section - File list retrieval failed message"
+    },
+    "errorStorageOperationFailed": "Storage operation failed",
+    "@errorStorageOperationFailed": {
+        "description": "Error section - Storage operation failed message"
     },
     "successDefault": "Success",
     "@successDefault": {

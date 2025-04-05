@@ -13,12 +13,12 @@ class UserService {
       this._credentialsUseCase, this._profileDataUseCase, this._userRepository);
 
   // Credential operations
-  Future<String?> resetPassword(String email) async {
-    return await _credentialsUseCase.resetPassword(email);
+  Future<void> resetPassword(String email) async {
+    await _credentialsUseCase.resetPassword(email);
   }
 
-  Future<String?> changeEmail(String newEmail, String password) async {
-    return await _credentialsUseCase.changeEmail(newEmail);
+  Future<void> changeEmail(String newEmail, String password) async {
+    await _credentialsUseCase.changeEmail(newEmail);
   }
 
   Future<void> changeName(String uid, String firstName, String lastName) async {

@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:edconnect_admin/core/errors/domain_exception.dart';
+import 'package:edconnect_admin/core/errors/error_messages.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/presentation/widgets/common/forms.dart';
@@ -50,37 +52,17 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   Future<void> signUp(BuildContext context) async {
     final request = RegistrationRequest(
-        email: _emailController.text,
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        password: _passwordController.text,
-        confirmedPassword: _confirmedPasswordController.text,
-        orgName: customerName,
-        registrationFields: _registrationFields ?? [],
-        accountType: 'Student');
-
-    // Use the SignUpNotifier through the provider
-    await ref.read(signUpNotifierProvider.notifier).signUp(request);
-  }
-
-  void handleAccountAlreadyExistsWithOtherOrg(
-      List<BaseRegistrationField> registrationFields,
-      BuildContext context,
-      AppLocalizations localizations) async {
-    final request = RegistrationRequest(
       email: _emailController.text,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
       password: _passwordController.text,
       confirmedPassword: _confirmedPasswordController.text,
       orgName: customerName,
-      registrationFields: registrationFields,
+      registrationFields: _registrationFields ?? [],
       accountType: 'Student',
     );
 
-    await ref
-        .read(signUpWithExistingAuthAccountNotifierProvider.notifier)
-        .signUpWithExistingAuthAccount(request);
+    await ref.read(signUpNotifierProvider.notifier).signUp(request);
   }
 
   @override
@@ -93,19 +75,20 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     final theme = ref.watch(appThemeProvider);
 
     // Handle sign up state
-    ref.listen<AsyncValue<String?>>(signUpNotifierProvider, (_, state) {
+    ref.listen<AsyncValue<void>>(signUpNotifierProvider, (_, state) {
       state.whenOrNull(
         error: (error, _) {
-          errorMessage(context, error.toString());
-        },
-        data: (data) {
-          if (data == null) {
-            // Success case
-            successMessage(
-              context,
-              AppLocalizations.of(context)!.successRegistration,
-            );
+          if (error is DomainException) {
+            errorMessage(context, error.getLocalizedMessage(context));
+          } else {
+            errorMessage(context, error.toString());
           }
+        },
+        data: (_) {
+          successMessage(
+            context,
+            AppLocalizations.of(context)!.successRegistration,
+          );
         },
       );
     });

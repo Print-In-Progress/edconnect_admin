@@ -6,6 +6,7 @@ enum ErrorCode {
   fieldTooShort,
   fieldTooLong,
   invalidEmail,
+  signatureValidationFailed,
 
   // Auth errors
   emailAlreadyInUse,
@@ -14,6 +15,24 @@ enum ErrorCode {
   passwordMissingNumber,
   passwordMissingSpecial,
   passwordsDoNotMatch,
+  authAccountAlreadyExists,
+
+  // Group errors
+  groupNotFound,
+  groupUpdateFailed,
+  groupDeleteFailed,
+  groupCreateFailed,
+  invalidGroupOperation,
+  userGroupUpdateFailed,
+
+  // Storage errors
+  fileUploadFailed,
+  fileDeleteFailed,
+  fileNotFound,
+  invalidFileType,
+  fileTooLarge,
+  fileListFailed,
+  storageOperationFailed,
 
   // Network errors
   networkError,

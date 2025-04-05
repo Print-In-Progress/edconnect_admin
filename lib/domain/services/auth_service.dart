@@ -9,17 +9,16 @@ class AuthService {
 
   AuthService(this._signUpUseCase, this._signInUseCase);
 
-  Future<String?> signUp(RegistrationRequest request) async {
+  Future<void> signUp(RegistrationRequest request) async {
     return await _signUpUseCase.signUp(request);
   }
 
-  Future<String?> signUpWithExistingAuthAccount(
+  Future<void> signUpWithExistingAuthAccount(
       RegistrationRequest request) async {
     return await _signUpUseCase.signUpWithExistingAuthAccount(request);
   }
 
-  Future<String?> signInWithEmailAndPassword(
-      String email, String password) async {
-    return await _signInUseCase.execute(email, password);
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
+    await _signInUseCase.execute(email, password);
   }
 }

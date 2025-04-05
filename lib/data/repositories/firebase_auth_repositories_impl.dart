@@ -1,12 +1,15 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edconnect_admin/core/errors/domain_exception.dart';
+import 'package:edconnect_admin/core/errors/error_handler.dart';
 import 'package:edconnect_admin/core/utils/crypto_utils.dart';
+import 'package:edconnect_admin/core/validation/validators/registration_validator.dart';
 import 'package:edconnect_admin/data/datasource/auth_data_source.dart';
 import 'package:edconnect_admin/data/datasource/storage_data_source.dart';
 import 'package:edconnect_admin/data/datasource/user_data_source.dart';
+import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import 'package:edconnect_admin/domain/services/pdf_service.dart';
 import 'package:edconnect_admin/domain/utils/registration_utils.dart';
-import 'package:edconnect_admin/domain/utils/validation_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/interfaces/auth_repository.dart';
 import '../../core/models/app_user.dart';
@@ -27,209 +30,82 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   }) : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
-  Future<String?> signUp(RegistrationRequest request) async {
+  Future<void> signUp(RegistrationRequest request) async {
     // Validate password match
-    if (!passwordConfirmed(request.password, request.confirmedPassword)) {
-      return 'Passwords do not match';
-    }
-
-    // Filter registration fields
-    final filteredFields = request.registrationFields.where((field) {
-      return !(field.type == 'checkbox_section' && field.checked != true);
-    }).toList();
-
-    // Flatten and validate
-    final flattenedFields = flattenRegistrationFields(filteredFields);
-    final validationError = validateRegistrationFields(flattenedFields);
-    if (validationError.isNotEmpty) {
-      return validationError;
-    }
-
     try {
-      // Create user
+      final validator = RegistrationValidator();
+      validator.validate(request);
+
       final uid = await _authDataSource.createUserWithEmailAndPassword(
         request.email.trim(),
         request.password.trim(),
       );
-
-      // Determine groups
-      final checkedGroups = flattenedFields
-          .where((field) =>
-              field.type == 'checkbox_assign_group' && (field.checked ?? false))
-          .map((field) => field.group!)
-          .toList();
-
-      // Check if user provided a signature
-      final hasSignature = flattenedFields.any(
-          (field) => field.type == 'signature' && (field.checked ?? false));
-
-      Uint8List pdfBytes;
-      Uint8List? signatureBytes;
-      String? publicKeyPem;
-      if (hasSignature) {
-        // Generate signed PDF
-        final keyPair = generateRSAKeyPair();
-        pdfBytes = await PdfService.generateRegistrationPdf(
-          flattenedFields,
-          true,
-          uid,
-          request.orgName,
-          capitalize(request.firstName),
-          capitalize(request.lastName),
-          request.email.trim(),
-          publicKey: keyPair.publicKey,
-        );
-
-        // Sign the PDF
-        final pdfHash = hashBytes(pdfBytes);
-        signatureBytes = signHash(pdfHash, keyPair.privateKey);
-
-        // Verify signature
-        bool isVerified = false;
-        try {
-          isVerified =
-              verifySignature(pdfHash, signatureBytes, keyPair.publicKey);
-        } catch (e) {
-          // Handle explicit verification exceptions
-          return 'SignatureVerificationFailed: ${e.toString()}';
-        }
-
-        // Double-check verification result
-        if (!isVerified) {
-          // Clean up any created user account first
-          return 'SignatureVerificationFailed: Signature did not match document';
-        }
-        publicKeyPem = convertPublicKeyToPem(keyPair.publicKey);
-
-        // Save user with signature
-        await _userDataSource.saveUserDetails(
-          uid,
-          capitalize(request.firstName),
-          capitalize(request.lastName),
-          request.email.trim(),
-          checkedGroups,
-          true,
-          publicKeyPem: publicKeyPem,
-          signatureBytes: signatureBytes,
-        );
-
-        // Upload signed PDF
-        await _storageDataSource.uploadPdf(
-          pdfBytes,
-          '${uid}_registration_form_signed.pdf',
-          'registration_data/$uid',
-        );
-      } else {
-        // Generate unsigned PDF
-        pdfBytes = await PdfService.generateRegistrationPdf(
-          flattenedFields,
-          false,
-          uid,
-          request.orgName,
-          capitalize(request.firstName),
-          capitalize(request.lastName),
-          request.email.trim(),
-        );
-
-        // Save user without signature
-        await _userDataSource.saveUserDetails(
-          uid,
-          capitalize(request.firstName),
-          capitalize(request.lastName),
-          request.email.trim(),
-          checkedGroups,
-          false,
-        );
-
-        // Upload unsigned PDF
-        await _storageDataSource.uploadPdf(
-          pdfBytes,
-          '${uid}_registration_form_unsigned.pdf',
-          'registration_data/$uid',
-        );
-      }
-
-      // Process file uploads if any
-      final fileUploadFields = flattenedFields
-          .where((field) => field.type == 'file_upload' && field.file != null)
-          .toList();
-      if (fileUploadFields.isNotEmpty) {
-        List<Uint8List> fileBytes = [];
-        List<String> fileNames = [];
-
-        // Extract bytes and names from PlatformFile objects
-        for (var field in fileUploadFields) {
-          for (var platformFile in field.file!) {
-            if (platformFile.bytes != null) {
-              fileBytes.add(platformFile.bytes!);
-              fileNames.add(platformFile.name);
-            }
-          }
-        }
-
-        // Call the updated interface with both lists
-        if (fileBytes.isNotEmpty) {
-          await _storageDataSource.uploadFiles(
-            fileBytes,
-            fileNames,
-            'registration_data/$uid',
-          );
-        }
-      }
-
-      // Send verification email
+      await _processRegistration(uid, request);
       await _authDataSource.sendEmailVerification();
-
-      return null; // Success
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        // Check if the email is in our Firestore database
         final snapshot = await _firestore
             .collection(customerSpecificCollectionUsers)
             .where('email', isEqualTo: request.email.trim())
             .get();
-        if (snapshot.docs.isEmpty) {
-          return 'AccountAlreadyExistsWithOtherOrg';
+
+        if (snapshot.docs.isNotEmpty) {
+          throw DomainException(
+              code: ErrorCode.emailAlreadyInUse,
+              type: ExceptionType.auth,
+              originalError: e);
         } else {
-          return 'EmailAlreadyInUse';
+          throw DomainException(
+              code: ErrorCode.authAccountAlreadyExists,
+              type: ExceptionType.auth,
+              originalError: e);
         }
       }
-      return 'AuthError: ${e.code}';
+      throw ErrorHandler.handle(e);
     } catch (e) {
-      return 'UnexpectedError: $e';
+      ErrorHandler.handle(e);
     }
   }
 
   @override
-  Future<String?> signUpWithExistingAuthAccount(
+  Future<void> signUpWithExistingAuthAccount(
       RegistrationRequest request) async {
     try {
-      // Filter registration fields
-      final filteredFields = request.registrationFields.where((field) {
-        return !(field.type == 'checkbox_section' && field.checked != true);
-      }).toList();
+      // Validate request
+      final validator = RegistrationValidator();
+      validator.validate(request);
 
-      // Flatten and validate
-      final flattenedFields = flattenRegistrationFields(filteredFields);
-      final validationError = validateRegistrationFields(flattenedFields);
-      if (validationError.isNotEmpty) {
-        return validationError;
-      }
-
-      // Try to sign in with existing account
-      final signInResult = await _authDataSource.signUpWithExistingAuthAccount(
+      // Sign in with existing account
+      final uid = await _authDataSource.signUpWithExistingAuthAccount(
         request.email.trim(),
         request.password.trim(),
       );
 
-      // Check for auth errors
-      if (signInResult == null ||
-          signInResult.startsWith('AuthError') ||
-          signInResult.startsWith('UnexpectedError')) {
-        return signInResult ?? 'Failed to authenticate';
+      if (uid == null) {
+        throw const DomainException(
+            code: ErrorCode.unexpected, type: ExceptionType.auth);
       }
 
-      // Get groups from registration fields
+      // Process registration
+      await _processRegistration(uid, request);
+    } catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
+  Future<void> _processRegistration(
+    String uid,
+    RegistrationRequest request,
+  ) async {
+    try {
+      // Filter and flatten fields
+      final filteredFields = request.registrationFields
+          .where((field) =>
+              !(field.type == 'checkbox_section' && field.checked != true))
+          .toList();
+      final flattenedFields = flattenRegistrationFields(filteredFields);
+
+      // Get checked groups to be assigned to user
       final checkedGroups = flattenedFields
           .where((field) =>
               field.type == 'checkbox_assign_group' && (field.checked ?? false))
@@ -240,116 +116,180 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       final hasSignature = flattenedFields.any(
           (field) => field.type == 'signature' && (field.checked ?? false));
 
-      Uint8List pdfBytes;
       if (hasSignature) {
-        // Generate signed PDF
-        final keyPair = generateRSAKeyPair();
-        pdfBytes = await PdfService.generateRegistrationPdf(
+        await _processSignedRegistration(
+          uid,
+          request,
           flattenedFields,
-          true,
-          signInResult,
-          request.orgName,
-          capitalize(request.firstName),
-          capitalize(request.lastName),
-          request.email.trim(),
-          publicKey: keyPair.publicKey,
-        );
-
-        // Sign the PDF
-        final pdfHash = hashBytes(pdfBytes);
-        final signatureBytes = signHash(pdfHash, keyPair.privateKey);
-        final publicKeyPem = convertPublicKeyToPem(keyPair.publicKey);
-
-        // Save user with signature
-        await _userDataSource.saveUserDetails(
-          signInResult,
-          capitalize(request.firstName),
-          capitalize(request.lastName),
-          request.email.trim(),
           checkedGroups,
-          true,
-          publicKeyPem: publicKeyPem,
-          signatureBytes: signatureBytes,
-        );
-
-        // Upload signed PDF
-        await _storageDataSource.uploadPdf(
-          pdfBytes,
-          '${signInResult}_registration_form_signed.pdf',
-          'registration_data/$signInResult',
         );
       } else {
-        // Generate unsigned PDF
-        pdfBytes = await PdfService.generateRegistrationPdf(
+        await _processUnsignedRegistration(
+          uid,
+          request,
           flattenedFields,
-          false,
-          signInResult,
-          request.orgName,
-          capitalize(request.firstName),
-          capitalize(request.lastName),
-          request.email.trim(),
-        );
-
-        // Save user without signature
-        await _userDataSource.saveUserDetails(
-          signInResult,
-          capitalize(request.firstName),
-          capitalize(request.lastName),
-          request.email.trim(),
           checkedGroups,
-          false,
-        );
-
-        // Upload unsigned PDF
-        await _storageDataSource.uploadPdf(
-          pdfBytes,
-          '${signInResult}_registration_form_unsigned.pdf',
-          'registration_data/$signInResult',
         );
       }
 
-      // Process any file uploads
-      final fileUploadFields = flattenedFields
+      // Process file uploads if any
+      await _processFileUploads(uid, flattenedFields);
+    } catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
+  Future<void> _processSignedRegistration(
+    String uid,
+    RegistrationRequest request,
+    List<BaseRegistrationField> fields,
+    List<String> groups,
+  ) async {
+    try {
+      // Generate key pair and PDF
+      final keyPair = generateRSAKeyPair();
+      final pdfBytes = await PdfService.generateRegistrationPdf(
+        fields,
+        true,
+        uid,
+        request.orgName,
+        capitalize(request.firstName),
+        capitalize(request.lastName),
+        request.email.trim(),
+        publicKey: keyPair.publicKey,
+      );
+
+      // Sign the PDF
+      final pdfHash = hashBytes(pdfBytes);
+      final signatureBytes = signHash(pdfHash, keyPair.privateKey);
+
+      // Verify signature
+      final isVerified =
+          verifySignature(pdfHash, signatureBytes, keyPair.publicKey);
+      if (!isVerified) {
+        throw const DomainException(
+          code: ErrorCode.signatureValidationFailed,
+          type: ExceptionType.validation,
+        );
+      }
+
+      final publicKeyPem = convertPublicKeyToPem(keyPair.publicKey);
+
+      // Save user details
+      await _userDataSource.saveUserDetails(
+        uid,
+        capitalize(request.firstName),
+        capitalize(request.lastName),
+        request.email.trim(),
+        groups,
+        true,
+        publicKeyPem: publicKeyPem,
+        signatureBytes: signatureBytes,
+      );
+
+      // Upload signed PDF
+      await _storageDataSource.uploadPdf(
+        pdfBytes,
+        '${uid}_registration_form_signed.pdf',
+        'registration_data/$uid',
+      );
+    } catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
+  Future<void> _processUnsignedRegistration(
+    String uid,
+    RegistrationRequest request,
+    List<BaseRegistrationField> fields,
+    List<String> groups,
+  ) async {
+    try {
+      // Generate unsigned PDF
+      final pdfBytes = await PdfService.generateRegistrationPdf(
+        fields,
+        false,
+        uid,
+        request.orgName,
+        capitalize(request.firstName),
+        capitalize(request.lastName),
+        request.email.trim(),
+      );
+
+      // Save user details
+      await _userDataSource.saveUserDetails(
+        uid,
+        capitalize(request.firstName),
+        capitalize(request.lastName),
+        request.email.trim(),
+        groups,
+        false,
+      );
+
+      // Upload unsigned PDF
+      await _storageDataSource.uploadPdf(
+        pdfBytes,
+        '${uid}_registration_form_unsigned.pdf',
+        'registration_data/$uid',
+      );
+    } catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
+
+  Future<void> _processFileUploads(
+    String uid,
+    List<BaseRegistrationField> fields,
+  ) async {
+    try {
+      final fileUploadFields = fields
           .where((field) => field.type == 'file_upload' && field.file != null)
           .toList();
 
-      if (fileUploadFields.isNotEmpty) {
-        List<Uint8List> fileBytes = [];
-        List<String> fileNames = [];
+      if (fileUploadFields.isEmpty) return;
 
-        for (var field in fileUploadFields) {
-          for (var platformFile in field.file!) {
-            if (platformFile.bytes != null) {
-              fileBytes.add(platformFile.bytes!);
-              fileNames.add(platformFile.name);
-            }
+      List<Uint8List> fileBytes = [];
+      List<String> fileNames = [];
+
+      for (var field in fileUploadFields) {
+        for (var platformFile in field.file!) {
+          if (platformFile.bytes != null) {
+            fileBytes.add(platformFile.bytes!);
+            fileNames.add(platformFile.name);
           }
-        }
-
-        if (fileBytes.isNotEmpty) {
-          await _storageDataSource.uploadFiles(
-            fileBytes,
-            fileNames,
-            'registration_data/$signInResult',
-          );
         }
       }
 
-      return null; // Success
+      if (fileBytes.isNotEmpty) {
+        await _storageDataSource.uploadFiles(
+          fileBytes,
+          fileNames,
+          'registration_data/$uid',
+        );
+      }
     } catch (e) {
-      return 'UnexpectedError: $e';
+      throw ErrorHandler.handle(e);
     }
   }
 
   @override
   Future<void> sendEmailVerification() async {
-    await _authDataSource.sendEmailVerification();
+    try {
+      await _authDataSource.sendEmailVerification();
+    } catch (e) {
+      ErrorHandler.handle(e);
+    }
   }
 
   @override
   Future<bool> isEmailVerified() async {
-    await _authDataSource.reloadUser();
-    return _authDataSource.isEmailVerified;
+    try {
+      await _authDataSource.reloadUser();
+      return _authDataSource.isEmailVerified;
+    } catch (e) {
+      ErrorHandler.handle(e);
+      return false;
+    }
   }
 
   @override
@@ -379,7 +319,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
           return AppUser.fromMap(doc.data()!, doc.id);
         }
       } catch (e) {
-        print('Error fetching user data: $e');
+        throw ErrorHandler.handle(e);
       }
 
       return null;
@@ -388,43 +328,74 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> signOut() async {
-    await _authDataSource.signOut();
+    try {
+      await _authDataSource.signOut();
+    } catch (e) {
+      ErrorHandler.handle(e);
+    }
   }
 
   @override
   Future<void> reloadUser() async {
-    await _authDataSource.reloadUser();
+    try {
+      await _authDataSource.reloadUser();
+    } catch (e) {
+      ErrorHandler.handle(e);
+    }
   }
 
   @override
-  Future<String?> signInWithEmailAndPassword(
-      String email, String password) async {
-    return await _authDataSource.signInWithEmailAndPassword(email, password);
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
+    try {
+      await _authDataSource.signInWithEmailAndPassword(email, password);
+    } catch (e) {
+      ErrorHandler.handle(e);
+    }
   }
 
   @override
-  Future<String?> resetPassword(String email) async {
-    return await _authDataSource.resetPassword(email);
+  Future<void> resetPassword(String email) async {
+    try {
+      await _authDataSource.resetPassword(email);
+    } catch (e) {
+      ErrorHandler.handle(e);
+    }
   }
 
   @override
-  Future<String?> changeEmail(String email) async {
-    return await _authDataSource.changeEmail(email);
+  Future<void> changeEmail(String email) async {
+    try {
+      await _authDataSource.changeEmail(email);
+    } catch (e) {
+      ErrorHandler.handle(e);
+    }
   }
 
   @override
-  Future<String?> reauthenticate(String password) async {
-    return await _authDataSource.reauthenticate(password);
+  Future<void> reauthenticate(String password) async {
+    try {
+      await _authDataSource.reauthenticate(password);
+    } catch (e) {
+      ErrorHandler.handle(e);
+    }
   }
 
   @override
-  Future<String?> changePassword(String newPassword) async {
-    return await _authDataSource.changePassword(newPassword);
+  Future<void> changePassword(String newPassword) async {
+    try {
+      await _authDataSource.changePassword(newPassword);
+    } catch (e) {
+      ErrorHandler.handle(e);
+    }
   }
 
   @override
   Future<void> deleteAccount() async {
-    await _authDataSource.deleteAccount();
+    try {
+      await _authDataSource.deleteAccount();
+    } catch (e) {
+      ErrorHandler.handle(e);
+    }
   }
 }
 

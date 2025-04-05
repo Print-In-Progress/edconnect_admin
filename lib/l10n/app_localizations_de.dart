@@ -149,6 +149,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get validationSignatureMissing => 'Signature is required';
 
   @override
+  String get validationSignatureFailed => 'Signature validation failed';
+
+  @override
   String get validationTextTooShort => 'Text is too short';
 
   @override
@@ -210,6 +213,48 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get errorEmailAlreadyInUse => 'Email already in use';
+
+  @override
+  String get errorGroupNotFound => 'Group not found';
+
+  @override
+  String get errorGroupUpdateFailed => 'Group update failed';
+
+  @override
+  String get errorGroupDeleteFailed => 'Group deletion failed';
+
+  @override
+  String get errorGroupCreateFailed => 'Group creation failed';
+
+  @override
+  String get errorInvalidGroupOperation => 'Invalid group operation';
+
+  @override
+  String get errorUserGroupUpdateFailed => 'User group update failed';
+
+  @override
+  String get errorFileUploadFailed => 'File upload failed';
+
+  @override
+  String get errorFileDeleteFailed => 'File deletion failed';
+
+  @override
+  String get errorAuthAccountAlreadyExists => 'Auth account already exists';
+
+  @override
+  String get errorFileNotFound => 'File not found';
+
+  @override
+  String get errorInvalidFileType => 'Invalid file type';
+
+  @override
+  String get errorFileTooLarge => 'File too large';
+
+  @override
+  String get errorFileListFailed => 'File list retrieval failed';
+
+  @override
+  String get errorStorageOperationFailed => 'Storage operation failed';
 
   @override
   String get successDefault => 'Success';

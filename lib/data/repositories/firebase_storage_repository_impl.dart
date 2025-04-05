@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:edconnect_admin/core/errors/domain_exception.dart';
 import 'package:edconnect_admin/core/interfaces/storage_repository.dart';
 import 'package:edconnect_admin/data/datasource/storage_data_source.dart';
 import 'package:edconnect_admin/domain/entities/storage_file.dart';
@@ -13,8 +14,16 @@ class FirebaseStorageRepositoryImpl implements StorageRepository {
     Uint8List pdfBytes,
     String fileName,
     String path,
-  ) {
-    return _dataSource.uploadPdf(pdfBytes, fileName, path);
+  ) async {
+    try {
+      await _dataSource.uploadPdf(pdfBytes, fileName, path);
+    } catch (e) {
+      throw DomainException(
+        code: ErrorCode.fileUploadFailed,
+        type: ExceptionType.storage,
+        originalError: e,
+      );
+    }
   }
 
   @override
@@ -22,9 +31,16 @@ class FirebaseStorageRepositoryImpl implements StorageRepository {
     List<Uint8List> files,
     List<String> fileNames,
     String path,
-  ) {
-    // Simply delegate to the data source
-    return _dataSource.uploadFiles(files, fileNames, path);
+  ) async {
+    try {
+      await _dataSource.uploadFiles(files, fileNames, path);
+    } catch (e) {
+      throw DomainException(
+        code: ErrorCode.fileUploadFailed,
+        type: ExceptionType.storage,
+        originalError: e,
+      );
+    }
   }
 
   @override
@@ -34,27 +50,67 @@ class FirebaseStorageRepositoryImpl implements StorageRepository {
     String path,
     String contentType,
   ) async {
-    return await _dataSource.uploadFile(fileBytes, fileName, path, contentType);
+    try {
+      return await _dataSource.uploadFile(
+          fileBytes, fileName, path, contentType);
+    } catch (e) {
+      throw DomainException(
+        code: ErrorCode.fileUploadFailed,
+        type: ExceptionType.storage,
+        originalError: e,
+      );
+    }
   }
 
   @override
   Future<List<StorageFile>> listFiles(String path) async {
-    return await _dataSource.listFiles(path);
+    try {
+      return await _dataSource.listFiles(path);
+    } catch (e) {
+      throw DomainException(
+        code: ErrorCode.fileListFailed,
+        type: ExceptionType.storage,
+        originalError: e,
+      );
+    }
   }
 
   @override
   Future<String> getFileUrl(String path) async {
-    return await _dataSource.getFileUrl(path);
+    try {
+      return await _dataSource.getFileUrl(path);
+    } catch (e) {
+      throw DomainException(
+        code: ErrorCode.fileNotFound,
+        type: ExceptionType.storage,
+        originalError: e,
+      );
+    }
   }
 
   @override
-  Future<void> deleteFile(String path) {
-    return _dataSource.deleteFile(path);
+  Future<void> deleteFile(String path) async {
+    try {
+      await _dataSource.deleteFile(path);
+    } catch (e) {
+      throw DomainException(
+        code: ErrorCode.fileDeleteFailed,
+        type: ExceptionType.storage,
+        originalError: e,
+      );
+    }
   }
 
   @override
-  Future<void> deleteAllUserFiles(String uid) {
-    // Simply delegate to the data source
-    return _dataSource.deleteAllUserFiles(uid);
+  Future<void> deleteAllUserFiles(String uid) async {
+    try {
+      await _dataSource.deleteAllUserFiles(uid);
+    } catch (e) {
+      throw DomainException(
+        code: ErrorCode.fileDeleteFailed,
+        type: ExceptionType.storage,
+        originalError: e,
+      );
+    }
   }
 }

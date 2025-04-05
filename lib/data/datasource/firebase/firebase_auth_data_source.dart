@@ -16,7 +16,9 @@ class FirebaseAuthDataSource implements AuthDataSource {
     );
 
     if (userCredential.user == null) {
-      throw Exception('Failed to create user account');
+      FirebaseAuthException(
+        code: 'null-user',
+      );
     }
 
     return userCredential.user!.uid;
@@ -25,23 +27,18 @@ class FirebaseAuthDataSource implements AuthDataSource {
   @override
   Future<String?> signUpWithExistingAuthAccount(
       String email, String password) async {
-    try {
-      // Attempt to sign in with existing account
-      final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+    final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    if (userCredential.user == null) {
+      throw FirebaseAuthException(
+        code: 'null-user',
       );
-
-      if (userCredential.user == null) {
-        return 'Failed to authenticate user';
-      }
-
-      return userCredential.user!.uid;
-    } on FirebaseAuthException catch (e) {
-      return 'AuthError: ${e.code}';
-    } catch (e) {
-      return 'UnexpectedError: $e';
     }
+
+    return userCredential.user!.uid;
   }
 
   @override
@@ -70,81 +67,57 @@ class FirebaseAuthDataSource implements AuthDataSource {
   }
 
   @override
-  Future<String?> signInWithEmailAndPassword(
-      String email, String password) async {
-    try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
+    await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  @override
+  Future<void> resetPassword(String email) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
+  @override
+  Future<void> changeEmail(String email) async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'null-user',
       );
-    } on Exception catch (e) {
-      return 'AuthError: $e';
-    } catch (e) {
-      return 'UnexpectedError: $e';
     }
-    return null;
+    await user.verifyBeforeUpdateEmail(email);
   }
 
   @override
-  Future<String?> resetPassword(String email) async {
-    try {
-      await _firebaseAuth.sendPasswordResetEmail(email: email);
-    } on Exception catch (e) {
-      return 'AuthError: $e';
-    } catch (e) {
-      return 'UnexpectedError: $e';
+  Future<void> reauthenticate(String password) async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null || user.email == null) {
+      throw FirebaseAuthException(
+          code: 'null-user', message: 'No authenticated user found');
     }
-    return null;
+
+    final credential = EmailAuthProvider.credential(
+      email: user.email!,
+      password: password,
+    );
+
+    await user.reauthenticateWithCredential(credential);
   }
 
   @override
-  Future<String?> changeEmail(String email) async {
-    try {
-      await _firebaseAuth.currentUser!.verifyBeforeUpdateEmail(email);
-    } on Exception catch (e) {
-      return 'AuthError: $e';
-    } catch (e) {
-      return 'UnexpectedError: $e';
+  Future<void> changePassword(String newPassword) async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+          code: 'null-user', message: 'No authenticated user found');
     }
-    return null;
-  }
-
-  @override
-  Future<String?> reauthenticate(String password) async {
-    try {
-      final user = _firebaseAuth.currentUser;
-      if (user == null || user.email == null) {
-        return 'No authenticated user found';
-      }
-
-      final credential = EmailAuthProvider.credential(
-        email: user.email!,
-        password: password,
-      );
-
-      await user.reauthenticateWithCredential(credential);
-      return null;
-    } catch (e) {
-      return 'AuthError: $e';
-    }
-  }
-
-  @override
-  Future<String?> changePassword(String newPassword) async {
-    try {
-      await _firebaseAuth.currentUser?.updatePassword(newPassword);
-      return null;
-    } catch (e) {
-      return 'AuthError: $e';
-    }
+    await user.updatePassword(newPassword);
   }
 
   @override
   Future<void> deleteAccount() async {
-    try {
-      await _firebaseAuth.currentUser?.delete();
-    } catch (e) {
-      throw Exception('Failed to delete account: $e');
-    }
+    await _firebaseAuth.currentUser?.delete();
   }
 }

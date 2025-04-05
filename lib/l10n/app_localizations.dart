@@ -371,6 +371,12 @@ abstract class AppLocalizations {
   /// **'Signature is required'**
   String get validationSignatureMissing;
 
+  /// Validation section - Signature validation failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Signature validation failed'**
+  String get validationSignatureFailed;
+
   /// Validation section - Text too short message
   ///
   /// In en, this message translates to:
@@ -496,6 +502,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Email already in use'**
   String get errorEmailAlreadyInUse;
+
+  /// Error section - Group not found message
+  ///
+  /// In en, this message translates to:
+  /// **'Group not found'**
+  String get errorGroupNotFound;
+
+  /// Error section - Group update failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Group update failed'**
+  String get errorGroupUpdateFailed;
+
+  /// Error section - Group deletion failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Group deletion failed'**
+  String get errorGroupDeleteFailed;
+
+  /// Error section - Group creation failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Group creation failed'**
+  String get errorGroupCreateFailed;
+
+  /// Error section - Invalid group operation message
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid group operation'**
+  String get errorInvalidGroupOperation;
+
+  /// Error section - User group update failed message
+  ///
+  /// In en, this message translates to:
+  /// **'User group update failed'**
+  String get errorUserGroupUpdateFailed;
+
+  /// Error section - File upload failed message
+  ///
+  /// In en, this message translates to:
+  /// **'File upload failed'**
+  String get errorFileUploadFailed;
+
+  /// Error section - File deletion failed message
+  ///
+  /// In en, this message translates to:
+  /// **'File deletion failed'**
+  String get errorFileDeleteFailed;
+
+  /// Error section - Auth Account Already exists message
+  ///
+  /// In en, this message translates to:
+  /// **'Auth account already exists'**
+  String get errorAuthAccountAlreadyExists;
+
+  /// Error section - File not found message
+  ///
+  /// In en, this message translates to:
+  /// **'File not found'**
+  String get errorFileNotFound;
+
+  /// Error section - Invalid file type message
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid file type'**
+  String get errorInvalidFileType;
+
+  /// Error section - File too large message
+  ///
+  /// In en, this message translates to:
+  /// **'File too large'**
+  String get errorFileTooLarge;
+
+  /// Error section - File list retrieval failed message
+  ///
+  /// In en, this message translates to:
+  /// **'File list retrieval failed'**
+  String get errorFileListFailed;
+
+  /// Error section - Storage operation failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Storage operation failed'**
+  String get errorStorageOperationFailed;
 
   /// Global section - Default success message
   ///

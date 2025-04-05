@@ -166,6 +166,10 @@
     "@validationRequired": {
         "description": "Validation section - Required field message"
     },
+    "validationSignatureFailed": "Signature validation failed",
+    "@validationSignatureFailed": {
+        "description": "Validation section - Signature validation failed message"
+    },
     "validationRequiredSnackbar": "Please fill in all required fields",
     "@validationRequiredSnackbar": {
         "description": "Validation section - Snackbar message for required fields"
