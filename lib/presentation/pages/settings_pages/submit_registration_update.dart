@@ -1,6 +1,7 @@
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/forms.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
+import 'package:edconnect_admin/presentation/widgets/common/loading_progress.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:edconnect_admin/presentation/widgets/registration_card_builder.dart';
 import 'package:flutter/material.dart';
@@ -226,7 +227,19 @@ class _SubmitRegistrationUpdateState
                                           .globalSubmit),
                                     ),
                                   if (updateState.isLoading)
-                                    const CircularProgressIndicator(),
+                                    LoadingProgress(
+                                      message:
+                                          'Updating registration information...',
+                                      steps: const [
+                                        'Validating information',
+                                        'Processing registration form',
+                                        'Finalizing update'
+                                      ],
+                                      currentStep: ref
+                                          .watch(registrationUpdateProvider
+                                              .notifier)
+                                          .currentStep,
+                                    )
                                 ],
                               );
                             },

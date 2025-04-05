@@ -146,6 +146,8 @@ class RegistrationUpdateNotifier extends StateNotifier<AsyncValue<void>> {
   final UserProfileDataUseCase _useCase;
   final Ref _ref;
 
+  int _currentStep = 0;
+  int get currentStep => _currentStep;
   RegistrationUpdateNotifier(this._useCase, this._ref)
       : super(const AsyncValue.data(null));
 
@@ -155,7 +157,7 @@ class RegistrationUpdateNotifier extends StateNotifier<AsyncValue<void>> {
     String lastName,
   ) async {
     state = const AsyncValue.loading();
-
+    _currentStep = 0;
     try {
       final user = _ref.read(currentUserProvider).value;
       if (user == null) {
@@ -164,12 +166,11 @@ class RegistrationUpdateNotifier extends StateNotifier<AsyncValue<void>> {
           type: ExceptionType.auth,
         );
       }
-
-      await _useCase.changeName(user.id, firstName, lastName);
-
+      _currentStep = 1;
       final registrationFields = fields.whereType<RegistrationField>().toList();
+      _currentStep = 2;
       await _useCase.submitRegistrationUpdate(user, registrationFields);
-
+      _currentStep = 3;
       state = const AsyncValue.data(null);
     } on DomainException catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
