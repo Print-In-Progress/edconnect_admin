@@ -1,12 +1,15 @@
+import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/models/app_theme.dart';
 import 'package:edconnect_admin/presentation/providers/navigation_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
-import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
+import 'package:edconnect_admin/presentation/widgets/common/buttons/toggle_theme_button.dart';
+import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
+import 'package:edconnect_admin/presentation/widgets/common/navigation/navigation_sidebar.dart';
+import 'package:edconnect_admin/presentation/widgets/common/popups/account_popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:edconnect_admin/l10n/app_localizations.dart';
 import '../../../core/constants/database_constants.dart';
-import '../../../domain/services/url_service.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -16,47 +19,19 @@ class HomePage extends ConsumerWidget {
     final theme = ref.watch(appThemeProvider);
     final navState = ref.watch(navigationProvider);
     final user = ref.watch(userWithResolvedGroupsProvider);
+    final isExpanded = ref.watch(sidebarExpandedProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Row(
           children: <Widget>[
-            SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height,
-                ),
-                child: IntrinsicHeight(
-                  child: NavigationRail(
-                    selectedIndex: navState.availableItems
-                        .indexWhere((item) => item.id == navState.selectedId),
-                    onDestinationSelected: (index) {
-                      ref
-                          .read(navigationProvider.notifier)
-                          .selectItemById(navState.availableItems[index].id);
-                    },
-                    trailing: Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: _buildTrailing(context, theme.isDarkMode),
-                    ),
-                    labelType: NavigationRailLabelType.all,
-                    destinations: navState.availableItems.map((item) {
-                      final localizedTitle =
-                          NavRailLocalizationHelper.getLocalizedNavigationTitle(
-                              item.id, context);
-
-                      return NavigationRailDestination(
-                        icon: Icon(item.icon),
-                        selectedIcon: Icon(item.selectedIcon),
-                        label: Text(localizedTitle),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
+            // Collapsible sidebar
+            CollapsibleSidebar(
+              header: _buildSidebarHeader(context, theme, isExpanded),
+              trailing:
+                  _buildSidebarTrailing(context, theme.isDarkMode, isExpanded),
             ),
-            // Navigation rail - always show this
 
             // Main content area
             Expanded(
@@ -69,31 +44,25 @@ class HomePage extends ConsumerWidget {
                         headerSliverBuilder:
                             (context, bool innerBoxIsScrolled) {
                           return [
-                            SliverAppBar(
-                              automaticallyImplyLeading: true,
+                            BaseAppBar(
+                              user: user,
                               floating: true,
                               snap: true,
                               forceMaterialTransparency: true,
+                              showDivider: false,
+                              foregroundColor: Foundations.colors.surface,
                               actions: [
-                                const PIPChangeThemeButton(),
-                                // User menu (show loading placeholder if needed)
-                                AccountPopUpMenuButton(
-                                  isDarkMode: theme.isDarkMode,
-                                  user: user,
-                                )
+                                const ToggleThemeButton(),
+                                SizedBox(width: Foundations.spacing.xs),
+                                AccountPopupMenu(user: user),
+                                SizedBox(width: Foundations.spacing.sm),
                               ],
-                              actionsIconTheme:
-                                  const IconThemeData(color: Colors.white),
-                              iconTheme:
-                                  const IconThemeData(color: Colors.white),
-                              title: const Text(
-                                '$customerName Admin Panel',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            )
+                            ).asSliverAppBar(
+                              context,
+                              ref,
+                            ),
                           ];
                         },
-                        // Show skeleton loader when user data or permissions are loading
                         body: navState.currentScreen,
                       ),
               ),
@@ -104,7 +73,89 @@ class HomePage extends ConsumerWidget {
     );
   }
 
+  // Header for the sidebar
+  Widget _buildSidebarHeader(
+      BuildContext context, AppTheme theme, bool isExpanded) {
+    if (isExpanded) {
+      return Row(
+        children: [
+          Image.asset(
+            theme.logoUrl.isEmpty
+                ? theme.isDarkMode
+                    ? 'assets/edconnect_logo.png' // Fallback to EdConnect logo
+                    : 'assets/edconnect_logo.png'
+                : theme.logoUrl, // Customer logo when available
+            height: 40,
+          ),
+          SizedBox(width: Foundations.spacing.sm),
+          Flexible(
+            child: Text(
+              customerName,
+              style: TextStyle(
+                fontSize: Foundations.typography.lg,
+                fontWeight: Foundations.typography.bold,
+                color: theme.isDarkMode
+                    ? Foundations.darkColors.textPrimary
+                    : Foundations.colors.textPrimary,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      );
+    } else {
+      // Just the logo when collapsed
+      return Image.asset(
+        theme.logoUrl.isEmpty
+            ? theme.isDarkMode
+                ? 'assets/edconnect_logo.png'
+                : 'assets/edconnect_logo.png'
+            : theme.logoUrl,
+        height: 32,
+      );
+    }
+  }
+
+  Widget _buildSidebarTrailing(
+      BuildContext context, bool isDarkMode, bool isExpanded) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: EdgeInsets.all(
+              isExpanded ? Foundations.spacing.sm : Foundations.spacing.xs),
+          child: ImageIcon(
+            isDarkMode
+                ? const AssetImage(
+                    'assets/pip_branding_dark_mode_verticalxxxhdpi.png')
+                : const AssetImage(
+                    'assets/pip_branding_light_mode_verticalxxxhdpi.png'),
+            size: isExpanded ? 100 : 48, // Smaller icon when collapsed
+            color: isDarkMode
+                ? const Color.fromRGBO(246, 246, 246, 1)
+                : const Color.fromRGBO(76, 76, 76, 1),
+          ),
+        ),
+        if (isExpanded)
+          Padding(
+            padding: EdgeInsets.only(top: Foundations.spacing.xs),
+            child: Text(
+              "Powered by EdConnect",
+              style: TextStyle(
+                fontSize: Foundations.typography.xs,
+                color: isDarkMode
+                    ? Foundations.darkColors.textMuted
+                    : Foundations.colors.textMuted,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  // Skeleton loader when user data is loading
   Widget _buildSkeletonLoader() {
+    // Your existing skeleton loader code
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -116,7 +167,7 @@ class HomePage extends ConsumerWidget {
             height: 40,
             margin: const EdgeInsets.only(bottom: 24),
             decoration: BoxDecoration(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -140,7 +191,7 @@ class HomePage extends ConsumerWidget {
                                     height: 100,
                                     margin: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: Colors.grey.withOpacity(0.2),
+                                      color: Colors.grey.withValues(alpha: 0.2),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
@@ -161,7 +212,7 @@ class HomePage extends ConsumerWidget {
                           itemCount: 6,
                           itemBuilder: (_, __) => Container(
                             decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(0.2),
+                              color: Colors.grey.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
@@ -176,7 +227,7 @@ class HomePage extends ConsumerWidget {
                   width: 250,
                   margin: const EdgeInsets.only(left: 16),
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.grey.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
@@ -185,34 +236,6 @@ class HomePage extends ConsumerWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTrailing(BuildContext context, bool isDarkMode) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TextButton(
-            onPressed: () =>
-                UrlService.launchWebUrl('https://printinprogress.net/legal'),
-            child: Text(AppLocalizations.of(context)!.globalLegalNotice,
-                style: TextStyle(
-                    fontSize: 12,
-                    color: isDarkMode
-                        ? const Color.fromRGBO(202, 196, 208, 1)
-                        : Colors.black))),
-        ImageIcon(
-          isDarkMode
-              ? const AssetImage(
-                  'assets/pip_branding_dark_mode_verticalxxxhdpi.png')
-              : const AssetImage(
-                  'assets/pip_branding_light_mode_verticalxxxhdpi.png'),
-          size: 100,
-          color: isDarkMode
-              ? const Color.fromRGBO(246, 246, 246, 1)
-              : const Color.fromRGBO(76, 76, 76, 1),
-        ),
-      ],
     );
   }
 }

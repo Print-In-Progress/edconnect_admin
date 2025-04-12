@@ -16,6 +16,18 @@
     "@globalSave": {
         "description": "Global section - Save button text"
     },
+    "globalEdit": "Edit",
+    "@globalEdit": {
+        "description": "Global section - Edit button text"
+    },
+    "globalAdd": "Add",
+    "@globalAdd": {
+        "description": "Global section - Add button text"
+    },
+    "globalConfirm": "Confirm",
+    "@globalConfirm": {
+        "description": "Global section - Confirm button text"
+    },
     "globalDelete": "Delete",
     "@globalDelete": {
         "description": "Global section - Delete button text"
@@ -27,6 +39,14 @@
     "globalReauthenticate": "Re-authentification required",
     "@globalReauthenticate": {
         "description": "Global section - Re-authentication required message"
+    },
+    "globalSearch": "Search",
+    "@globalSearch": {
+        "description": "Global section - Search button text"
+    },
+    "globalNoResults": "No results found",
+    "@globalNoResults": {
+        "description": "Global section - No results found message"
     },
     "globalLogout": "Logout",
     "@globalLogout": {
@@ -70,6 +90,10 @@
     "@globalToS": {
         "description": "Global section - Terms of Service text"
     },
+    "globalBack": "Back",
+    "@globalBack": {
+        "description": "Global section - Back button text"
+    },
     "globalBackToLogin": "Back to Login",
     "@globalBackToLogin": {
         "description": "Global section - Back to login button text"
@@ -81,6 +105,18 @@
     "authLoginTitle": "Login",
     "@authLoginTitle": {
         "description": "Auth section - Login page title"
+    },
+    "authSignDocument": "Sign Document",
+    "@authSignDocument": {
+        "description": "Auth section - Sign document button text"
+    },
+    "authSignDocumentBody": "I hereby confirm that by checking this box and submitting this form, I give my consent to digitally sign this document. I understand that my signature will be generated securely using cryptographic techniques to ensure the authenticity and integrity of the document. This signature is legally binding and I certify that the information provided is correct to the best of my knowledge and belief.",
+    "@authSignDocumentBody": {
+        "description": "Auth section - Sign document message body"
+    },
+    "authDocumentSigned": "Document Signed",
+    "@authDocumentSigned": {
+        "description": "Auth section - Document signed message"
     },
     "authPasswordLabel": "Password",
     "@authPasswordLabel": {
@@ -129,6 +165,10 @@
     "navDashboard": "Dashboard",
     "@navDashboard": {
         "description": "Navigation section - Dashboard menu item"
+    },
+    "navHideSidebar": "Hide Sidebar",
+    "@navHideSidebar": {
+        "description": "Navigation section - Hide sidebar button text"
     },
     "navArticles": "Articles",
     "@navArticles": {
@@ -225,6 +265,10 @@
     "errorAccessDenied": "403 - Access Denied",
     "@errorAccessDenied": {
         "description": "Error section - Access denied message"
+    },
+    "errorAcceptToSAndPrivacyPolicy": "You must accept the Terms & Conditions and Privacy Policy",
+    "@errorAcceptToSAndPrivacyPolicy": {
+        "description": "Error section - Terms acceptance message"
     },
     "errorAccessDeniedMessage": "You do not have permission to access this page.",
     "@errorAccessDeniedMessage": {
@@ -373,6 +417,10 @@
     "successSettingsUpdated": "Settings updated successfully",
     "@successSettingsUpdated": {
         "description": "Success section - Settings update confirmation"
+    },
+    "settingsLabel": "Settings",
+    "@settingsLabel": {
+        "description": "Settings section - Settings label"
     },
     "settingsManageAccount": "Manage Account",
     "@settingsManageAccount": {

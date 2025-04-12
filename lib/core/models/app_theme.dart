@@ -15,6 +15,18 @@ class AppTheme {
     this.customerName = '',
   });
 
+  Color get accentColor => primaryColor;
+
+  Color get accentLight => HSLColor.fromColor(primaryColor)
+      .withLightness(
+          (HSLColor.fromColor(primaryColor).lightness + 0.15).clamp(0.0, 1.0))
+      .toColor();
+
+  Color get accentDark => HSLColor.fromColor(primaryColor)
+      .withLightness(
+          (HSLColor.fromColor(primaryColor).lightness - 0.15).clamp(0.0, 1.0))
+      .toColor();
+
   AppTheme copyWith({
     bool? isDarkMode,
     Color? primaryColor,

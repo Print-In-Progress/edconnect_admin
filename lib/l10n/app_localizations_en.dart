@@ -21,6 +21,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get globalSave => 'Save';
 
   @override
+  String get globalEdit => 'Edit';
+
+  @override
+  String get globalAdd => 'Add';
+
+  @override
+  String get globalConfirm => 'Confirm';
+
+  @override
   String get globalDelete => 'Delete';
 
   @override
@@ -28,6 +37,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get globalReauthenticate => 'Re-authentification required';
+
+  @override
+  String get globalSearch => 'Search';
+
+  @override
+  String get globalNoResults => 'No results found';
 
   @override
   String get globalLogout => 'Logout';
@@ -59,6 +74,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get globalToS => 'Terms of Service';
 
   @override
+  String get globalBack => 'Back';
+
+  @override
   String get globalBackToLogin => 'Back to Login';
 
   @override
@@ -66,6 +84,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authLoginTitle => 'Login';
+
+  @override
+  String get authSignDocument => 'Sign Document';
+
+  @override
+  String get authSignDocumentBody => 'I hereby confirm that by checking this box and submitting this form, I give my consent to digitally sign this document. I understand that my signature will be generated securely using cryptographic techniques to ensure the authenticity and integrity of the document. This signature is legally binding and I certify that the information provided is correct to the best of my knowledge and belief.';
+
+  @override
+  String get authDocumentSigned => 'Document Signed';
 
   @override
   String get authPasswordLabel => 'Password';
@@ -102,6 +129,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navDashboard => 'Dashboard';
+
+  @override
+  String get navHideSidebar => 'Hide Sidebar';
 
   @override
   String get navArticles => 'Articles';
@@ -174,6 +204,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorAccessDenied => '403 - Access Denied';
+
+  @override
+  String get errorAcceptToSAndPrivacyPolicy => 'You must accept the Terms & Conditions and Privacy Policy';
 
   @override
   String get errorAccessDeniedMessage => 'You do not have permission to access this page.';
@@ -285,6 +318,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get successSettingsUpdated => 'Settings updated successfully';
+
+  @override
+  String get settingsLabel => 'Settings';
 
   @override
   String get settingsManageAccount => 'Manage Account';

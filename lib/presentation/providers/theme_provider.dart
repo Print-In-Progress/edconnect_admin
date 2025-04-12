@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:edconnect_admin/core/design_system/app_theme.dart';
 import 'package:edconnect_admin/data/datasource/firebase/firebase_theme_data_source.dart';
 import 'package:edconnect_admin/data/datasource/local/shared_prefs_theme_data_source.dart';
 import 'package:edconnect_admin/data/repositories/theme_repository.dart';
@@ -142,57 +143,7 @@ final appThemeProvider =
 // Theme data provider for Material app
 final themeDataProvider = Provider<ThemeData>((ref) {
   final appTheme = ref.watch(appThemeProvider);
-
-  if (appTheme.isDarkMode) {
-    return ThemeData(
-      useMaterial3: true,
-      fontFamily: 'Inter',
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-            foregroundColor: Colors.white, iconColor: Colors.white),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white,
-        ),
-      ),
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.white,
-        ),
-      ),
-      colorScheme: ColorScheme.dark(
-        primary: appTheme.primaryColor,
-        onPrimary: Colors.white,
-        secondary: appTheme.secondaryColor,
-        onSecondary: Colors.white,
-        background: Colors.grey.shade900,
-        surface: Colors.grey.shade900,
-        shadow: Colors.grey.shade700,
-      ),
-      tabBarTheme: const TabBarTheme(
-        dividerColor: Colors.transparent,
-        indicatorColor: Color.fromRGBO(202, 196, 208, 1),
-        labelColor: Color.fromRGBO(202, 196, 208, 1),
-      ),
-      navigationRailTheme: const NavigationRailThemeData(
-          selectedIconTheme: IconThemeData(color: Colors.white),
-          unselectedIconTheme: IconThemeData(color: Colors.white),
-          unselectedLabelTextStyle: TextStyle(color: Colors.white),
-          selectedLabelTextStyle: TextStyle(color: Colors.white)),
-      primaryColor: appTheme.primaryColor,
-    );
-  } else {
-    return ThemeData(
-      useMaterial3: true,
-      fontFamily: 'Inter',
-      colorScheme: ColorScheme.light(
-        primary: appTheme.primaryColor,
-        onPrimary: Colors.white,
-        secondary: appTheme.secondaryColor,
-        onSecondary: Colors.white,
-      ),
-      primaryColor: appTheme.primaryColor,
-    );
-  }
+  return appTheme.isDarkMode
+      ? AppThemeData.darkTheme(appTheme)
+      : AppThemeData.lightTheme(appTheme);
 });

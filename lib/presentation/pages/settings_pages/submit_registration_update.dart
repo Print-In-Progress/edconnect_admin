@@ -206,8 +206,8 @@ class _SubmitRegistrationUpdateState
                                         const NeverScrollableScrollPhysics(),
                                     itemCount: fields.length,
                                     itemBuilder: (context, index) =>
-                                        buildRegistrationCard(
-                                            context, fields, index),
+                                        buildRegistrationCard(context, fields,
+                                            index, theme.isDarkMode),
                                   ),
                                   if (!updateState.isLoading)
                                     FilledButton(

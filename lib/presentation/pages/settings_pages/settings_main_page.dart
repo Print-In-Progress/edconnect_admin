@@ -6,6 +6,7 @@ import 'package:edconnect_admin/presentation/pages/settings_pages/settings_chang
 import 'package:edconnect_admin/presentation/pages/settings_pages/settings_update_password_page.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
+import 'package:edconnect_admin/presentation/widgets/common/switch.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -324,25 +325,18 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                           style: const TextStyle(color: Colors.blue),
                         ),
                       ),
-                      SwitchListTile(
-                        title: Text(
-                          AppLocalizations.of(context)!.settingsDarkMode,
-                          style: TextStyle(
-                            color: theme.isDarkMode
-                                ? Colors.white
-                                : theme.primaryColor,
-                          ),
-                        ),
-                        value: theme.isDarkMode,
-                        onChanged: (value) {
-                          ref
-                              .read(appThemeProvider.notifier)
-                              .setDarkMode(!theme.isDarkMode);
-                        },
-                        secondary: theme.isDarkMode
-                            ? const Icon(Icons.light_mode_outlined)
-                            : const Icon(Icons.dark_mode_outlined),
-                      )
+                      BaseSwitch(
+                          label: AppLocalizations.of(context)!.settingsDarkMode,
+                          value: theme.isDarkMode,
+                          showHoverEffect: true,
+                          trailing: theme.isDarkMode
+                              ? const Icon(Icons.light_mode_outlined)
+                              : const Icon(Icons.dark_mode_outlined),
+                          onChanged: (value) {
+                            ref
+                                .read(appThemeProvider.notifier)
+                                .setDarkMode(!theme.isDarkMode);
+                          }),
                     ]),
                   ),
                 ),

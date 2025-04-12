@@ -14,6 +14,7 @@ abstract class BaseRegistrationField {
   int? maxFileUploads;
   List<PlatformFile>? file;
   DateTime? selectedDate;
+  bool isRequired;
 
   List<RegistrationSubField>? childWidgets;
   TextEditingController? response;
@@ -34,80 +35,50 @@ abstract class BaseRegistrationField {
     this.file,
     this.maxFileUploads,
     this.checkboxLabel,
+    this.isRequired = false,
     required this.pos,
   });
 }
 
 class RegistrationField extends BaseRegistrationField {
   RegistrationField({
-    required String id,
-    required String type,
-    List? options,
-    required String title,
-    List<RegistrationSubField>? childWidgets,
-    String? text,
-    String? selectedOption,
-    String? group,
-    bool? checked,
-    List<PlatformFile>? file,
-    DateTime? selectedDate,
-    TextEditingController? response,
-    required int pos,
-    int? maxFileUploads,
-    String? checkboxLabel,
-  }) : super(
-          id: id,
-          type: type,
-          options: options,
-          title: title,
-          text: text,
-          response: response,
-          group: group,
-          checked: checked,
-          file: file,
-          selectedDate: selectedDate,
-          selectedOption: selectedOption,
-          childWidgets: childWidgets,
-          maxFileUploads: maxFileUploads,
-          checkboxLabel: checkboxLabel,
-          pos: pos,
-        );
+    required super.id,
+    required super.type,
+    super.options,
+    required super.title,
+    super.childWidgets,
+    super.text,
+    super.selectedOption,
+    super.group,
+    super.checked,
+    super.file,
+    super.selectedDate,
+    super.response,
+    required super.pos,
+    super.maxFileUploads,
+    super.checkboxLabel,
+  });
 }
 
 class RegistrationSubField extends BaseRegistrationField {
   final String parentUid;
 
   RegistrationSubField({
-    required String id,
+    required super.id,
     required this.parentUid,
-    required String type,
-    List? options,
-    required String title,
-    String? text,
-    String? group,
+    required super.type,
+    super.options,
+    required super.title,
+    super.text,
+    super.group,
     bool? signed,
-    List<PlatformFile>? file,
-    TextEditingController? response,
-    bool? checked,
-    DateTime? selectedDate,
-    List<RegistrationSubField>? childWidgets,
-    int? maxFileUploads,
-    String? checkboxLabel,
-    required int pos,
-  }) : super(
-          id: id,
-          type: type,
-          options: options,
-          title: title,
-          checkboxLabel: checkboxLabel,
-          pos: pos,
-          file: file,
-          response: response,
-          checked: checked,
-          selectedDate: selectedDate,
-          group: group,
-          text: text,
-          maxFileUploads: maxFileUploads,
-          childWidgets: childWidgets,
-        );
+    super.file,
+    super.response,
+    super.checked,
+    super.selectedDate,
+    super.childWidgets,
+    super.maxFileUploads,
+    super.checkboxLabel,
+    required super.pos,
+  });
 }

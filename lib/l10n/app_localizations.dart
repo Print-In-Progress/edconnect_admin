@@ -119,6 +119,24 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get globalSave;
 
+  /// Global section - Edit button text
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get globalEdit;
+
+  /// Global section - Add button text
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get globalAdd;
+
+  /// Global section - Confirm button text
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get globalConfirm;
+
   /// Global section - Delete button text
   ///
   /// In en, this message translates to:
@@ -136,6 +154,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Re-authentification required'**
   String get globalReauthenticate;
+
+  /// Global section - Search button text
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get globalSearch;
+
+  /// Global section - No results found message
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get globalNoResults;
 
   /// Global section - Logout button text
   ///
@@ -191,6 +221,12 @@ abstract class AppLocalizations {
   /// **'Terms of Service'**
   String get globalToS;
 
+  /// Global section - Back button text
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get globalBack;
+
   /// Global section - Back to login button text
   ///
   /// In en, this message translates to:
@@ -208,6 +244,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login'**
   String get authLoginTitle;
+
+  /// Auth section - Sign document button text
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Document'**
+  String get authSignDocument;
+
+  /// Auth section - Sign document message body
+  ///
+  /// In en, this message translates to:
+  /// **'I hereby confirm that by checking this box and submitting this form, I give my consent to digitally sign this document. I understand that my signature will be generated securely using cryptographic techniques to ensure the authenticity and integrity of the document. This signature is legally binding and I certify that the information provided is correct to the best of my knowledge and belief.'**
+  String get authSignDocumentBody;
+
+  /// Auth section - Document signed message
+  ///
+  /// In en, this message translates to:
+  /// **'Document Signed'**
+  String get authDocumentSigned;
 
   /// Global section - Password input label
   ///
@@ -280,6 +334,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dashboard'**
   String get navDashboard;
+
+  /// Navigation section - Hide sidebar button text
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Sidebar'**
+  String get navHideSidebar;
 
   /// Navigation section - Articles menu item
   ///
@@ -424,6 +484,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'403 - Access Denied'**
   String get errorAccessDenied;
+
+  /// Error section - Terms acceptance message
+  ///
+  /// In en, this message translates to:
+  /// **'You must accept the Terms & Conditions and Privacy Policy'**
+  String get errorAcceptToSAndPrivacyPolicy;
 
   /// Global section - Access denied message body
   ///
@@ -646,6 +712,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings updated successfully'**
   String get successSettingsUpdated;
+
+  /// Settings section - Settings label
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsLabel;
 
   /// Settings section - Manage Account label
   ///
