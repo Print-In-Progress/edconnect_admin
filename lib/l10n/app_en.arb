@@ -302,6 +302,10 @@
     "@errorUserNotFound": {
         "description": "Auth section - User not found error message"
     },
+    "errorSelectFile": "Please select a file",
+    "@errorSelectFile": {
+        "description": "Error section - File selection error message"
+    },
     "errorUserNotFoundMessage": "User not found. The user may have been deleted by an administrator or does not exist.",
     "@errorUserNotFoundMessage": {
         "description": "Auth section - User not found message body"

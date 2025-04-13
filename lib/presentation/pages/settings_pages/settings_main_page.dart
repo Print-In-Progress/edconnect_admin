@@ -10,7 +10,6 @@ import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.
 import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
-import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:edconnect_admin/presentation/widgets/common/switch.dart';
 import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
@@ -182,16 +181,6 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                                     .signOut();
                               },
                             ),
-                            _buildSettingsItem(
-                                icon: Icons.abc,
-                                label: 'Test',
-                                onTap: () {
-                                  Toaster.error(
-                                    context,
-                                    'Error message',
-                                    description: 'This is a test error message',
-                                  );
-                                }),
                             _buildSettingsItem(
                               icon: Icons.delete_outline,
                               label: l10n.globalDeleteAccount,
@@ -373,14 +362,14 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                   if (!context.mounted) return;
                   Navigator.of(context).pop();
                   Navigator.of(context).pop(); // Pop settings page
-                  successMessage(
-                    context,
-                    l10n.successDefault,
-                  );
+                  Toaster.success(context, l10n.successDefault);
                 } catch (e) {
                   if (!context.mounted) return;
                   Navigator.of(context).pop();
-                  errorMessage(context, e.toString());
+                  Toaster.error(
+                    context,
+                    AppLocalizations.of(context)!.errorUnexpected,
+                  );
                 }
               },
             ),

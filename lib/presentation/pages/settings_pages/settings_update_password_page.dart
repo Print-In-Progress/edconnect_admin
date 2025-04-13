@@ -6,7 +6,7 @@ import 'package:edconnect_admin/presentation/pages/auth_pages/forgot_password_pa
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
-import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,14 +44,19 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
           .changePassword(_newPasswordController.text);
 
       if (!mounted) return;
-      successMessage(
+      Toaster.success(
         context,
         AppLocalizations.of(context)!.successPasswordChanged,
       );
+
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
-      errorMessage(context, e.toString());
+      Toaster.error(
+        context,
+        AppLocalizations.of(context)!.errorUnexpected,
+        description: e.toString(),
+      );
     }
   }
 

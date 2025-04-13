@@ -4,7 +4,7 @@ import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
 import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
-import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
@@ -54,7 +54,11 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
       if (mounted) setState(() => canResendEmail = true);
     } catch (e) {
       if (!mounted) return;
-      errorMessage(context, e.toString());
+      Toaster.error(
+        context,
+        AppLocalizations.of(context)!.errorUnexpected,
+        description: e.toString(),
+      );
       setState(() => canResendEmail = true);
     }
   }

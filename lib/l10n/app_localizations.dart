@@ -539,6 +539,12 @@ abstract class AppLocalizations {
   /// **'404 - User not found'**
   String get errorUserNotFound;
 
+  /// Error section - File selection error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a file'**
+  String get errorSelectFile;
+
   /// Auth section - User not found message body
   ///
   /// In en, this message translates to:

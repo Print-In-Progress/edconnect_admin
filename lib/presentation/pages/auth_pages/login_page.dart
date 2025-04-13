@@ -7,7 +7,6 @@ import 'package:edconnect_admin/presentation/widgets/common/cards/base_card.dart
 import 'package:edconnect_admin/presentation/pages/auth_pages/forgot_password_page.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
-import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
@@ -68,7 +67,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     // Listen for errors
     ref.listen<AsyncValue<void>>(loginStateProvider, (_, state) {
       state.whenOrNull(
-        error: (error, _) => errorMessage(context, error.toString()),
+        error: (error, _) => Toaster.error(
+          context,
+          AppLocalizations.of(context)!.errorUnexpected,
+          description: error.toString(),
+        ),
       );
     });
 

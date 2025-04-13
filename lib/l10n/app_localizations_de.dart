@@ -233,6 +233,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get errorUserNotFound => 'User not found';
 
   @override
+  String get errorSelectFile => 'Please select a file';
+
+  @override
   String get errorUserNotFoundMessage => 'User not found. The user may have been deleted by an administrator or does not exist.';
 
   @override

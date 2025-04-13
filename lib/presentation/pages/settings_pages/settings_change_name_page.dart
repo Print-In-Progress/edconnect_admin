@@ -7,7 +7,7 @@ import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.
 import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
-import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -131,16 +131,17 @@ class _AccountNameState extends ConsumerState<AccountName> {
                                         );
 
                                     if (!context.mounted) return;
-                                    successMessage(
+                                    Toaster.success(
                                       context,
                                       AppLocalizations.of(context)!
                                           .successProfileUpdated,
                                     );
+
                                     Navigator.of(context).pop();
                                   }
                                 } catch (e) {
                                   if (!context.mounted) return;
-                                  errorMessage(
+                                  Toaster.error(
                                     context,
                                     AppLocalizations.of(context)!
                                         .errorUnexpected,

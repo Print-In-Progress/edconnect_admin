@@ -3,7 +3,7 @@ import 'package:edconnect_admin/domain/entities/storage_file.dart';
 import 'package:edconnect_admin/domain/entities/storage_module.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
-import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -399,7 +399,10 @@ class _MediaSelectorDialogState extends ConsumerState<MediaSelectorDialog> {
           widget.onFileSelected(_selectedFile!);
           Navigator.of(context).pop();
         } else {
-          errorMessage(context, 'Please select a file');
+          Toaster.info(
+            context,
+            AppLocalizations.of(context)!.errorSelectFile,
+          );
         }
         break;
     }

@@ -10,11 +10,11 @@ import 'package:edconnect_admin/presentation/widgets/common/cards/base_card.dart
 import 'package:edconnect_admin/presentation/widgets/common/checkbox.dart';
 import 'package:edconnect_admin/presentation/widgets/common/dropdown/single_select_dropdown.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
-import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:edconnect_admin/core/constants/database_constants.dart';
 import 'package:edconnect_admin/domain/entities/registration_request.dart';
 import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:edconnect_admin/presentation/widgets/registration_card_builder.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +62,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     }
 
     if (!_isCheckedAgreement) {
-      errorMessage(
+      Toaster.error(
         context,
         AppLocalizations.of(context)!
             .errorPagesRegisterAcceptToSAndPrivacyPolicy,
@@ -109,13 +109,22 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       state.whenOrNull(
         error: (error, _) {
           if (error is DomainException) {
-            errorMessage(context, error.getLocalizedMessage(context));
+            Toaster.error(
+              context,
+              error.getLocalizedMessage(context),
+            );
           } else {
-            errorMessage(context, error.toString());
+            Toaster.error(
+              context,
+              AppLocalizations.of(context)!.errorUnexpected,
+            );
           }
         },
         data: (_) {
-          successMessage(context, l10n.successRegistration);
+          Toaster.success(
+            context,
+            AppLocalizations.of(context)!.successRegistration,
+          );
         },
       );
     });

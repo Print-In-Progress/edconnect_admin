@@ -8,7 +8,7 @@ import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
 import 'package:edconnect_admin/presentation/widgets/common/loading_progress.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
-import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:edconnect_admin/presentation/widgets/registration_card_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
@@ -64,14 +64,19 @@ class _SubmitRegistrationUpdateState
           final message = error.toString().contains('Exception:')
               ? _getErrorMessage(error.toString().split('Exception: ')[1])
               : _getErrorMessage(error.toString());
-          errorMessage(context, message);
+          Toaster.error(
+            context,
+            AppLocalizations.of(context)!.errorUnexpected,
+            description: message,
+          );
         },
         data: (_) {
           _resetForm();
-          successMessage(
+          Toaster.success(
             context,
             AppLocalizations.of(context)!.successProfileUpdated,
           );
+
           Navigator.of(context).pop();
         },
       );

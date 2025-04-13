@@ -9,7 +9,7 @@ import 'package:edconnect_admin/domain/entities/storage_module.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
 import 'package:edconnect_admin/presentation/widgets/common/media_selector_dialog.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
-import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:edconnect_admin/presentation/widgets/text_editor/dialogs/insert_link_dialog.dart';
 import 'package:edconnect_admin/presentation/widgets/text_editor/dialogs/insert_table_dialog.dart';
 import 'package:file_picker/file_picker.dart';
@@ -200,12 +200,12 @@ class _PIPStandardTextEditorState extends ConsumerState<PIPStandardTextEditor> {
                               .update({
                             widget.saveDatabaseKey: await controller.getText(),
                           }).then((value) {
-                            successMessage(
+                            Toaster.success(
                               context,
                               AppLocalizations.of(context)!.successDataSaved,
                             );
                           }).catchError((e) {
-                            errorMessage(context, e);
+                            Toaster.error(context, e.toString());
                           });
                         },
                         icon: const Icon(

@@ -17,6 +17,7 @@
     "validationTextTooShort",
     "validationTextTooLong",
     "errorAcceptToSAndPrivacyPolicy",
+    "errorSelectFile",
     "errorUserNotFoundMessage",
     "errorPasswordMissingNumber",
     "errorPasswordMissingSpecial",

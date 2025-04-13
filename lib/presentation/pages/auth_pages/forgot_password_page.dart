@@ -5,7 +5,6 @@ import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
 import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
-import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
@@ -32,7 +31,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           .resetPassword(_emailController.text.trim());
 
       if (!mounted) return;
-      successMessage(
+      Toaster.success(
         context,
         AppLocalizations.of(context)!.successResetPasswordEmailSent,
       );
@@ -41,7 +40,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       if (!mounted) return;
       Toaster.error(
         context,
-        e.toString(),
+        AppLocalizations.of(context)!.errorUnexpected,
+        description: e.toString(),
       );
     }
   }

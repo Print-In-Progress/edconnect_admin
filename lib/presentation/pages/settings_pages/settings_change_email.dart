@@ -6,7 +6,7 @@ import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.
 import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
-import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,11 +37,18 @@ class _ChangeEmailState extends ConsumerState<ChangeEmail> {
     ref.listen<AsyncValue<void>>(updateEmailProvider, (_, state) {
       state.whenOrNull(
         error: (error, _) {
-          errorMessage(context, error.toString());
+          Toaster.error(
+            context,
+            AppLocalizations.of(context)!.errorUnexpected,
+            description: error.toString(),
+          );
         },
         data: (_) {
-          successMessage(
-              context, AppLocalizations.of(context)!.successEmailChanged);
+          Toaster.success(
+            context,
+            AppLocalizations.of(context)!.successEmailChanged,
+          );
+
           Navigator.of(context).pop();
         },
       );
