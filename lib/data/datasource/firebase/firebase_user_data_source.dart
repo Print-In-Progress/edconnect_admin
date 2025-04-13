@@ -63,8 +63,8 @@ class FirebaseUserDataSource implements UserDataSource {
   @override
   Future<void> changeName(String uid, String firstName, String lastName) async {
     await _firestore.collection(customerSpecificCollectionUsers).doc(uid).set({
-      'firstName': firstName,
-      'lastName': lastName,
+      'first_name': firstName,
+      'last_name': lastName,
     }, SetOptions(merge: true));
   }
 
