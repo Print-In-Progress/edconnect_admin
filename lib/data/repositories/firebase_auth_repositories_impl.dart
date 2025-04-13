@@ -300,29 +300,34 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         return null;
       }
 
-      // Check email verification first since it's part of Firebase Auth
-      await _authDataSource.reloadUser();
-      final isVerified = _authDataSource.isEmailVerified;
-
-      if (!isVerified) {
-        // Return special unverified user state
-        return AppUser.unverified(uid);
-      }
-
       try {
+        // Check email verification first since it's part of Firebase Auth
+        await _authDataSource.reloadUser();
+        final isVerified = _authDataSource.isEmailVerified;
+
+        if (!isVerified) {
+          // Return special unverified user state
+          return AppUser.unverified(uid);
+        }
+
+        // Fetch the user document
         final doc = await _firestore
             .collection(customerSpecificCollectionUsers)
             .doc(uid)
             .get();
 
-        if (doc.exists) {
-          return AppUser.fromMap(doc.data()!, doc.id);
+        // Explicitly handle the case where doc doesn't exist
+        if (!doc.exists) {
+          // Create a special "document not found" user object instead of null
+          // This signals auth is OK but document is missing
+          return AppUser.documentNotFound(uid);
         }
-      } catch (e) {
-        throw ErrorHandler.handle(e);
-      }
 
-      return null;
+        return AppUser.fromMap(doc.data()!, doc.id);
+      } catch (e) {
+        // Create an error state user
+        return AppUser.error(uid, e.toString());
+      }
     });
   }
 

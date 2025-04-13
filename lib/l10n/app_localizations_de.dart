@@ -66,6 +66,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get globalSubmit => 'Submit';
 
   @override
+  String get globalDismiss => 'Dismiss';
+
+  @override
   String globalGreetingOne(String firstName) {
     return 'Hi, $firstName!';
   }

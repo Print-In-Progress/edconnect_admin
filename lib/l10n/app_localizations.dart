@@ -209,6 +209,12 @@ abstract class AppLocalizations {
   /// **'Submit'**
   String get globalSubmit;
 
+  /// Global section - Dismiss button text
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get globalDismiss;
+
   /// Global section - Greeting message with first name
   ///
   /// In en, this message translates to:
@@ -398,7 +404,7 @@ abstract class AppLocalizations {
   /// Navigation section - Survey Sorter menu item
   ///
   /// In en, this message translates to:
-  /// **'Survey Sorter'**
+  /// **'Sorting Module'**
   String get navSurveySorter;
 
   /// Navigation section - Settings button text

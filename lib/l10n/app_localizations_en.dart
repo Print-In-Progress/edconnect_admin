@@ -66,6 +66,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get globalSubmit => 'Submit';
 
   @override
+  String get globalDismiss => 'Dismiss';
+
+  @override
   String globalGreetingOne(String firstName) {
     return 'Hi, $firstName!';
   }
@@ -161,7 +164,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navSurveys => 'Surveys';
 
   @override
-  String get navSurveySorter => 'Survey Sorter';
+  String get navSurveySorter => 'Sorting Module';
 
   @override
   String get navSettings => 'Settings';

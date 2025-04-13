@@ -8,6 +8,7 @@ import 'package:edconnect_admin/presentation/pages/auth_pages/forgot_password_pa
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,7 +45,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             );
       } catch (e) {
         if (!mounted) return;
-        errorMessage(context, e.toString());
+        Toaster.error(
+          context,
+          e.toString(),
+        );
       }
     }
   }

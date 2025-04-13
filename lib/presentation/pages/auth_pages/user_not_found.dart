@@ -76,7 +76,6 @@ class UserNotFoundPage extends ConsumerWidget {
                     UrlService.launchWebUrl('https://printinprogress.com'),
                 variant: ButtonVariant.outlined,
                 size: ButtonSize.large,
-                prefixIcon: Icons.arrow_back,
                 fullWidth: true,
               ),
             ],

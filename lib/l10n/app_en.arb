@@ -76,6 +76,10 @@
     "@globalSubmit": {
         "description": "Global section - Submit button text"
     },
+    "globalDismiss": "Dismiss",
+    "@globalDismiss": {
+        "description": "Global section - Dismiss button text"
+    },
     "globalGreetingOne": "Hi, {firstName}!",
     "@globalGreetingOne": {
         "description": "Global section - Greeting message with first name",
@@ -206,7 +210,7 @@
     "@navSurveys": {
         "description": "Navigation section - Surveys menu item"
     },
-    "navSurveySorter": "Survey Sorter",
+    "navSurveySorter": "Sorting Module",
     "@navSurveySorter": {
         "description": "Navigation section - Survey Sorter menu item"
     },

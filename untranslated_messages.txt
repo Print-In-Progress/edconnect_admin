@@ -5,6 +5,7 @@
     "globalConfirm",
     "globalSearch",
     "globalNoResults",
+    "globalDismiss",
     "globalToS",
     "globalBack",
     "authSignDocument",

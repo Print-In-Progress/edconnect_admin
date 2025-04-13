@@ -12,6 +12,7 @@ import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dar
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:edconnect_admin/presentation/widgets/common/switch.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -181,6 +182,16 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                                     .signOut();
                               },
                             ),
+                            _buildSettingsItem(
+                                icon: Icons.abc,
+                                label: 'Test',
+                                onTap: () {
+                                  Toaster.error(
+                                    context,
+                                    'Error message',
+                                    description: 'This is a test error message',
+                                  );
+                                }),
                             _buildSettingsItem(
                               icon: Icons.delete_outline,
                               label: l10n.globalDeleteAccount,

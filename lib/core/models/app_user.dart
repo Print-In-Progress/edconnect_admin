@@ -15,6 +15,8 @@ class AppUser {
   final Uint8List? registrationPdfSignature;
   final String accountType; // Student, Faculty, or Parent
   final bool isUnverified;
+  final bool isDocumentMissing;
+  final String? errorMessage;
 
   // Resolved groups for efficient permission checking
   final List<Group>? _resolvedGroups;
@@ -36,6 +38,8 @@ class AppUser {
     this.registrationPdfSignature,
     required this.accountType,
     this.isUnverified = false,
+    this.isDocumentMissing = false,
+    this.errorMessage,
     List<Group>? resolvedGroups,
   }) : _resolvedGroups = resolvedGroups {
     normalizedPermissions = _initializeNormalizedPermissions();
@@ -99,7 +103,37 @@ class AppUser {
     );
   }
 
-  // Factory method to create an empty AppUser
+  factory AppUser.documentNotFound(String uid) {
+    return AppUser(
+      id: uid,
+      firstName: '',
+      lastName: '',
+      email: '',
+      fcmTokens: const [],
+      permissions: const [],
+      groupIds: const [],
+      deviceIds: const {},
+      isUnverified: false,
+      accountType: '',
+      isDocumentMissing: true, // New flag
+    );
+  }
+
+  factory AppUser.error(String uid, String errorMessage) {
+    return AppUser(
+      id: uid,
+      firstName: '',
+      lastName: '',
+      email: '',
+      fcmTokens: const [],
+      permissions: const [],
+      groupIds: const [],
+      deviceIds: const {},
+      isUnverified: false,
+      accountType: '',
+      errorMessage: errorMessage, // Store the error
+    );
+  }
 
   // Create from Firestore document
   factory AppUser.fromMap(Map<String, dynamic> map, String id) {
