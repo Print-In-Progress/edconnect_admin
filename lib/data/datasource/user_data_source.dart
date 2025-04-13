@@ -10,6 +10,7 @@ abstract class UserDataSource {
     String lastName,
     String email,
     List<String> groups,
+    String accountType,
     bool isSigned, {
     String? publicKeyPem,
     Uint8List? signatureBytes,

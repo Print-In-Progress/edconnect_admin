@@ -255,7 +255,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               type: TextFieldType.password,
-                              minLength: 8,
+                              minLength: 6,
                               trailingIcon: IconButton(
                                 icon: Icon(
                                   _passwordVisible

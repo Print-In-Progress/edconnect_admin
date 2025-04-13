@@ -1,3 +1,5 @@
+import 'package:edconnect_admin/core/errors/error_handler.dart';
+
 import '../../entities/registration_request.dart';
 import '../../../core/interfaces/auth_repository.dart';
 
@@ -12,6 +14,10 @@ class SignUpUseCase {
 
   Future<void> signUpWithExistingAuthAccount(
       RegistrationRequest request) async {
-    return await _authRepository.signUpWithExistingAuthAccount(request);
+    try {
+      return await _authRepository.signUpWithExistingAuthAccount(request);
+    } catch (e) {
+      throw ErrorHandler.handle(e);
+    }
   }
 }

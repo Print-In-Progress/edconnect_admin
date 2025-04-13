@@ -35,6 +35,7 @@ class FirebaseUserRepositoryImpl implements UserRepository {
         user.lastName,
         user.email,
         user.groupIds,
+        user.accountType,
         withSignedPdf,
         publicKeyPem: user.registrationPdfPublicKey,
         signatureBytes: user.registrationPdfSignature,

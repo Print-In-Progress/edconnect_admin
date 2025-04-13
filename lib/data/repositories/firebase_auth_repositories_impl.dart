@@ -35,12 +35,12 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     try {
       final validator = RegistrationValidator();
       validator.validate(request);
-
       final uid = await _authDataSource.createUserWithEmailAndPassword(
         request.email.trim(),
         request.password.trim(),
       );
       await _processRegistration(uid, request);
+
       await _authDataSource.sendEmailVerification();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
@@ -63,7 +63,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       }
       throw ErrorHandler.handle(e);
     } catch (e) {
-      ErrorHandler.handle(e);
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -74,18 +74,15 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       // Validate request
       final validator = RegistrationValidator();
       validator.validate(request);
-
       // Sign in with existing account
       final uid = await _authDataSource.signUpWithExistingAuthAccount(
         request.email.trim(),
         request.password.trim(),
       );
-
       if (uid == null) {
         throw const DomainException(
             code: ErrorCode.unexpected, type: ExceptionType.auth);
       }
-
       // Process registration
       await _processRegistration(uid, request);
     } catch (e) {
@@ -174,7 +171,6 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       }
 
       final publicKeyPem = convertPublicKeyToPem(keyPair.publicKey);
-
       // Save user details
       await _userDataSource.saveUserDetails(
         uid,
@@ -182,11 +178,12 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         capitalize(request.lastName),
         request.email.trim(),
         groups,
+        request.accountType,
         true,
         publicKeyPem: publicKeyPem,
         signatureBytes: signatureBytes,
       );
-
+      print('Saved to firestore');
       // Upload signed PDF
       await _storageDataSource.uploadPdf(
         pdfBytes,
@@ -215,7 +212,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         capitalize(request.lastName),
         request.email.trim(),
       );
-
+      print('generated pdf');
       // Save user details
       await _userDataSource.saveUserDetails(
         uid,
@@ -223,9 +220,9 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         capitalize(request.lastName),
         request.email.trim(),
         groups,
+        request.accountType,
         false,
       );
-
       // Upload unsigned PDF
       await _storageDataSource.uploadPdf(
         pdfBytes,

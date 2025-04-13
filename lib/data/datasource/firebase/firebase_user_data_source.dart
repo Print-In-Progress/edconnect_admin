@@ -33,6 +33,7 @@ class FirebaseUserDataSource implements UserDataSource {
     String lastName,
     String email,
     List<String> groups,
+    String accountType,
     bool isSigned, {
     String? publicKeyPem,
     Uint8List? signatureBytes,
@@ -45,7 +46,7 @@ class FirebaseUserDataSource implements UserDataSource {
       'permissions': [],
       'fcmTokens': [],
       'deviceIds': {},
-      'accountType': 'Student',
+      'accountType': accountType,
       'registrationComplete': isSigned,
     };
 
