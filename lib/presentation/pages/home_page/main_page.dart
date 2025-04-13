@@ -37,39 +37,31 @@ class MainPage extends ConsumerWidget {
     if (status == AuthStatus.authenticated) {
       return userState.when(
         data: (user) {
-          print('Main page received user: $user');
-
           if (user == null) {
-            print('User is null, redirecting to AuthPage');
             // If user is null, Firebase Auth isn't logged in, go to login page
             return const AuthPage();
           }
 
           // Check special document not found state
           if (user.isDocumentMissing) {
-            print('Document missing, redirecting to UserNotFoundPage');
             return const UserNotFoundPage();
           }
 
           // Check for error state
           if (user.errorMessage != null) {
-            print('Error in user data: ${user.errorMessage}');
             return Center(child: Text('Error: ${user.errorMessage}'));
           }
 
           // Check for unverified state
           if (user.isUnverified) {
-            print('User not verified, redirecting to verify page');
             return const VerifyEmailPage();
           }
 
           // Normal authenticated user with document
-          print('User authenticated and document exists');
           return const HomePage();
         },
         loading: () => _buildLoadingScreen(AuthStatus.loadingUserData, context),
         error: (error, __) {
-          print('Error in userState: $error');
           return Center(child: Text('Authentication error: $error'));
         },
       );

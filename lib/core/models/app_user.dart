@@ -154,7 +154,7 @@ class AppUser {
           ? Uint8List.fromList(
               List<int>.from(map['registration_pdf_signature']))
           : null,
-      accountType: map['account_type'] ?? '',
+      accountType: map['account_type'],
     );
   }
 

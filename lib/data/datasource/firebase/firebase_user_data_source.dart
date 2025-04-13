@@ -39,19 +39,19 @@ class FirebaseUserDataSource implements UserDataSource {
     Uint8List? signatureBytes,
   }) async {
     final Map<String, dynamic> userData = {
-      'firstName': firstName,
-      'lastName': lastName,
+      'first_name': firstName,
+      'last_Name': lastName,
       'email': email,
       'groups': groups,
       'permissions': [],
-      'fcmTokens': [],
-      'deviceIds': {},
-      'accountType': accountType,
+      'fcm_tokens': [],
+      'device_ids': {},
+      'account_type': accountType,
     };
 
     if (isSigned && publicKeyPem != null && signatureBytes != null) {
-      userData['registrationPdfPublicKey'] = publicKeyPem;
-      userData['registrationPdfSignature'] = signatureBytes;
+      userData['registration_pdf_public_key'] = publicKeyPem;
+      userData['registration_pdf_signature'] = signatureBytes;
     }
 
     await _firestore
