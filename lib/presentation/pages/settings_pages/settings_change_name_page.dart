@@ -1,7 +1,12 @@
+import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/validation/validators/text_field_validator.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
-import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
+import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
+import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
+import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
+import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
@@ -30,6 +35,8 @@ class _AccountNameState extends ConsumerState<AccountName> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
+    final changeNameState = ref.watch(changeNameProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -47,125 +54,108 @@ class _AccountNameState extends ConsumerState<AccountName> {
               floatHeaderSlivers: true,
               headerSliverBuilder: (context, bool innerBoxIsScrolled) {
                 return [
-                  SliverAppBar(
-                    automaticallyImplyLeading: true,
-                    floating: true,
-                    snap: true,
+                  BaseAppBar(
+                    title: l10n.navSettings,
+                    showLeading: true,
                     forceMaterialTransparency: true,
-                    actionsIconTheme: const IconThemeData(color: Colors.white),
-                    iconTheme: const IconThemeData(color: Colors.white),
-                    title: Text(
-                      AppLocalizations.of(context)!.navSettings,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  )
+                    showDivider: false,
+                    foregroundColor: Foundations.colors.surfaceActive,
+                    floating: true,
+                  ).asSliverAppBar(context, ref),
                 ];
               },
               body: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width < 700
-                          ? MediaQuery.of(context).size.width
-                          : MediaQuery.of(context).size.width / 2,
-                      child: Card(
-                          child: Form(
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 700),
+                      child: Form(
                         key: _formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: buildSectionCard(
+                          l10n.settingsChangeName,
+                          theme.isDarkMode,
                           children: [
-                            const SizedBox(height: 10),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: TextFormField(
-                                controller: _userFirstNameController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return AppLocalizations.of(context)!
-                                        .validationRequired;
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  hintText: AppLocalizations.of(context)!
-                                      .globalFirstNameTextFieldHintText,
-                                  prefixIcon: const Icon(Icons.person),
+                            SizedBox(height: Foundations.spacing.lg),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: BaseInput(
+                                    controller: _userFirstNameController,
+                                    label:
+                                        l10n.globalFirstNameTextFieldHintText,
+                                    hint: l10n.globalFirstNameTextFieldHintText,
+                                    leadingIcon: Icons.person_outline,
+                                    isRequired: true,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    type: TextFieldType.name,
+                                    variant: InputVariant.default_,
+                                    size: InputSize.medium,
+                                  ),
                                 ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: TextFormField(
-                                controller: _userLastNameController,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return AppLocalizations.of(context)!
-                                        .validationRequired;
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  hintText: AppLocalizations.of(context)!
-                                      .globalLastNameTextFieldHintText,
-                                  prefixIcon: const Icon(Icons.person),
+                                SizedBox(width: Foundations.spacing.lg),
+                                Expanded(
+                                  child: BaseInput(
+                                    controller: _userLastNameController,
+                                    label: l10n.globalLastNameTextFieldHintText,
+                                    hint: l10n.globalLastNameTextFieldHintText,
+                                    leadingIcon: Icons.person_outline,
+                                    isRequired: true,
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    type: TextFieldType.name,
+                                    variant: InputVariant.default_,
+                                    size: InputSize.medium,
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25.0),
-                              child: PIPResponsiveRaisedButton(
-                                  fontWeight: FontWeight.w600,
-                                  label:
-                                      AppLocalizations.of(context)!.globalSave,
-                                  onPressed: () async {
-                                    try {
-                                      if (_formKey.currentState!.validate()) {
-                                        final user =
-                                            ref.read(currentUserProvider).value;
-                                        if (user == null) return;
+                            SizedBox(height: Foundations.spacing.lg),
+                            BaseButton(
+                              label: l10n.globalSave,
+                              onPressed: () async {
+                                try {
+                                  if (_formKey.currentState!.validate()) {
+                                    final user =
+                                        ref.read(currentUserProvider).value;
+                                    if (user == null) return;
 
-                                        await ref
-                                            .read(changeNameProvider.notifier)
-                                            .changeName(
-                                              user.id,
-                                              _userFirstNameController.text,
-                                              _userLastNameController.text,
-                                            );
-
-                                        if (!context.mounted) return;
-                                        successMessage(
-                                          context,
-                                          AppLocalizations.of(context)!
-                                              .successProfileUpdated,
+                                    await ref
+                                        .read(changeNameProvider.notifier)
+                                        .changeName(
+                                          user.id,
+                                          _userFirstNameController.text,
+                                          _userLastNameController.text,
                                         );
-                                        Navigator.of(context).pop();
-                                      }
-                                    } catch (e) {
-                                      if (!context.mounted) return;
-                                      errorMessage(
-                                        context,
-                                        AppLocalizations.of(context)!
-                                            .errorUnexpected,
-                                      );
-                                    }
-                                  },
-                                  width: MediaQuery.of(context).size.width),
+
+                                    if (!context.mounted) return;
+                                    successMessage(
+                                      context,
+                                      AppLocalizations.of(context)!
+                                          .successProfileUpdated,
+                                    );
+                                    Navigator.of(context).pop();
+                                  }
+                                } catch (e) {
+                                  if (!context.mounted) return;
+                                  errorMessage(
+                                    context,
+                                    AppLocalizations.of(context)!
+                                        .errorUnexpected,
+                                  );
+                                }
+                              },
+                              variant: ButtonVariant.filled,
+                              size: ButtonSize.large,
+                              isLoading: changeNameState.isLoading,
+                              fullWidth: true,
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(height: Foundations.spacing.lg),
                           ],
                         ),
-                      )),
+                      ),
                     ),
                   ],
                 ),

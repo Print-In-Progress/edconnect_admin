@@ -1,5 +1,11 @@
+import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/validation/validators/text_field_validator.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
+import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
+import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
+import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
+import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
@@ -22,21 +28,11 @@ class _ChangeEmailState extends ConsumerState<ChangeEmail> {
     super.dispose();
   }
 
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.validationRequired;
-    }
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email address';
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
     final updateEmailState = ref.watch(updateEmailProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     ref.listen<AsyncValue<void>>(updateEmailProvider, (_, state) {
       state.whenOrNull(
@@ -67,76 +63,60 @@ class _ChangeEmailState extends ConsumerState<ChangeEmail> {
             floatHeaderSlivers: true,
             headerSliverBuilder: (context, bool innerBoxIsScrolled) {
               return [
-                SliverAppBar(
-                  automaticallyImplyLeading: true,
-                  floating: true,
-                  snap: true,
+                BaseAppBar(
+                  title: l10n.navSettings,
+                  showLeading: true,
                   forceMaterialTransparency: true,
-                  actionsIconTheme: const IconThemeData(color: Colors.white),
-                  iconTheme: const IconThemeData(color: Colors.white),
-                  title: Text(
-                    AppLocalizations.of(context)!.navSettings,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                )
+                  showDivider: false,
+                  foregroundColor: Foundations.colors.surfaceActive,
+                  floating: true,
+                ).asSliverAppBar(context, ref),
               ];
             },
             body: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width < 700
-                        ? MediaQuery.of(context).size.width
-                        : MediaQuery.of(context).size.width / 2,
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 700),
                     child: Form(
                       key: _formKey,
-                      child: Card(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      child: buildSectionCard(
+                          l10n.settingsChangeEmail, theme.isDarkMode,
                           children: [
-                            const SizedBox(height: 10),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: TextFormField(
-                                controller: _userEmailController,
-                                validator: _validateEmail,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  hintText: AppLocalizations.of(context)!
-                                      .globalEmailLabel,
-                                  prefixIcon: const Icon(Icons.person),
-                                ),
-                              ),
+                            SizedBox(height: Foundations.spacing.lg),
+                            BaseInput(
+                              controller: _userEmailController,
+                              label: l10n.globalEmailLabel,
+                              hint: l10n.globalEmailLabel,
+                              leadingIcon: Icons.email_outlined,
+                              isRequired: true,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              type: TextFieldType.email,
+                              keyboardType: TextInputType.emailAddress,
+                              variant: InputVariant.default_,
+                              size: InputSize.medium,
                             ),
-                            const SizedBox(height: 10),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25.0),
-                              child: ElevatedButton(
-                                onPressed: updateEmailState.isLoading
-                                    ? null
-                                    : () async {
-                                        if (_formKey.currentState!.validate()) {
-                                          await ref
-                                              .read(
-                                                  updateEmailProvider.notifier)
-                                              .updateEmail(
-                                                  _userEmailController.text);
-                                        }
-                                      },
-                                child: updateEmailState.isLoading
-                                    ? const CircularProgressIndicator()
-                                    : Text(AppLocalizations.of(context)!
-                                        .globalSave),
-                              ),
+                            SizedBox(height: Foundations.spacing.lg),
+                            BaseButton(
+                              label: l10n.globalSave,
+                              variant: ButtonVariant.filled,
+                              size: ButtonSize.large,
+                              fullWidth: true,
+                              isLoading: updateEmailState.isLoading,
+                              onPressed: updateEmailState.isLoading
+                                  ? null
+                                  : () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        await ref
+                                            .read(updateEmailProvider.notifier)
+                                            .updateEmail(
+                                                _userEmailController.text);
+                                      }
+                                    },
                             ),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
-                      ),
+                          ]),
                     ),
                   ),
                 ],

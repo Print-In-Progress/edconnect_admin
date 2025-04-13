@@ -27,8 +27,7 @@ class RegistrationValidator implements Validator<RegistrationRequest> {
 
     if (request.password != request.confirmedPassword) {
       throw const DomainException(
-          code: ErrorCode.passwordsDoNotMatch, // Add this to ErrorCode enum
-          type: ExceptionType.validation);
+          code: ErrorCode.passwordsDoNotMatch, type: ExceptionType.validation);
     }
 
     _fieldValidator.validate(request.registrationFields);

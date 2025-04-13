@@ -1,7 +1,13 @@
+import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/validation/validators/text_field_validator.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
-import 'package:edconnect_admin/presentation/widgets/common/forms.dart';
+import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
+import 'package:edconnect_admin/presentation/widgets/common/cards/base_card.dart';
+import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
+import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
 import 'package:edconnect_admin/presentation/widgets/common/loading_progress.dart';
+import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:edconnect_admin/presentation/widgets/registration_card_builder.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +26,7 @@ class _SubmitRegistrationUpdateState
     extends ConsumerState<SubmitRegistrationUpdate> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-
-  bool _validateFirstNameField = false;
-  bool _validateLastNameField = false;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -42,19 +46,6 @@ class _SubmitRegistrationUpdateState
     }
   }
 
-  bool _validateForm() {
-    setState(() {
-      _validateFirstNameField = _firstNameController.text.isEmpty;
-      _validateLastNameField = _lastNameController.text.isEmpty;
-    });
-
-    if (_firstNameController.text.isEmpty || _lastNameController.text.isEmpty) {
-      errorMessage(context, 'First and Last Name cannot be empty');
-      return false;
-    }
-    return true;
-  }
-
   void _resetForm() {
     _firstNameController.clear();
     _lastNameController.clear();
@@ -65,6 +56,7 @@ class _SubmitRegistrationUpdateState
     final theme = ref.watch(appThemeProvider);
     final registrationFields = ref.watch(registrationFieldsProvider);
     final updateState = ref.watch(registrationUpdateProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     ref.listen<AsyncValue<void>>(registrationUpdateProvider, (_, state) {
       state.whenOrNull(
@@ -101,65 +93,64 @@ class _SubmitRegistrationUpdateState
             floatHeaderSlivers: true,
             headerSliverBuilder: (context, bool innerBoxIsScrolled) {
               return [
-                SliverAppBar(
-                  automaticallyImplyLeading: true,
-                  floating: true,
-                  snap: true,
+                BaseAppBar(
+                  title: l10n.navSettings,
+                  showLeading: true,
                   forceMaterialTransparency: true,
-                  actionsIconTheme: const IconThemeData(color: Colors.white),
-                  iconTheme: const IconThemeData(color: Colors.white),
-                  title: Text(
-                    'Registration Information',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                )
+                  showDivider: false,
+                  foregroundColor: Foundations.colors.surfaceActive,
+                  floating: true,
+                ).asSliverAppBar(context, ref),
               ];
             },
             body: SingleChildScrollView(
-              child: Center(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width < 700
-                      ? MediaQuery.of(context).size.width
-                      : MediaQuery.of(context).size.width / 2,
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 700),
+                    child: Form(
+                      key: _formKey,
+                      child: buildSectionCard(
+                        l10n.settingsUpdateRegistrationQuestionaire,
+                        theme.isDarkMode,
                         children: [
-                          Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  PIPOutlinedBorderInputForm(
-                                    validate: _validateFirstNameField,
-                                    width: MediaQuery.of(context).size.width,
-                                    controller: _firstNameController,
-                                    label: AppLocalizations.of(context)!
-                                        .globalFirstNameTextFieldHintText,
-                                    icon: Icons.person,
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  PIPOutlinedBorderInputForm(
-                                    validate: _validateLastNameField,
-                                    width: MediaQuery.of(context).size.width,
-                                    controller: _lastNameController,
-                                    label: AppLocalizations.of(context)!
-                                        .globalLastNameTextFieldHintText,
-                                    icon: Icons.person,
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                ],
+                          SizedBox(height: Foundations.spacing.lg),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: BaseInput(
+                                  controller: _firstNameController,
+                                  label: l10n.globalFirstNameTextFieldHintText,
+                                  hint: l10n.globalFirstNameTextFieldHintText,
+                                  leadingIcon: Icons.person_outline,
+                                  isRequired: true,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  type: TextFieldType.name,
+                                  variant: InputVariant.default_,
+                                  size: InputSize.medium,
+                                ),
                               ),
-                            ),
+                              SizedBox(width: Foundations.spacing.lg),
+                              Expanded(
+                                child: BaseInput(
+                                  controller: _lastNameController,
+                                  label: l10n.globalLastNameTextFieldHintText,
+                                  hint: l10n.globalLastNameTextFieldHintText,
+                                  leadingIcon: Icons.person_outline,
+                                  isRequired: true,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  type: TextFieldType.name,
+                                  variant: InputVariant.default_,
+                                  size: InputSize.medium,
+                                ),
+                              ),
+                            ],
                           ),
+                          SizedBox(height: Foundations.spacing.lg),
                           registrationFields.when(
                             loading: () => Column(
                               mainAxisSize: MainAxisSize.min,
@@ -168,24 +159,25 @@ class _SubmitRegistrationUpdateState
                                 (index) => Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 2),
-                                  child: Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            width: double.infinity,
-                                            height: 20.0,
-                                            color: Colors.grey[300],
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Container(
-                                            width: double.infinity,
-                                            height: 20.0,
-                                            color: Colors.grey[300],
-                                          ),
-                                        ],
-                                      ),
+                                  child: BaseCard(
+                                    variant: CardVariant.elevated,
+                                    margin: EdgeInsets.zero,
+                                    padding:
+                                        EdgeInsets.all(Foundations.spacing.lg),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          width: double.infinity,
+                                          height: 20.0,
+                                          color: Colors.grey[300],
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Container(
+                                          width: double.infinity,
+                                          height: 20.0,
+                                          color: Colors.grey[300],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -200,32 +192,38 @@ class _SubmitRegistrationUpdateState
                               return Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  ListView.builder(
+                                  ListView.separated(
                                     shrinkWrap: true,
                                     physics:
                                         const NeverScrollableScrollPhysics(),
                                     itemCount: fields.length,
+                                    separatorBuilder: (_, __) => SizedBox(
+                                        height: Foundations.spacing.md),
                                     itemBuilder: (context, index) =>
                                         buildRegistrationCard(context, fields,
                                             index, theme.isDarkMode),
                                   ),
-                                  if (!updateState.isLoading)
-                                    FilledButton(
+                                  SizedBox(height: Foundations.spacing.lg),
+                                  BaseButton(
+                                      label: l10n.globalSubmit,
+                                      variant: ButtonVariant.filled,
+                                      size: ButtonSize.large,
+                                      fullWidth: true,
+                                      isLoading: updateState.isLoading,
                                       onPressed: () async {
-                                        if (_validateForm()) {
-                                          await ref
-                                              .read(registrationUpdateProvider
-                                                  .notifier)
-                                              .submitUpdate(
-                                                fields,
-                                                _firstNameController.text,
-                                                _lastNameController.text,
-                                              );
+                                        if (!_formKey.currentState!
+                                            .validate()) {
+                                          return;
                                         }
-                                      },
-                                      child: Text(AppLocalizations.of(context)!
-                                          .globalSubmit),
-                                    ),
+                                        await ref
+                                            .read(registrationUpdateProvider
+                                                .notifier)
+                                            .submitUpdate(
+                                              fields,
+                                              _firstNameController.text,
+                                              _lastNameController.text,
+                                            );
+                                      }),
                                   if (updateState.isLoading)
                                     LoadingProgress(
                                       message:
@@ -248,7 +246,7 @@ class _SubmitRegistrationUpdateState
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           )),

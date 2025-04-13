@@ -42,7 +42,6 @@ class BaseAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   /// Create a SliverAppBar version with the same styling
   SliverAppBar asSliverAppBar(BuildContext context, WidgetRef ref) {
-    // Don't include actions in the appBarContent
     final appBarContent =
         _buildAppBarContent(context, ref, includeActions: false);
 
@@ -54,10 +53,10 @@ class BaseAppBar extends ConsumerWidget implements PreferredSizeWidget {
       backgroundColor: ref.watch(appThemeProvider).isDarkMode
           ? Foundations.darkColors.surface
           : Foundations.colors.surface,
-      automaticallyImplyLeading: showLeading,
+      automaticallyImplyLeading: false,
       leading: showLeading ? customLeading : null,
       title: appBarContent,
-      actions: actions, // This will render the actions once
+      actions: actions,
       bottom: bottom,
       foregroundColor: foregroundColor ??
           (ref.watch(appThemeProvider).isDarkMode
@@ -110,8 +109,6 @@ class BaseAppBar extends ConsumerWidget implements PreferredSizeWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildAppBarContent(context, ref),
-
-          // Optional bottom widget (tabs, etc.)
           if (bottom != null)
             Padding(
               padding: EdgeInsets.only(top: Foundations.spacing.sm),
@@ -128,22 +125,19 @@ class BaseAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final isDarkMode = theme.isDarkMode;
     final l10n = AppLocalizations.of(context)!;
 
-    // Retrieve screen width for responsive design
     final screenWidth = MediaQuery.of(context).size.width;
     final isNarrowScreen = screenWidth < 600;
 
-    // Determine title to display - use provided title, constant, or empty
     final effectiveTitle = title ?? '$customerName Admin Panel';
 
     return Row(
       children: [
-        // Leading section (back button or custom widget)
         if (showLeading)
           customLeading ??
               BaseIconButton(
                 icon: Icons.arrow_back,
                 variant: IconButtonVariant.ghost,
-                size: IconButtonSize.medium,
+                size: IconButtonSize.large,
                 color: foregroundColor ??
                     (isDarkMode
                         ? Foundations.darkColors.textPrimary
@@ -152,16 +146,11 @@ class BaseAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     onLeadingPressed ?? () => Navigator.of(context).pop(),
                 tooltip: l10n.globalBack,
               ),
-
-        // Conditional spacer after the leading widget
         if (showLeading) SizedBox(width: Foundations.spacing.md),
-
-        // Title section
         if (!isNarrowScreen || (isNarrowScreen && !showLeading))
           Expanded(
             child: Row(
               children: [
-                // Page title with optional breadcrumb styling
                 Expanded(
                   child: Text(
                     effectiveTitle,
@@ -181,8 +170,6 @@ class BaseAppBar extends ConsumerWidget implements PreferredSizeWidget {
               ],
             ),
           ),
-
-        // Actions section - only include if requested
         if (includeActions)
           Expanded(
             flex: isNarrowScreen ? 2 : 1,

@@ -238,24 +238,24 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
 
         return Stack(
           children: [
+            // Invisible overlay for detecting outside taps
             Positioned.fill(
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
                   _removeOverlay();
-                  // Release focus when clicking outside
                   _focusNode.unfocus();
                 },
-                // Make this transparent
                 child: Container(color: Colors.transparent),
               ),
             ),
+
+            // Dropdown content
             Positioned(
               width: size.width,
               child: CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                // Use the actual height with a small offset for visual separation
                 offset: Offset(0, offsetHeight),
                 child: Material(
                   color: Colors.transparent,
@@ -263,7 +263,9 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
                     duration: Foundations.effects.shortAnimation,
                     opacity: 1.0,
                     child: Container(
+                      // Set constraints with a maximum height
                       constraints: BoxConstraints(
+                        // Maximum height limit
                         maxHeight: 320,
                         minWidth: size.width,
                       ),
@@ -272,8 +274,6 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
                             ? Foundations.darkColors.surface
                             : Foundations.colors.surface,
                         borderRadius: borderRadius,
-
-                        // Enhanced shadow for more defined floating appearance
                         boxShadow: [
                           BoxShadow(
                             color: isDarkMode
@@ -287,110 +287,139 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
                       ),
                       child: ClipRRect(
                         borderRadius: borderRadius,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (widget.searchable) ...[
-                              Padding(
-                                padding: EdgeInsets.all(Foundations.spacing.sm),
-                                child: TextFormField(
-                                  controller: _searchController,
-                                  autofocus: true,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: Foundations.spacing.md,
-                                      vertical: Foundations.spacing.sm,
-                                    ),
-                                    hintText: widget.searchPlaceholder ??
-                                        l10n.globalSearch,
-                                    prefixIcon: Icon(
-                                      Icons.search,
-                                      color: isDarkMode
-                                          ? Foundations.darkColors.textMuted
-                                          : Foundations.colors.textMuted,
-                                      size: 18,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: Foundations.borders.md,
-                                      borderSide: BorderSide(
-                                        color: isDarkMode
-                                            ? Foundations.darkColors.border
-                                            : Foundations.colors.border,
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: Foundations.borders.md,
-                                      borderSide: BorderSide(
-                                        color: isDarkMode
-                                            ? Foundations.darkColors.border
-                                            : Foundations.colors.border,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: Foundations.borders.md,
-                                      borderSide: BorderSide(
-                                        color: theme.primaryColor,
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _searchQuery = value;
-                                      _overlayEntry?.markNeedsBuild();
-                                    });
-                                  },
-                                ),
-                              ),
-                              Divider(
-                                height: 1,
-                                thickness: 1,
-                                color: isDarkMode
-                                    ? Foundations.darkColors.border
-                                    : Foundations.colors.border,
-                              ),
-                            ],
-                            Flexible(
-                              child: Builder(builder: (context) {
-                                final filteredOptions = _getFilteredOptions();
+                        // Use IntrinsicHeight to adjust to content size
+                        child: LayoutBuilder(builder: (context, constraints) {
+                          // Get the filtered options
+                          final filteredOptions = _getFilteredOptions();
 
-                                if (filteredOptions.isEmpty) {
-                                  return Padding(
-                                    padding:
-                                        EdgeInsets.all(Foundations.spacing.md),
-                                    child: Center(
-                                      child: Text(
-                                        l10n.globalNoResults,
-                                        style: TextStyle(
+                          // Calculate content height
+                          final bool hasSearch = widget.searchable;
+                          final double searchHeight = hasSearch
+                              ? 56.0
+                              : 0.0; // Height of search box + divider
+                          final double itemHeight =
+                              44.0; // Approximate height of each item
+                          final double totalItemsHeight =
+                              filteredOptions.length * itemHeight;
+
+                          // Check if we need to scroll
+                          final bool needsScroll =
+                              (totalItemsHeight + searchHeight) >
+                                  constraints.maxHeight;
+
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Search field if searchable is enabled
+                              if (widget.searchable) ...[
+                                Padding(
+                                  padding:
+                                      EdgeInsets.all(Foundations.spacing.sm),
+                                  child: TextFormField(
+                                    controller: _searchController,
+                                    autofocus: true,
+                                    // Search field styling remains the same
+                                    decoration: InputDecoration(
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.symmetric(
+                                        horizontal: Foundations.spacing.md,
+                                        vertical: Foundations.spacing.sm,
+                                      ),
+                                      hintText: widget.searchPlaceholder ??
+                                          l10n.globalSearch,
+                                      prefixIcon: Icon(
+                                        Icons.search,
+                                        color: isDarkMode
+                                            ? Foundations.darkColors.textMuted
+                                            : Foundations.colors.textMuted,
+                                        size: 18,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: Foundations.borders.md,
+                                        borderSide: BorderSide(
                                           color: isDarkMode
-                                              ? Foundations.darkColors.textMuted
-                                              : Foundations.colors.textMuted,
-                                          fontSize: Foundations.typography.sm,
+                                              ? Foundations.darkColors.border
+                                              : Foundations.colors.border,
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: Foundations.borders.md,
+                                        borderSide: BorderSide(
+                                          color: isDarkMode
+                                              ? Foundations.darkColors.border
+                                              : Foundations.colors.border,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: Foundations.borders.md,
+                                        borderSide: BorderSide(
+                                          color: theme.primaryColor,
+                                          width: 1.5,
                                         ),
                                       ),
                                     ),
-                                  );
-                                }
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _searchQuery = value;
+                                        _overlayEntry?.markNeedsBuild();
+                                      });
+                                    },
+                                  ),
+                                ),
+                                Divider(
+                                  height: 1,
+                                  thickness: 1,
+                                  color: isDarkMode
+                                      ? Foundations.darkColors.border
+                                      : Foundations.colors.border,
+                                ),
+                              ],
 
-                                return ListView.builder(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: Foundations.spacing.sm),
-                                  shrinkWrap: true,
-                                  itemCount: filteredOptions.length,
-                                  itemBuilder: (context, index) {
-                                    final option = filteredOptions[index];
-                                    final isSelected =
-                                        widget.value == option.value;
-
-                                    return _buildOptionItem(
-                                        option, isSelected, isDarkMode);
-                                  },
-                                );
-                              }),
-                            ),
-                          ],
-                        ),
+                              if (filteredOptions.isEmpty)
+                                // No results message
+                                Padding(
+                                  padding:
+                                      EdgeInsets.all(Foundations.spacing.md),
+                                  child: Center(
+                                    child: Text(
+                                      l10n.globalNoResults,
+                                      style: TextStyle(
+                                        color: isDarkMode
+                                            ? Foundations.darkColors.textMuted
+                                            : Foundations.colors.textMuted,
+                                        fontSize: Foundations.typography.sm,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              else
+                                // List of options - this is where the key changes are
+                                Container(
+                                  // If we need to scroll, use the max height, otherwise use the content height
+                                  height: needsScroll
+                                      ? constraints.maxHeight - searchHeight
+                                      : totalItemsHeight,
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: Foundations.spacing.sm),
+                                    // Always allow scrolling for consistency
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    // Don't use shrinkWrap when scrollable
+                                    shrinkWrap: !needsScroll,
+                                    itemCount: filteredOptions.length,
+                                    itemBuilder: (context, index) {
+                                      final option = filteredOptions[index];
+                                      final isSelected =
+                                          widget.value == option.value;
+                                      return _buildOptionItem(
+                                          option, isSelected, isDarkMode);
+                                    },
+                                  ),
+                                ),
+                            ],
+                          );
+                        }),
                       ),
                     ),
                   ),

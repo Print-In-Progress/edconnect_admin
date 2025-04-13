@@ -1,14 +1,18 @@
+import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
-import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
-import 'package:edconnect_admin/presentation/pages/settings_pages/submit_registration_update.dart';
+import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/pages/settings_pages/settings_change_name_page.dart';
 import 'package:edconnect_admin/presentation/pages/settings_pages/settings_change_email.dart';
 import 'package:edconnect_admin/presentation/pages/settings_pages/settings_update_password_page.dart';
-import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
+import 'package:edconnect_admin/presentation/pages/settings_pages/submit_registration_update.dart';
+import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
+import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
+import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
+import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:edconnect_admin/presentation/widgets/common/switch.dart';
 import 'package:flutter/material.dart';
-import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AccountOverview extends ConsumerStatefulWidget {
@@ -20,7 +24,6 @@ class AccountOverview extends ConsumerStatefulWidget {
 
 class _AccountOverviewState extends ConsumerState<AccountOverview> {
   final _reauthenticatePasswordController = TextEditingController();
-
   bool reauthenticatePasswordVisible = false;
 
   @override
@@ -32,436 +35,344 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
+    final isDarkMode = theme.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
+
+    // Responsive width calculation
 
     return Scaffold(
-        body: Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [theme.primaryColor, theme.secondaryColor],
+      backgroundColor: Colors.transparent,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [theme.primaryColor, theme.secondaryColor],
+          ),
         ),
-      ),
-      padding: const EdgeInsets.all(8.0),
-      child: SafeArea(
-        child: NestedScrollView(
-          floatHeaderSlivers: true,
-          headerSliverBuilder: (context, bool innerBoxIsScrolled) {
-            return [
-              SliverAppBar(
-                automaticallyImplyLeading: true,
-                floating: true,
-                snap: true,
-                forceMaterialTransparency: true,
-                actionsIconTheme: const IconThemeData(color: Colors.white),
-                iconTheme: const IconThemeData(color: Colors.white),
-                title: Text(
-                  AppLocalizations.of(context)!.navSettings,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              )
-            ];
-          },
-          body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Name and Profile Picture
-//                SizedBox(
-//                    width: MediaQuery.of(context).size.width < 700
-//                        ? MediaQuery.of(context).size.width
-//                        : MediaQuery.of(context).size.width / 2,
-//                    child: Card(
-//                      child: Column(
-//                        mainAxisSize: MainAxisSize.min,
-//                        children: [],
-//                      ),
-//                    )),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width < 700
-                      ? MediaQuery.of(context).size.width
-                      : MediaQuery.of(context).size.width / 2,
-                  child: Card(
+        child: CustomScrollView(
+          slivers: [
+            BaseAppBar(
+              title: l10n.navSettings,
+              showLeading: true,
+              forceMaterialTransparency: true,
+              showDivider: false,
+              foregroundColor: Foundations.colors.surfaceActive,
+              floating: true,
+            ).asSliverAppBar(context, ref),
+            SliverPadding(
+              padding: EdgeInsets.all(Foundations.spacing.lg),
+              sliver: SliverToBoxAdapter(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 700),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Text(
-                            AppLocalizations.of(context)!.settingsManageAccount,
-                            style: const TextStyle(color: Colors.blue),
-                          ),
-                        ),
-
-                        // Change Name Button
-                        TextButton.icon(
-                          icon: Icon(
-                            Icons.abc,
-                            size: 30,
-                            color: theme.isDarkMode
-                                ? Colors.white
-                                : theme.primaryColor,
-                          ),
-                          label: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!
-                                    .settingsChangeName,
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  color: theme.isDarkMode
-                                      ? Colors.white
-                                      : theme.primaryColor,
-                                ),
-                              ),
-                              Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: theme.isDarkMode
-                                    ? Colors.white
-                                    : theme.primaryColor,
-                              )
-                            ],
-                          ),
-                          onPressed: () {
-                            Navigator.push(
+                        // Account Management Section
+                        buildSectionCard(
+                          l10n.settingsManageAccount,
+                          theme.isDarkMode,
+                          children: [
+                            _buildSettingsItem(
+                              icon: Icons.person_outline,
+                              label: l10n.settingsChangeName,
+                              onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    settings: const RouteSettings(
-                                        name: 'Settings Change Name Page'),
-                                    builder: (context) {
-                                      return const AccountName();
-                                    }));
-                          },
-                        ),
-
-                        // Change Email Button
-                        TextButton.icon(
-                          icon: Icon(
-                            Icons.email_outlined,
-                            size: 30,
-                            color: theme.isDarkMode
-                                ? Colors.white
-                                : theme.primaryColor,
-                          ),
-                          label: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.globalEmailLabel,
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  color: theme.isDarkMode
-                                      ? Colors.white
-                                      : theme.primaryColor,
+                                  settings: const RouteSettings(
+                                      name: 'Settings Change Name Page'),
+                                  builder: (context) => const AccountName(),
                                 ),
                               ),
-                              Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: theme.isDarkMode
-                                    ? Colors.white
-                                    : theme.primaryColor,
-                              )
-                            ],
-                          ),
-                          onPressed: () {
-                            Navigator.push(
+                            ),
+                            _buildSettingsItem(
+                              icon: Icons.email_outlined,
+                              label: l10n.globalEmailLabel,
+                              onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    settings: const RouteSettings(
-                                        name: 'Settings Change Email Screen'),
-                                    builder: (context) {
-                                      return const ChangeEmail();
-                                    }));
-                          },
-                        ),
-
-                        // Change Password Button
-                        TextButton.icon(
-                          icon: Icon(
-                            Icons.password,
-                            size: 30,
-                            color: theme.isDarkMode
-                                ? Colors.white
-                                : theme.primaryColor,
-                          ),
-                          label: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!
-                                    .settingsChangePassword,
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  color: theme.isDarkMode
-                                      ? Colors.white
-                                      : theme.primaryColor,
+                                  settings: const RouteSettings(
+                                      name: 'Settings Change Email Screen'),
+                                  builder: (context) => const ChangeEmail(),
                                 ),
                               ),
-                              Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: theme.isDarkMode
-                                    ? Colors.white
-                                    : theme.primaryColor,
-                              )
-                            ],
-                          ),
-                          onPressed: () {
-                            Navigator.push(
+                            ),
+                            _buildSettingsItem(
+                              icon: Icons.lock_outline,
+                              label: l10n.settingsChangePassword,
+                              onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    settings: const RouteSettings(
-                                        name:
-                                            'Settings Change Password Screen'),
-                                    builder: (context) {
-                                      return const AccountPassword();
-                                    }));
-                          },
-                        ),
-
-                        // Resubmit Registration Information Button
-                        TextButton.icon(
-                          icon: Icon(
-                            Icons.app_registration,
-                            size: 30,
-                            color: theme.isDarkMode
-                                ? Colors.white
-                                : theme.primaryColor,
-                          ),
-                          label: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  // Resubmit Questionnaire
-                                  AppLocalizations.of(context)!
-                                      .settingsUpdateRegistrationQuestionaire,
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    overflow: TextOverflow.ellipsis,
-                                    color: theme.isDarkMode
-                                        ? Colors.white
-                                        : theme.primaryColor,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                                  settings: const RouteSettings(
+                                      name: 'Settings Change Password Screen'),
+                                  builder: (context) => const AccountPassword(),
                                 ),
                               ),
-                              Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: theme.isDarkMode
-                                    ? Colors.white
-                                    : theme.primaryColor,
-                              )
-                            ],
-                          ),
-                          onPressed: () {
-                            Navigator.push(
+                            ),
+                            _buildSettingsItem(
+                              icon: Icons.assignment_outlined,
+                              label:
+                                  l10n.settingsUpdateRegistrationQuestionaire,
+                              onTap: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   settings: const RouteSettings(
                                       name: 'resubmitRegInfo'),
-                                  builder: (context) {
-                                    return const SubmitRegistrationUpdate();
-                                  },
-                                ));
-                          },
-                        ),
-
-                        // Change Organization Button
-/*
-                        TextButton.icon(
-                          icon: Icon(
-                            Icons.download,
-                            size: 30,
-                            color: theme.isDarkMode
-                                ? Colors.white
-                                : theme.primaryColor,
-                          ),
-                          label: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Konto-Info anfragen',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  color: theme.isDarkMode
-                                      ? Colors.white
-                                      : theme.primaryColor,
+                                  builder: (context) =>
+                                      const SubmitRegistrationUpdate(),
                                 ),
                               ),
-                              Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: theme.isDarkMode
-                                    ? Colors.white
-                                    : Color(int.parse(theme
-                                        .primaryColor)),
-                              )
-                            ],
-                          ),
-                          onPressed: () {
-                            if (connectivity) {
-                            } else {
-                              errorMessage(context, 'No Internet Connection');
-                              return;
-                            }
-                          },
+                            ),
+                          ],
                         ),
-*/
-                        const SizedBox(height: 20),
+
+                        SizedBox(height: Foundations.spacing.lg),
+
+                        // Appearance Section
+                        buildSectionCard(
+                          l10n.settingsAppearance,
+                          theme.isDarkMode,
+                          children: [
+                            BaseSwitch(
+                              label: l10n.settingsDarkMode,
+                              value: theme.isDarkMode,
+                              showHoverEffect: true,
+                              trailing: theme.isDarkMode
+                                  ? Icon(
+                                      Icons.light_mode_outlined,
+                                      color: isDarkMode
+                                          ? Foundations.darkColors.textSecondary
+                                          : Foundations.colors.textSecondary,
+                                    )
+                                  : Icon(
+                                      Icons.dark_mode_outlined,
+                                      color: isDarkMode
+                                          ? Foundations.darkColors.textSecondary
+                                          : Foundations.colors.textSecondary,
+                                    ),
+                              onChanged: (value) {
+                                ref
+                                    .read(appThemeProvider.notifier)
+                                    .setDarkMode(!theme.isDarkMode);
+                              },
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: Foundations.spacing.lg),
+
+                        // Account Actions Section
+                        buildSectionCard(
+                          'Account Actions',
+                          theme.isDarkMode,
+                          children: [
+                            _buildSettingsItem(
+                              icon: Icons.logout,
+                              label: l10n.globalLogout,
+                              textColor: Foundations.colors.error,
+                              iconColor: Foundations.colors.error,
+                              onTap: () async {
+                                Navigator.of(context).pop();
+                                await ref
+                                    .read(signOutStateProvider.notifier)
+                                    .signOut();
+                              },
+                            ),
+                            _buildSettingsItem(
+                              icon: Icons.delete_outline,
+                              label: l10n.globalDeleteAccount,
+                              textColor: Foundations.colors.error,
+                              iconColor: Foundations.colors.error,
+                              onTap: () async {
+                                await showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      _buildDeleteAccountDialog(context),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+
+                        // Add bottom padding to ensure no white bar is visible
+                        SizedBox(height: Foundations.spacing.xl3),
                       ],
                     ),
                   ),
                 ),
-
-                SizedBox(
-                  width: MediaQuery.of(context).size.width < 700
-                      ? MediaQuery.of(context).size.width
-                      : MediaQuery.of(context).size.width / 2,
-                  child: Card(
-                    child: Column(children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Text(
-                          AppLocalizations.of(context)!.settingsAppearance,
-                          style: const TextStyle(color: Colors.blue),
-                        ),
-                      ),
-                      BaseSwitch(
-                          label: AppLocalizations.of(context)!.settingsDarkMode,
-                          value: theme.isDarkMode,
-                          showHoverEffect: true,
-                          trailing: theme.isDarkMode
-                              ? const Icon(Icons.light_mode_outlined)
-                              : const Icon(Icons.dark_mode_outlined),
-                          onChanged: (value) {
-                            ref
-                                .read(appThemeProvider.notifier)
-                                .setDarkMode(!theme.isDarkMode);
-                          }),
-                    ]),
-                  ),
-                ),
-
-                // Logout Button
-                SizedBox(
-                  width: MediaQuery.of(context).size.width < 700
-                      ? MediaQuery.of(context).size.width
-                      : MediaQuery.of(context).size.width / 2,
-                  child: Card(
-                    child: Column(
-                      children: [
-                        TextButton(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.globalLogout,
-                                style: const TextStyle(
-                                    color: Colors.red, fontSize: 17),
-                              ),
-                              const Icon(Icons.logout, color: Colors.red)
-                            ],
-                          ),
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                            await ref
-                                .read(signOutStateProvider.notifier)
-                                .signOut();
-                          },
-                        ),
-
-                        // Delete Button
-                        TextButton(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!
-                                    .globalDeleteAccount,
-                                style: const TextStyle(
-                                    color: Colors.red, fontSize: 17),
-                              ),
-                              const Icon(Icons.delete, color: Colors.red)
-                            ],
-                          ),
-                          onPressed: () async {
-                            await showDialog(
-                                context: context,
-                                builder: ((BuildContext context) {
-                                  return _buildDeleteAccountDialog(context);
-                                }));
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsItem({
+    required IconData icon,
+    required String label,
+    Color? iconColor,
+    Color? textColor,
+    required VoidCallback onTap,
+  }) {
+    final theme = ref.watch(appThemeProvider);
+    final isDarkMode = theme.isDarkMode;
+
+    // Default colors if not specified
+    final effectiveIconColor = iconColor ??
+        (isDarkMode ? Foundations.darkColors.textPrimary : theme.primaryColor);
+    final effectiveTextColor = textColor ??
+        (isDarkMode
+            ? Foundations.darkColors.textPrimary
+            : Foundations.colors.textPrimary);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: Foundations.borders.md,
+        splashColor: isDarkMode
+            ? Foundations.darkColors.backgroundSubtle.withValues(alpha: 0.5)
+            : theme.accentLight.withValues(alpha: 0.1),
+        highlightColor: Colors.transparent,
+        hoverColor: isDarkMode
+            ? Foundations.darkColors.backgroundSubtle.withValues(alpha: 0.5)
+            : theme.accentLight.withValues(alpha: 0.1),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: Foundations.spacing.lg,
+            vertical: Foundations.spacing.md,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                size: 22,
+                color: effectiveIconColor,
+              ),
+              SizedBox(width: Foundations.spacing.lg),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: Foundations.typography.base,
+                    fontWeight: Foundations.typography.medium,
+                    color: effectiveTextColor,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                size: 20,
+                color: isDarkMode
+                    ? Foundations.darkColors.textSecondary
+                    : Foundations.colors.textSecondary,
+              ),
+            ],
           ),
         ),
       ),
-    ));
+    );
   }
 
   Widget _buildDeleteAccountDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = ref.watch(appThemeProvider);
+    final isDarkMode = theme.isDarkMode;
+
     return StatefulBuilder(
       builder: (context, setState) {
         final deleteAccountState = ref.watch(deleteAccountProvider);
 
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.globalReauthenticate),
+          title: Text(
+            l10n.globalReauthenticate,
+            style: TextStyle(
+              fontSize: Foundations.typography.lg,
+              fontWeight: Foundations.typography.semibold,
+              color: isDarkMode
+                  ? Foundations.darkColors.textPrimary
+                  : Foundations.colors.textPrimary,
+            ),
+          ),
+          backgroundColor: isDarkMode
+              ? Foundations.darkColors.surface
+              : Foundations.colors.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: Foundations.borders.md,
+          ),
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(AppLocalizations.of(context)!.settingsDeleteDialogBody),
-              TextFormField(
-                obscureText: !reauthenticatePasswordVisible,
+              Text(
+                l10n.settingsDeleteDialogBody,
+                style: TextStyle(
+                  fontSize: Foundations.typography.base,
+                  color: isDarkMode
+                      ? Foundations.darkColors.textSecondary
+                      : Foundations.colors.textSecondary,
+                ),
+              ),
+              SizedBox(height: Foundations.spacing.lg),
+              BaseInput(
                 controller: _reauthenticatePasswordController,
-                decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      reauthenticatePasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () => setState(() {
+                label: l10n.authPasswordLabel,
+                obscureText: !reauthenticatePasswordVisible,
+                trailingIcon: IconButton(
+                  icon: Icon(
+                    reauthenticatePasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                    size: 20,
+                    color: isDarkMode
+                        ? Foundations.darkColors.textSecondary
+                        : Foundations.colors.textSecondary,
+                  ),
+                  onPressed: () {
+                    setState(() {
                       reauthenticatePasswordVisible =
                           !reauthenticatePasswordVisible;
-                    }),
-                  ),
-                  hintText: AppLocalizations.of(context)!.authPasswordLabel,
+                    });
+                  },
                 ),
               ),
             ],
           ),
           actions: [
-            const PIPCancelButton(),
-            if (deleteAccountState.isLoading)
-              const CircularProgressIndicator()
-            else
-              PIPDialogTextButton(
-                label: 'Ok',
-                onPressed: () async {
-                  try {
-                    await ref
-                        .read(deleteAccountProvider.notifier)
-                        .deleteAccount(_reauthenticatePasswordController.text);
+            BaseButton(
+              label: l10n.globalCancel,
+              variant: ButtonVariant.text,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            BaseButton(
+              label: l10n.globalOk,
+              variant: ButtonVariant.filled,
+              isLoading: deleteAccountState.isLoading,
+              onPressed: () async {
+                try {
+                  await ref
+                      .read(deleteAccountProvider.notifier)
+                      .deleteAccount(_reauthenticatePasswordController.text);
 
-                    if (!context.mounted) return;
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop(); // Pop settings page
-                    successMessage(
-                      context,
-                      AppLocalizations.of(context)!.successDefault,
-                    );
-                  } catch (e) {
-                    if (!context.mounted) return;
-                    Navigator.of(context).pop();
-                    errorMessage(context, e.toString());
-                  }
-                },
-              ),
+                  if (!context.mounted) return;
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(); // Pop settings page
+                  successMessage(
+                    context,
+                    l10n.successDefault,
+                  );
+                } catch (e) {
+                  if (!context.mounted) return;
+                  Navigator.of(context).pop();
+                  errorMessage(context, e.toString());
+                }
+              },
+            ),
           ],
         );
       },

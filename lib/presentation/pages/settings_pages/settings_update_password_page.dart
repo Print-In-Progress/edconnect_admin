@@ -1,8 +1,11 @@
+import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
-import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
-import 'package:edconnect_admin/presentation/widgets/common/forms.dart';
+import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
+import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
 import 'package:edconnect_admin/presentation/pages/auth_pages/forgot_password_page.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
+import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
+import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
@@ -63,6 +66,10 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
+    final l10n = AppLocalizations.of(context)!;
+    final reauthenticateState = ref.watch(reauthenticateProvider);
+    final changePasswordState = ref.watch(changePasswordProvider);
+
     return Scaffold(
         backgroundColor: Colors.transparent,
         body: Container(
@@ -79,127 +86,148 @@ class _AccountPasswordState extends ConsumerState<AccountPassword> {
             floatHeaderSlivers: true,
             headerSliverBuilder: (context, bool innerBoxIsScrolled) {
               return [
-                SliverAppBar(
-                  automaticallyImplyLeading: true,
-                  floating: true,
-                  snap: true,
+                BaseAppBar(
+                  title: l10n.navSettings,
+                  showLeading: true,
                   forceMaterialTransparency: true,
-                  actionsIconTheme: const IconThemeData(color: Colors.white),
-                  iconTheme: const IconThemeData(color: Colors.white),
-                  title: Text(
-                    AppLocalizations.of(context)!.navSettings,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                )
+                  showDivider: false,
+                  foregroundColor: Foundations.colors.surfaceActive,
+                  floating: true,
+                ).asSliverAppBar(context, ref),
               ];
             },
             body: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width < 700
-                        ? MediaQuery.of(context).size.width
-                        : MediaQuery.of(context).size.width / 2,
-                    child: Card(
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 10),
-
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: PIPPasswordForm(
-                                  label: AppLocalizations.of(context)!
-                                      .authResetPassword,
-                                  width: MediaQuery.of(context).size.width,
-                                  controller: _currentPasswordController,
-                                  passwordVisible: _currentPasswordVisible,
-                                  onPressed: () {
-                                    setState(() {
-                                      _currentPasswordVisible =
-                                          !_currentPasswordVisible;
-                                    });
-                                  }),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: PIPPasswordForm(
-                                  label: AppLocalizations.of(context)!
-                                      .settingsNewPassword,
-                                  width: MediaQuery.of(context).size.width,
-                                  controller: _newPasswordController,
-                                  passwordVisible: _newPasswordVisible,
-                                  onPressed: () {
-                                    setState(() {
-                                      _newPasswordVisible =
-                                          !_newPasswordVisible;
-                                    });
-                                  }),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: PIPPasswordForm(
-                                  label: AppLocalizations.of(context)!
-                                      .authPagesRegisterConfirmPasswordTextFieldHintText,
-                                  width: MediaQuery.of(context).size.width,
-                                  controller: _confirmNewPasswordController,
-                                  passwordVisible: _confirmNewPasswordVisible,
-                                  onPressed: () {
-                                    setState(() {
-                                      _confirmNewPasswordVisible =
-                                          !_confirmNewPasswordVisible;
-                                    });
-                                  }),
-                            ),
-
-                            // forgot password button
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              settings: const RouteSettings(
-                                                  name: 'Forgot Password Page'),
-                                              builder: (context) {
-                                                return const ForgotPasswordPage();
-                                              }));
-                                    },
-                                    child: Text(
-                                      AppLocalizations.of(context)!
-                                          .authForgotPassword,
-                                      style: const TextStyle(
-                                          color: Colors.blue,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 700),
+                    child: Form(
+                      key: _formKey,
+                      child: buildSectionCard(
+                        l10n.settingsChangePassword,
+                        theme.isDarkMode,
+                        children: [
+                          SizedBox(height: Foundations.spacing.lg),
+                          BaseInput(
+                            controller: _currentPasswordController,
+                            label:
+                                AppLocalizations.of(context)!.authPasswordLabel,
+                            hint:
+                                AppLocalizations.of(context)!.authPasswordLabel,
+                            leadingIcon: Icons.lock_outline,
+                            isRequired: true,
+                            obscureText: !_currentPasswordVisible,
+                            variant: InputVariant.default_,
+                            size: InputSize.large,
+                            fullWidth: true,
+                            trailingIcon: IconButton(
+                              icon: Icon(
+                                _currentPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: theme.isDarkMode
+                                    ? Foundations.darkColors.textMuted
+                                    : Foundations.colors.textMuted,
                               ),
+                              onPressed: () {
+                                setState(() {
+                                  _currentPasswordVisible =
+                                      !_currentPasswordVisible;
+                                });
+                              },
                             ),
-                            const SizedBox(height: 10),
-
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25.0),
-                              child: PIPResponsiveRaisedButton(
-                                  fontWeight: FontWeight.w600,
-                                  label:
-                                      AppLocalizations.of(context)!.globalSave,
-                                  onPressed: _updatePassword,
-                                  width: MediaQuery.of(context).size.width),
+                          ),
+                          SizedBox(height: Foundations.spacing.lg),
+                          BaseInput(
+                            controller: _newPasswordController,
+                            label: AppLocalizations.of(context)!
+                                .settingsNewPassword,
+                            hint: AppLocalizations.of(context)!
+                                .settingsNewPassword,
+                            leadingIcon: Icons.lock_outline,
+                            isRequired: true,
+                            obscureText: !_newPasswordVisible,
+                            variant: InputVariant.default_,
+                            size: InputSize.large,
+                            fullWidth: true,
+                            trailingIcon: IconButton(
+                              icon: Icon(
+                                _newPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: theme.isDarkMode
+                                    ? Foundations.darkColors.textMuted
+                                    : Foundations.colors.textMuted,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _newPasswordVisible = !_newPasswordVisible;
+                                });
+                              },
                             ),
-
-                            const SizedBox(height: 10),
-                          ],
-                        ),
+                          ),
+                          SizedBox(height: Foundations.spacing.lg),
+                          BaseInput(
+                            controller: _confirmNewPasswordController,
+                            label: AppLocalizations.of(context)!
+                                .authPagesRegisterConfirmPasswordTextFieldHintText,
+                            hint: AppLocalizations.of(context)!
+                                .authPagesRegisterConfirmPasswordTextFieldHintText,
+                            leadingIcon: Icons.lock_outline,
+                            isRequired: true,
+                            obscureText: !_confirmNewPasswordVisible,
+                            variant: InputVariant.default_,
+                            size: InputSize.large,
+                            fullWidth: true,
+                            trailingIcon: IconButton(
+                              icon: Icon(
+                                _confirmNewPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: theme.isDarkMode
+                                    ? Foundations.darkColors.textMuted
+                                    : Foundations.colors.textMuted,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _confirmNewPasswordVisible =
+                                      !_confirmNewPasswordVisible;
+                                });
+                              },
+                            ),
+                          ),
+                          SizedBox(height: Foundations.spacing.lg),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: BaseButton(
+                              label: AppLocalizations.of(context)!
+                                  .authForgotPassword,
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      settings: const RouteSettings(
+                                          name: 'Change Password Screen'),
+                                      builder: (context) =>
+                                          const ForgotPasswordPage(),
+                                    ));
+                              },
+                              variant: ButtonVariant.text,
+                              size: ButtonSize.medium,
+                            ),
+                          ),
+                          SizedBox(height: Foundations.spacing.lg),
+                          BaseButton(
+                              label: l10n.globalSave,
+                              onPressed: _updatePassword,
+                              variant: ButtonVariant.filled,
+                              size: ButtonSize.large,
+                              isLoading: reauthenticateState.isLoading ||
+                                  changePasswordState.isLoading,
+                              fullWidth: true),
+                          SizedBox(height: Foundations.spacing.lg),
+                        ],
                       ),
                     ),
                   ),
