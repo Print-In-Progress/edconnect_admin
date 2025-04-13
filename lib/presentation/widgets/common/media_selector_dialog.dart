@@ -2,7 +2,7 @@ import 'package:edconnect_admin/domain/entities/media_selection_options.dart';
 import 'package:edconnect_admin/domain/entities/storage_file.dart';
 import 'package:edconnect_admin/domain/entities/storage_module.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
-import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
+import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -132,6 +132,7 @@ class _MediaSelectorDialogState extends ConsumerState<MediaSelectorDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Dialog(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -182,10 +183,16 @@ class _MediaSelectorDialogState extends ConsumerState<MediaSelectorDialog> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const PIPCancelButton(),
-                  PIPDialogTextButton(
-                    label: 'Ok',
+                  BaseButton(
+                      label: l10n.globalCancel,
+                      variant: ButtonVariant.text,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      }),
+                  BaseButton(
+                    label: l10n.globalOk,
                     onPressed: _handleSubmit,
+                    variant: ButtonVariant.filled,
                   ),
                 ],
               ),

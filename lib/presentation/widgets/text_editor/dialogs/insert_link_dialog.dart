@@ -1,8 +1,8 @@
+import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
-import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 
 class LinkDialog extends ConsumerStatefulWidget {
   final HtmlEditorController htmlController;
@@ -29,6 +29,7 @@ class _LinkDialogState extends ConsumerState<LinkDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -61,9 +62,14 @@ class _LinkDialogState extends ConsumerState<LinkDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const PIPCancelButton(),
-                PIPDialogTextButton(
-                  label: 'OK',
+                BaseButton(
+                    label: l10n.globalCancel,
+                    variant: ButtonVariant.text,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
+                BaseButton(
+                  label: l10n.globalOk,
                   onPressed: () {
                     widget.htmlController.insertLink(
                       _textController.text,
@@ -72,6 +78,7 @@ class _LinkDialogState extends ConsumerState<LinkDialog> {
                     );
                     Navigator.pop(context);
                   },
+                  variant: ButtonVariant.filled,
                 ),
               ],
             ),

@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edconnect_admin/domain/entities/media_selection_options.dart';
 import 'package:edconnect_admin/domain/entities/storage_file.dart';
 import 'package:edconnect_admin/domain/entities/storage_module.dart';
-import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
+import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
 import 'package:edconnect_admin/presentation/widgets/common/media_selector_dialog.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
@@ -1368,6 +1368,7 @@ class _ChangeFontColorDialogState extends State<ChangeFontColorDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
       scrollable: true,
       content: ColorPicker(
@@ -1399,7 +1400,12 @@ class _ChangeFontColorDialogState extends State<ChangeFontColorDialog> {
         ),
       ),
       actions: <Widget>[
-        const PIPCancelButton(),
+        BaseButton(
+            label: l10n.globalCancel,
+            variant: ButtonVariant.text,
+            onPressed: () {
+              Navigator.of(context).pop();
+            }),
         TextButton(
             onPressed: () {
               setState(() {
@@ -1452,6 +1458,7 @@ class _ChangeBackgroundColorDialogState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
       scrollable: true,
       content: ColorPicker(
@@ -1482,7 +1489,12 @@ class _ChangeBackgroundColorDialogState
         ),
       ),
       actions: <Widget>[
-        const PIPCancelButton(),
+        BaseButton(
+            label: l10n.globalCancel,
+            variant: ButtonVariant.text,
+            onPressed: () {
+              Navigator.of(context).pop();
+            }),
         TextButton(
             onPressed: () {
               setState(() {
