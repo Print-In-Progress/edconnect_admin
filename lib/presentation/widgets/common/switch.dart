@@ -25,7 +25,7 @@ class BaseSwitch extends ConsumerStatefulWidget {
   final String? description;
 
   /// Optional custom child widget that replaces label and description
-  /// Useful for rich content like TextButtons for privacy policy links
+  /// Useful for rich content like TextButtons for links
   final Widget? child;
 
   /// Whether the switch is disabled

@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
+import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
+import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,7 +63,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
   Widget build(BuildContext context) {
     final authStatus = ref.watch(authStatusProvider);
     final theme = ref.watch(appThemeProvider);
-
+    final l10n = AppLocalizations.of(context)!;
     if (authStatus == AuthStatus.authenticated) {
       return ref.watch(currentUserProvider).when(
             data: (user) =>
@@ -84,36 +87,47 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
           ),
         ),
         child: Center(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width / 2,
-            height: MediaQuery.of(context).size.height / 2,
-            child: Card(
-              child: Column(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: Foundations.spacing.sm,
+              vertical: Foundations.spacing.lg,
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 700),
+              child: buildSectionCard(
+                l10n.authVerifyEmailTitle,
+                theme.isDarkMode,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Text(
-                      AppLocalizations.of(context)!.authVerifyEmailTitle,
-                      style: const TextStyle(color: Colors.green, fontSize: 50),
-                    ),
-                  ),
                   Text(
                     AppLocalizations.of(context)!.authVerifyEmailBody,
-                    style: const TextStyle(fontSize: 15),
+                    style: TextStyle(
+                        color: theme.isDarkMode
+                            ? Foundations.darkColors.textPrimary
+                            : Foundations.colors.textPrimary,
+                        fontSize: Foundations.typography.base),
                   ),
-                  const SizedBox(height: 15),
-                  ElevatedButton.icon(
+                  SizedBox(
+                    height: Foundations.spacing.lg,
+                  ),
+                  BaseButton(
+                    label: l10n.authResendVerificationEmail,
                     onPressed: canResendEmail ? sendVerificationEmail : null,
-                    icon: const Icon(Icons.email),
-                    label: Text(AppLocalizations.of(context)!
-                        .authResendVerificationEmail),
+                    variant: ButtonVariant.filled,
+                    size: ButtonSize.large,
+                    isLoading: canResendEmail == false,
+                    fullWidth: true,
+                    prefixIcon: Icons.email_outlined,
                   ),
-                  const SizedBox(height: 10),
-                  ElevatedButton.icon(
+                  SizedBox(
+                    height: Foundations.spacing.lg,
+                  ),
+                  BaseButton(
+                    label: l10n.globalCancel,
                     onPressed: () =>
                         ref.read(signOutStateProvider.notifier).signOut(),
-                    icon: const Icon(Icons.cancel),
-                    label: Text(AppLocalizations.of(context)!.globalCancel),
+                    variant: ButtonVariant.text,
+                    size: ButtonSize.large,
+                    fullWidth: true,
                   ),
                 ],
               ),

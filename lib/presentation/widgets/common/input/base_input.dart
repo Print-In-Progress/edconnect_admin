@@ -129,7 +129,8 @@ class BaseInput extends ConsumerWidget {
     this.autovalidateMode,
     this.child,
     this.spacing = 8.0,
-  });
+  }) : assert(!(controller != null && initialValue != null),
+            'You can only provide either a controller or an initial value, not both.');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

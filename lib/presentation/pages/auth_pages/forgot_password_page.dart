@@ -1,6 +1,10 @@
+import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/validation/validators/text_field_validator.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
-import 'package:edconnect_admin/presentation/widgets/common/buttons.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
+import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
+import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
+import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
 import 'package:edconnect_admin/presentation/widgets/common/snackbars.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
@@ -17,17 +21,6 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   // text editing controllers
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return AppLocalizations.of(context)!.validationRequired;
-    }
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) {
-      return AppLocalizations.of(context)!.validationEmail;
-    }
-    return null;
-  }
 
   Future<void> _resetPassword() async {
     if (!_formKey.currentState!.validate()) return;
@@ -60,10 +53,12 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
     final resetPasswordState = ref.watch(resetPasswordProvider);
-
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topRight,
@@ -74,74 +69,64 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             ],
           ),
         ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width < 700
-                    ? MediaQuery.of(context).size.width
-                    : MediaQuery.of(context).size.width / 2,
-                child: Card(
-                    elevation: 50,
-                    child: Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(height: 10),
-                            Text(
-                              AppLocalizations.of(context)!.authResetPassword,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                            Text(
-                              AppLocalizations.of(context)!
-                                  .authResetPasswordBody,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              controller: _emailController,
-                              validator: _validateEmail,
-                            ),
-                            const SizedBox(height: 10),
-                            PIPResponsiveRaisedButton(
-                              label: AppLocalizations.of(context)!
-                                  .authResetPasswordSendEmail,
-                              onPressed: () {
-                                resetPasswordState.isLoading
-                                    ? null
-                                    : _resetPassword;
-                              },
-                              fontWeight: FontWeight.w700,
-                              width: MediaQuery.of(context).size.width < 700
-                                  ? MediaQuery.of(context).size.width
-                                  : MediaQuery.of(context).size.width / 4,
-                            ),
-                            if (resetPasswordState.isLoading)
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: CircularProgressIndicator(),
-                              ),
-                            const SizedBox(height: 10),
-                            PIPResponsiveTextButton(
-                              label: AppLocalizations.of(context)!
-                                  .globalBackToLogin,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w700,
-                              onPressed: () => Navigator.of(context).pop(),
-                              width: MediaQuery.of(context).size.width < 700
-                                  ? MediaQuery.of(context).size.width / 2
-                                  : MediaQuery.of(context).size.width / 4,
-                              height: MediaQuery.of(context).size.height / 20,
-                            ),
-                          ],
-                        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: Foundations.spacing.sm,
+              vertical: Foundations.spacing.lg,
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: Form(
+                key: _formKey,
+                child: buildSectionCard(
+                  l10n.authResetPassword,
+                  theme.isDarkMode,
+                  children: [
+                    SizedBox(height: Foundations.spacing.lg),
+                    Text(
+                      AppLocalizations.of(context)!.authResetPasswordBody,
+                      style: TextStyle(
+                        fontSize: Foundations.typography.base,
+                        fontWeight: Foundations.typography.semibold,
+                        color: theme.isDarkMode
+                            ? Foundations.darkColors.textPrimary
+                            : Foundations.colors.textPrimary,
                       ),
-                    )),
+                    ),
+                    SizedBox(height: Foundations.spacing.lg),
+                    BaseInput(
+                      controller: _emailController,
+                      label: l10n.globalEmailLabel,
+                      hint: l10n.globalEmailLabel,
+                      leadingIcon: Icons.email_outlined,
+                      isRequired: true,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      type: TextFieldType.email,
+                      keyboardType: TextInputType.emailAddress,
+                      variant: InputVariant.default_,
+                      size: InputSize.medium,
+                    ),
+                    SizedBox(height: Foundations.spacing.lg),
+                    BaseButton(
+                        label: l10n.authResetPasswordSendEmail,
+                        variant: ButtonVariant.filled,
+                        isLoading: resetPasswordState.isLoading,
+                        size: ButtonSize.large,
+                        fullWidth: true,
+                        onPressed: () {
+                          resetPasswordState.isLoading ? null : _resetPassword;
+                        }),
+                    SizedBox(height: Foundations.spacing.lg),
+                    BaseButton(
+                      label: l10n.globalBack,
+                      onPressed: () => Navigator.of(context).pop(),
+                      variant: ButtonVariant.outlined,
+                      size: ButtonSize.large,
+                      fullWidth: true,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
