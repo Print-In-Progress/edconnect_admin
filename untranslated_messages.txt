@@ -4,6 +4,7 @@
     "globalAdd",
     "globalConfirm",
     "globalSearch",
+    "globalClear",
     "globalNoResults",
     "globalDismiss",
     "globalToS",

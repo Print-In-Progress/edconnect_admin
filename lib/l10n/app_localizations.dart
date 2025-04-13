@@ -161,6 +161,12 @@ abstract class AppLocalizations {
   /// **'Search'**
   String get globalSearch;
 
+  /// Global section - Clear button text
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get globalClear;
+
   /// Global section - No results found message
   ///
   /// In en, this message translates to:

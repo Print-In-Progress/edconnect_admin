@@ -25,7 +25,7 @@ class AccountOverview extends ConsumerStatefulWidget {
 class _AccountOverviewState extends ConsumerState<AccountOverview> {
   final _reauthenticatePasswordController = TextEditingController();
   bool reauthenticatePasswordVisible = false;
-
+  List<String> selectedSkills = [];
   @override
   void dispose() {
     _reauthenticatePasswordController.dispose();

@@ -44,6 +44,10 @@
     "@globalSearch": {
         "description": "Global section - Search button text"
     },
+    "globalClear": "Clear",
+    "@globalClear": {
+        "description": "Global section - Clear button text"
+    },
     "globalNoResults": "No results found",
     "@globalNoResults": {
         "description": "Global section - No results found message"
