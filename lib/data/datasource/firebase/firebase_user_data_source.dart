@@ -47,7 +47,6 @@ class FirebaseUserDataSource implements UserDataSource {
       'fcmTokens': [],
       'deviceIds': {},
       'accountType': accountType,
-      'registrationComplete': isSigned,
     };
 
     if (isSigned && publicKeyPem != null && signatureBytes != null) {
