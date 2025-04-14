@@ -2,7 +2,8 @@ const String customerSpecificCollectionArticles = '/demo_org/newsapp/articles';
 const String customerSpecificCollectionEvents = '/demo_org/newsapp/events';
 const String customerSpecificCollectionUsers = '/demo_org/newsapp/users';
 const String customerSpecificCollectionComments = '/demo_org/newsapp/comments';
-const customerSpecificCollectionSortingSurveys = '/demo_org/sorting_surveys';
+const customerSpecificCollectionSortingSurveys =
+    '/demo_org/newsapp/sorting_surveys';
 const String customerSpecificCollectionRegistration =
     '/demo_org/newsapp/registration_page';
 const String customerSpecificCollectionFiles = 'files_demo_org';

@@ -26,7 +26,7 @@ class SortingSurvey {
   final List<String> editorGroups;
   final List<Map<String, dynamic>> parameters;
   final List<Map<String, dynamic>> responses;
-  final bool factorBiologicalSex;
+  final bool askBiologicalSex;
 
   const SortingSurvey({
     required this.id,
@@ -41,7 +41,7 @@ class SortingSurvey {
     required this.editorGroups,
     required this.parameters,
     required this.responses,
-    required this.factorBiologicalSex,
+    required this.askBiologicalSex,
   });
 
   factory SortingSurvey.fromMap(Map<String, dynamic> map, String docId) {
@@ -58,7 +58,7 @@ class SortingSurvey {
       editorGroups: List<String>.from(map['editor_groups'] ?? []),
       parameters: List<Map<String, dynamic>>.from(map['parameters'] ?? []),
       responses: List<Map<String, dynamic>>.from(map['responses'] ?? []),
-      factorBiologicalSex: map['factor_biological_sex'] ?? false,
+      askBiologicalSex: map['ask_biological_sex'] ?? true,
     );
   }
 
@@ -75,7 +75,7 @@ class SortingSurvey {
       'editor_groups': editorGroups,
       'parameters': parameters,
       'responses': responses,
-      'factor_biological_sex': factorBiologicalSex,
+      'ask_biological_sex': askBiologicalSex,
     };
   }
 
@@ -114,7 +114,7 @@ class SortingSurvey {
     List<String>? editorGroups,
     List<Map<String, dynamic>>? parameters,
     List<Map<String, dynamic>>? responses,
-    bool? factorBiologicalSex,
+    bool? askBiologicalSex,
   }) {
     return SortingSurvey(
       id: id,
@@ -129,7 +129,7 @@ class SortingSurvey {
       editorGroups: editorGroups ?? this.editorGroups,
       parameters: parameters ?? this.parameters,
       responses: responses ?? this.responses,
-      factorBiologicalSex: factorBiologicalSex ?? this.factorBiologicalSex,
+      askBiologicalSex: askBiologicalSex ?? this.askBiologicalSex,
     );
   }
 }

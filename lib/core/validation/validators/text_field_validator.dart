@@ -36,8 +36,17 @@ class TextFieldValidator implements Validator<String> {
         _validateEmail(input);
       case TextFieldType.password:
         _validatePassword(input);
+      case TextFieldType.number:
+        _validateNumber(input);
       default:
         break;
+    }
+  }
+
+  void _validateNumber(String input) {
+    if (!RegExp(r'^[0-9]+$').hasMatch(input)) {
+      throw const DomainException(
+          code: ErrorCode.fieldRequired, type: ExceptionType.validation);
     }
   }
 
@@ -68,4 +77,5 @@ enum TextFieldType {
   email,
   password,
   name,
+  number,
 }

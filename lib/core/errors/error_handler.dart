@@ -39,7 +39,7 @@ class ErrorHandler {
     return DomainException(
       code: ErrorCode.unexpected,
       type: ExceptionType.unexpected,
-      originalError: error,
+      originalError: error.toString(),
     );
   }
 
@@ -54,7 +54,7 @@ class ErrorHandler {
     return DomainException(
       code: code,
       type: ExceptionType.auth,
-      originalError: error,
+      originalError: error.message ?? error.toString(),
     );
   }
 }

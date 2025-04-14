@@ -48,6 +48,8 @@ class BaseCard extends ConsumerWidget {
   /// Optional footer widget below the main content
   final Widget? footer;
 
+  final VoidCallback? onTap;
+
   const BaseCard({
     super.key,
     required this.child,
@@ -61,6 +63,7 @@ class BaseCard extends ConsumerWidget {
     this.clipBehavior,
     this.header,
     this.footer,
+    this.onTap,
   });
 
   @override
@@ -143,20 +146,28 @@ class BaseCard extends ConsumerWidget {
     }
 
     // Create the card with the appropriate decoration
-    return Container(
-      margin: effectiveMargin,
-      clipBehavior: clipBehavior ?? Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: effectiveBackgroundColor,
-        borderRadius: effectiveBorderRadius,
-        border: Border.all(
-          color: effectiveBorderColor,
-          width:
-              variant == CardVariant.outlined ? Foundations.borders.normal : 0,
+    return GestureDetector(
+      onTap: () {
+        if (onTap != null) {
+          onTap!();
+        }
+      },
+      child: Container(
+        margin: effectiveMargin,
+        clipBehavior: clipBehavior ?? Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: effectiveBackgroundColor,
+          borderRadius: effectiveBorderRadius,
+          border: Border.all(
+            color: effectiveBorderColor,
+            width: variant == CardVariant.outlined
+                ? Foundations.borders.normal
+                : 0,
+          ),
+          boxShadow: effectiveShadow,
         ),
-        boxShadow: effectiveShadow,
+        child: cardContent,
       ),
-      child: cardContent,
     );
   }
 }

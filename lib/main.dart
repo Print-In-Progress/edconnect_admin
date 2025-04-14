@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:edconnect_admin/core/constants/database_constants.dart';
+import 'package:edconnect_admin/core/routing/app_routes.dart';
 import 'package:edconnect_admin/presentation/pages/home_page/main_page.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -40,6 +41,7 @@ class _EdConnectAdminState extends ConsumerState<EdConnectAdmin> {
       supportedLocales: AppLocalizations.supportedLocales,
       title: '$customerName Admin Panel',
       debugShowCheckedModeBanner: false,
+      onGenerateRoute: AppRoutes.onGenerateRoute,
       scrollBehavior: const MaterialScrollBehavior().copyWith(
         dragDevices: {
           PointerDeviceKind.mouse,

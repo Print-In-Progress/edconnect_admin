@@ -4,6 +4,7 @@ import '../../domain/entities/navigation_item.dart';
 import '../../domain/entities/permissions.dart';
 import '../../presentation/pages/auth_pages/access_denied_page.dart';
 import '../../presentation/pages/sample_page.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module_pages/sorting_surveys_page.dart';
 
 class NavigationRepositoryImpl implements NavigationRepository {
   // Cache navigation items by ID for faster lookup
@@ -169,7 +170,7 @@ class NavigationRepositoryImpl implements NavigationRepository {
       case 'surveys':
         return const SamplePage(title: 'Surveys');
       case 'survey_sorter':
-        return const SamplePage(title: 'Survey Sorter');
+        return const SortingSurveysPage();
       case 'digital_library':
         return const SamplePage(title: 'Digital Library');
       case 'media':
