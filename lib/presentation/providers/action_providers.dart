@@ -1,4 +1,5 @@
 import 'package:edconnect_admin/core/errors/domain_exception.dart';
+import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/domain/entities/storage_file.dart';
 import 'package:edconnect_admin/domain/entities/storage_module.dart';
 import 'package:edconnect_admin/domain/usecases/auth/delete_account_use_case.dart';
@@ -8,6 +9,7 @@ import 'package:edconnect_admin/domain/usecases/auth/sign_up_usecase.dart';
 import 'package:edconnect_admin/domain/usecases/auth/user_credential_repository.dart';
 import 'package:edconnect_admin/domain/usecases/auth/user_profile_use_case.dart';
 import 'package:edconnect_admin/domain/entities/registration_fields.dart';
+import 'package:edconnect_admin/domain/usecases/sorting_survey_use_case.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/registration_request.dart';
@@ -391,4 +393,131 @@ final moduleStorageFilesProvider =
 
   // Combine all files into a single list
   return filesLists.expand((files) => files).toList();
+});
+
+// ---------------- MODULE ACTIONS -----------------
+
+// ---------------- SORTING SURVEY MODULE -----------------
+class SortingSurveyNotifier extends StateNotifier<AsyncValue<void>> {
+  final SortingSurveyUseCase _useCase;
+  final Ref _ref;
+
+  SortingSurveyNotifier(this._useCase, this._ref)
+      : super(const AsyncValue.data(null));
+
+  Future<String?> createSortingSurvey(SortingSurvey survey) async {
+    state = const AsyncValue.loading();
+    try {
+      // Get current user for creator info
+      final user = await _ref.read(currentUserProvider.future);
+      if (user == null) {
+        state = const AsyncValue.error(
+            DomainException(
+              code: ErrorCode.userNotFound,
+              type: ExceptionType.auth,
+            ),
+            StackTrace.empty);
+        return null;
+      }
+
+      final surveyToCreate = survey.copyWith(
+        creatorId: user.id,
+        creatorName: "${user.firstName} ${user.lastName}",
+        createdAt: DateTime.now(),
+      );
+
+      final id = await _useCase.createSortingSurvey(surveyToCreate);
+      state = const AsyncValue.data(null);
+
+      return id;
+    } catch (e, stack) {
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
+      return null;
+    }
+  }
+
+  Future<void> updateSortingSurvey(SortingSurvey survey) async {
+    state = const AsyncValue.loading();
+    try {
+      await _useCase.updateSortingSurvey(survey);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
+    }
+  }
+
+  Future<void> deleteSortingSurvey(String id) async {
+    state = const AsyncValue.loading();
+    try {
+      await _useCase.deleteSortingSurvey(id);
+      state = const AsyncValue.data(null);
+
+      _ref.read(selectedSortingSurveyIdProvider.notifier).state = null;
+    } catch (e, stack) {
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
+    }
+  }
+
+  Future<void> publishSortingSurvey(String id) async {
+    state = const AsyncValue.loading();
+    try {
+      await _useCase.publishSortingSurvey(id);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
+    }
+  }
+
+  Future<void> closeSortingSurvey(String id) async {
+    state = const AsyncValue.loading();
+    try {
+      await _useCase.closeSortingSurvey(id);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
+    }
+  }
+}
+
+final sortingSurveyNotifierProvider =
+    StateNotifierProvider<SortingSurveyNotifier, AsyncValue<void>>((ref) {
+  return SortingSurveyNotifier(
+    ref.watch(sortingSurveyUseCaseProvider),
+    ref,
+  );
 });

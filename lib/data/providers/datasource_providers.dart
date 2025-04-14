@@ -1,3 +1,5 @@
+import 'package:edconnect_admin/data/datasource/firebase/firebase_sorting_survey_data_source.dart';
+import 'package:edconnect_admin/data/datasource/sorting_survey_data_source.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/datasource/auth_data_source.dart';
 import '../../data/datasource/firebase/firebase_auth_data_source.dart';
@@ -52,4 +54,11 @@ final themeLocalDataSourceProvider = Provider<ThemeDataSource>((ref) {
 
 final themeRemoteDataSourceProvider = Provider<RemoteThemeDataSource>((ref) {
   return FirebaseRemoteThemeDataSource();
+});
+
+// Modules data source
+// Sorting Module
+final sortingSurveyDataSourceProvider =
+    Provider<SortingSurveyDataSource>((ref) {
+  return FirebaseSortingSurveyDataSource();
 });

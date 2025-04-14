@@ -1,4 +1,6 @@
+import 'package:edconnect_admin/core/interfaces/sorting_survey_repository.dart';
 import 'package:edconnect_admin/core/interfaces/storage_repository.dart';
+import 'package:edconnect_admin/data/repositories/firebase_sorting_survey_repository_impl.dart';
 import 'package:edconnect_admin/data/repositories/firebase_storage_repository_impl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/interfaces/auth_repository.dart';
@@ -54,4 +56,12 @@ final storageRepositoryImplProvider = Provider<StorageRepository>((ref) {
   return FirebaseStorageRepositoryImpl(
     ref.watch(storageDataSourceProvider),
   );
+});
+
+// Modules repository implementations
+// Sorting Module
+final sortingSurveyRepositoryProvider =
+    Provider<SortingSurveyRepository>((ref) {
+  final dataSource = ref.watch(sortingSurveyDataSourceProvider);
+  return FirebaseSortingSurveyRepositoryImpl(dataSource);
 });
