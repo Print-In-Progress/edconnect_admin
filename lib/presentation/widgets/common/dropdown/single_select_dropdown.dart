@@ -376,7 +376,6 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
                               ],
 
                               if (filteredOptions.isEmpty)
-                                // No results message
                                 Padding(
                                   padding:
                                       EdgeInsets.all(Foundations.spacing.md),
@@ -393,8 +392,7 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
                                   ),
                                 )
                               else
-                                // List of options - this is where the key changes are
-                                Container(
+                                SizedBox(
                                   // If we need to scroll, use the max height, otherwise use the content height
                                   height: needsScroll
                                       ? constraints.maxHeight - searchHeight

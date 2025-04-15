@@ -21,6 +21,7 @@ class SortingSurvey {
   final SortingSurveyStatus status;
   final String creatorId;
   final String creatorName;
+  final List<String> respondentsUsers;
   final List<String> respondentsGroups;
   final List<String> editorUsers;
   final List<String> editorGroups;
@@ -36,6 +37,7 @@ class SortingSurvey {
     required this.status,
     required this.creatorId,
     required this.creatorName,
+    required this.respondentsUsers,
     required this.respondentsGroups,
     required this.editorUsers,
     required this.editorGroups,
@@ -53,6 +55,7 @@ class SortingSurvey {
       status: _mapStatusFromString(map['status'] ?? 'draft'),
       creatorId: map['creator_id'] ?? '',
       creatorName: map['creator_name'] ?? '',
+      respondentsUsers: List<String>.from(map['respondents_users'] ?? []),
       respondentsGroups: List<String>.from(map['respondents_groups'] ?? []),
       editorUsers: List<String>.from(map['editor_users'] ?? []),
       editorGroups: List<String>.from(map['editor_groups'] ?? []),
@@ -70,6 +73,7 @@ class SortingSurvey {
       'status': _mapStatusToString(status),
       'creator_id': creatorId,
       'creator_name': creatorName,
+      'respondents_users': respondentsUsers,
       'respondents_groups': respondentsGroups,
       'editor_users': editorUsers,
       'editor_groups': editorGroups,
@@ -109,6 +113,7 @@ class SortingSurvey {
     SortingSurveyStatus? status,
     String? creatorId,
     String? creatorName,
+    List<String>? respondentsUsers,
     List<String>? respondentsGroups,
     List<String>? editorUsers,
     List<String>? editorGroups,
@@ -124,6 +129,7 @@ class SortingSurvey {
       status: status ?? this.status,
       creatorId: creatorId ?? this.creatorId,
       creatorName: creatorName ?? this.creatorName,
+      respondentsUsers: respondentsUsers ?? this.respondentsUsers,
       respondentsGroups: respondentsGroups ?? this.respondentsGroups,
       editorUsers: editorUsers ?? this.editorUsers,
       editorGroups: editorGroups ?? this.editorGroups,

@@ -286,9 +286,10 @@ class _SurveyCard extends ConsumerWidget {
 
     return BaseCard(
       variant: CardVariant.outlined,
+      isSelectable: true,
       onTap: () {
         ref.read(selectedSortingSurveyIdProvider.notifier).state = survey.id;
-        AppRouter.toSortingSurveyDetails(context, surveyId: survey.id);
+        AppRouter.toSortingSurveyDetails(context, survey: survey);
       },
       child: Padding(
         padding: EdgeInsets.all(Foundations.spacing.lg),

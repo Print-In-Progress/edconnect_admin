@@ -137,21 +137,18 @@ class _BaseMultiSelectState<T> extends ConsumerState<BaseMultiSelect<T>> {
   }
 
   void _toggleOption(T value) {
-    if (_currentValues.contains(value)) {
-      _currentValues.remove(value);
-    } else {
-      _currentValues.add(value);
-    }
+    setState(() {
+      if (_currentValues.contains(value)) {
+        _currentValues.remove(value);
+      } else {
+        _currentValues.add(value);
+      }
+    });
 
     widget.onChanged(_currentValues);
 
-    if (_overlayEntry != null) {
-      // Schedule the rebuild for the next frame
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_overlayEntry != null && _isOpen) {
-          _overlayEntry!.markNeedsBuild();
-        }
-      });
+    if (_overlayEntry != null && _isOpen) {
+      _overlayEntry!.markNeedsBuild();
     }
   }
 
@@ -246,12 +243,44 @@ class _BaseMultiSelectState<T> extends ConsumerState<BaseMultiSelect<T>> {
   void _showOverlay() {
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
+    final offset = renderBox.localToGlobal(Offset.zero);
 
-    final double offsetHeight = switch (widget.size) {
+    // Calculate available space below and above
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double bottomSpace = screenHeight - offset.dy - size.height;
+    final double topSpace = offset.dy;
+
+    // Calculate content height
+    final double searchHeight = widget.searchable ? 48.0 : 0.0;
+    final double headerHeight = _currentValues.isNotEmpty ? 40.0 : 0.0;
+    const double itemHeight = 44.0;
+    final double totalItemsHeight = _getFilteredOptions().length * itemHeight;
+
+    // Calculate actual content height (with padding and dividers)
+    final double contentHeight = searchHeight +
+        headerHeight +
+        totalItemsHeight +
+        (widget.searchable ? 1.0 : 0.0) + // Divider
+        (headerHeight > 0 ? 1.0 : 0.0) + // Divider
+        8.0; // Padding
+
+    const double verticalGap = 4.0;
+
+    // Constrain to max height of 320
+    final double overlayHeight = contentHeight.clamp(0.0, 320.0);
+
+    // Determine if overlay should show above or below
+    final bool showAbove =
+        bottomSpace < overlayHeight && topSpace > bottomSpace;
+
+    final double fieldHeight = switch (widget.size) {
       SelectSize.small => 36.0,
       SelectSize.medium => 40.0,
       SelectSize.large => 48.0,
     };
+
+    final double overlayOffset =
+        showAbove ? -(overlayHeight + verticalGap) : fieldHeight + verticalGap;
 
     _overlayEntry = OverlayEntry(
       builder: (context) {
@@ -277,7 +306,7 @@ class _BaseMultiSelectState<T> extends ConsumerState<BaseMultiSelect<T>> {
               child: CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                offset: Offset(0, offsetHeight),
+                offset: Offset(0, overlayOffset),
                 child: Material(
                   color: Colors.transparent,
                   child: AnimatedOpacity(
@@ -310,7 +339,7 @@ class _BaseMultiSelectState<T> extends ConsumerState<BaseMultiSelect<T>> {
                           final filteredOptions = _getFilteredOptions();
                           final bool hasSearch = widget.searchable;
                           final double searchHeight = hasSearch ? 56.0 : 0.0;
-                          final double itemHeight = 44.0;
+                          const double itemHeight = 44.0;
                           final double totalItemsHeight =
                               filteredOptions.length * itemHeight;
                           final bool needsScroll =

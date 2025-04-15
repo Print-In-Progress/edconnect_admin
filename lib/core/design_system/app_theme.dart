@@ -27,7 +27,7 @@ class AppThemeData {
         onPrimary: Colors.white,
         secondary: appTheme.secondaryColor,
         onSecondary: Colors.white,
-        surface: Colors.grey.shade900,
+        surface: const Color(0xFF212121),
         shadow: Colors.grey.shade700,
       ),
       tabBarTheme: const TabBarTheme(

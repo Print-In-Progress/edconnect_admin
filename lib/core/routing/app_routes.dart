@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module_pages/create_sorting_survey_page.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module_pages/sorting_surveys_page.dart';
@@ -28,8 +29,11 @@ class AppRoutes {
         );
 
       case sortingSurveyDetails:
+        final survey = settings.arguments as SortingSurvey;
         return MaterialPageRoute(
-          builder: (_) => const SortingSurveyDetailsPage(),
+          builder: (_) => SortingSurveyDetailsPage(
+            survey: survey,
+          ),
           settings: settings,
         );
 

@@ -68,7 +68,9 @@ class _BaseButtonState extends ConsumerState<BaseButton> {
   Widget _buildLoadingIndicator(BuildContext context, AppTheme appTheme) {
     final Color color = switch (widget.variant) {
       ButtonVariant.filled => appTheme.primaryColor,
-      ButtonVariant.outlined || ButtonVariant.text => appTheme.primaryColor,
+      ButtonVariant.outlined || ButtonVariant.text => appTheme.isDarkMode
+          ? Foundations.darkColors.textPrimary
+          : appTheme.primaryColor,
     };
 
     return SizedBox(
@@ -119,7 +121,10 @@ class _BaseButtonState extends ConsumerState<BaseButton> {
               ? appTheme.isDarkMode
                   ? Foundations.darkColors.textDisabled
                   : Foundations.colors.textDisabled
-              : widget.foregroundColor ?? appTheme.primaryColor,
+              : widget.foregroundColor ??
+                  (appTheme.isDarkMode
+                      ? Foundations.darkColors.textPrimary
+                      : appTheme.primaryColor),
           shape: RoundedRectangleBorder(
             borderRadius: Foundations.borders.md,
           ),

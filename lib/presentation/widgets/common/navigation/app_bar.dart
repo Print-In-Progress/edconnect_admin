@@ -85,6 +85,7 @@ class BaseAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final isDarkMode = theme.isDarkMode;
 
     return Container(
+      height: preferredSize.height,
       decoration: BoxDecoration(
         color: isDarkMode
             ? Foundations.darkColors.surface
@@ -105,17 +106,24 @@ class BaseAppBar extends ConsumerWidget implements PreferredSizeWidget {
         horizontal: Foundations.spacing.xl,
         vertical: Foundations.spacing.sm,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildAppBarContent(context, ref),
-          if (bottom != null)
-            Padding(
-              padding: EdgeInsets.only(top: Foundations.spacing.sm),
-              child: bottom!,
+      child: LayoutBuilder(builder: (context, constraints) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              child: _buildAppBarContent(context, ref),
             ),
-        ],
-      ),
+            if (bottom != null)
+              Flexible(
+                child: Padding(
+                  padding: EdgeInsets.only(top: Foundations.spacing.sm),
+                  child: bottom!,
+                ),
+              ),
+          ],
+        );
+      }),
     );
   }
 
@@ -183,5 +191,16 @@ class BaseAppBar extends ConsumerWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(bottom != null ? 100 : 60);
+  Size get preferredSize {
+    // Add a small buffer to the height to prevent overflow
+    double baseHeight = 65; // Increased from 60 to 65
+    double bottomHeight = bottom?.preferredSize.height ?? 0;
+    double paddingHeight = Foundations.spacing.sm * 2;
+
+    if (bottom != null) {
+      return Size.fromHeight(baseHeight + bottomHeight + paddingHeight);
+    }
+
+    return Size.fromHeight(baseHeight);
+  }
 }

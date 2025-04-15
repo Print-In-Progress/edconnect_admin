@@ -14,7 +14,7 @@ enum CardVariant {
   outlined
 }
 
-class BaseCard extends ConsumerWidget {
+class BaseCard extends ConsumerStatefulWidget {
   /// The child widget to be displayed inside the card
   final Widget child;
 
@@ -50,6 +50,9 @@ class BaseCard extends ConsumerWidget {
 
   final VoidCallback? onTap;
 
+  /// Whether the card is selectable (used for hover effects)
+  final bool isSelectable;
+
   const BaseCard({
     super.key,
     required this.child,
@@ -64,63 +67,98 @@ class BaseCard extends ConsumerWidget {
     this.header,
     this.footer,
     this.onTap,
+    this.isSelectable = false,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BaseCard> createState() => _BaseCardState();
+}
+
+class _BaseCardState extends ConsumerState<BaseCard> {
+  bool _isHovering = false;
+
+  @override
+  Widget build(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
     final isDarkMode = theme.isDarkMode;
 
     // Determine style properties based on variant
     final BorderRadius effectiveBorderRadius =
-        borderRadius ?? Foundations.borders.md;
+        widget.borderRadius ?? Foundations.borders.md;
 
     final EdgeInsetsGeometry effectivePadding =
-        padding ?? EdgeInsets.all(Foundations.spacing.xl);
+        widget.padding ?? EdgeInsets.all(Foundations.spacing.xl);
 
     final EdgeInsetsGeometry effectiveMargin =
-        margin ?? EdgeInsets.all(Foundations.spacing.md);
+        widget.margin ?? EdgeInsets.all(Foundations.spacing.md);
 
     // Determine background color based on variant and theme
     Color effectiveBackgroundColor;
     Color effectiveBorderColor;
     List<BoxShadow>? effectiveShadow;
 
-    switch (variant) {
+    final bool isInteractive = widget.isSelectable && widget.onTap != null;
+
+    switch (widget.variant) {
       case CardVariant.standard:
-        effectiveBackgroundColor = backgroundColor ??
+        effectiveBackgroundColor = widget.backgroundColor ??
             (isDarkMode
                 ? Foundations.darkColors.backgroundMuted
                 : Foundations.colors.backgroundMuted);
-        effectiveBorderColor = borderColor ?? Colors.transparent;
+        effectiveBorderColor = widget.borderColor ?? Colors.transparent;
         effectiveShadow = null;
         break;
 
       case CardVariant.elevated:
-        effectiveBackgroundColor = backgroundColor ??
+        effectiveBackgroundColor = widget.backgroundColor ??
             (isDarkMode
                 ? Foundations.darkColors.surface
                 : Foundations.colors.surface);
-        effectiveBorderColor = borderColor ??
+        effectiveBorderColor = widget.borderColor ??
             (isDarkMode
                 ? Foundations.darkColors.border
                 : Foundations.colors.border);
         effectiveShadow = isDarkMode
             ? Foundations.effects.shadowMd
             : Foundations.effects.shadowMd;
+
+        // Enhanced shadow on hover for elevated cards
+        if (isInteractive && _isHovering) {
+          effectiveShadow = isDarkMode
+              ? Foundations.effects.shadowLg
+              : Foundations.effects.shadowLg;
+        }
         break;
 
       case CardVariant.outlined:
-        effectiveBackgroundColor = backgroundColor ??
+        effectiveBackgroundColor = widget.backgroundColor ??
             (isDarkMode
                 ? Foundations.darkColors.surface
                 : Foundations.colors.surface);
-        effectiveBorderColor = borderColor ??
+        effectiveBorderColor = widget.borderColor ??
             (isDarkMode
                 ? Foundations.darkColors.border
                 : Foundations.colors.border);
         effectiveShadow = null;
+
+        // Add subtle shadow on hover for outlined cards
+        if (isInteractive && _isHovering) {
+          effectiveShadow = isDarkMode
+              ? Foundations.effects.shadowSm
+              : Foundations.effects.shadowSm;
+          effectiveBorderColor =
+              theme.isDarkMode ? theme.accentLight : theme.accentLight;
+        }
         break;
+    }
+
+    // Apply slight background tint on hover for standard cards
+    if (isInteractive &&
+        _isHovering &&
+        widget.variant == CardVariant.standard) {
+      effectiveBackgroundColor = isDarkMode
+          ? Foundations.darkColors.backgroundMuted.withValues(alpha: 0.8)
+          : Foundations.colors.backgroundMuted.withValues(alpha: 0.8);
     }
 
     // Build the card content
@@ -128,17 +166,17 @@ class BaseCard extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (header != null) header!,
+        if (widget.header != null) widget.header!,
         Padding(
           padding: effectivePadding,
-          child: child,
+          child: widget.child,
         ),
-        if (footer != null) footer!,
+        if (widget.footer != null) widget..footer!,
       ],
     );
 
     // Apply full width if needed
-    if (fullWidth) {
+    if (widget.fullWidth) {
       cardContent = SizedBox(
         width: double.infinity,
         child: cardContent,
@@ -146,27 +184,34 @@ class BaseCard extends ConsumerWidget {
     }
 
     // Create the card with the appropriate decoration
-    return GestureDetector(
-      onTap: () {
-        if (onTap != null) {
-          onTap!();
-        }
-      },
-      child: Container(
-        margin: effectiveMargin,
-        clipBehavior: clipBehavior ?? Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: effectiveBackgroundColor,
-          borderRadius: effectiveBorderRadius,
-          border: Border.all(
-            color: effectiveBorderColor,
-            width: variant == CardVariant.outlined
-                ? Foundations.borders.normal
-                : 0,
+    return MouseRegion(
+      cursor:
+          isInteractive ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      onEnter: (_) => isInteractive ? setState(() => _isHovering = true) : null,
+      onExit: (_) => isInteractive ? setState(() => _isHovering = false) : null,
+      child: GestureDetector(
+        onTap: () {
+          if (widget.onTap != null) {
+            widget.onTap!();
+          }
+        },
+        child: AnimatedContainer(
+          duration: Foundations.effects.shortAnimation,
+          margin: effectiveMargin,
+          clipBehavior: widget.clipBehavior ?? Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: effectiveBackgroundColor,
+            borderRadius: effectiveBorderRadius,
+            border: Border.all(
+              color: effectiveBorderColor,
+              width: widget.variant == CardVariant.outlined
+                  ? Foundations.borders.normal
+                  : 0,
+            ),
+            boxShadow: effectiveShadow,
           ),
-          boxShadow: effectiveShadow,
+          child: cardContent,
         ),
-        child: cardContent,
       ),
     );
   }

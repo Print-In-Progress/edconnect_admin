@@ -145,7 +145,7 @@ final sortingSurveysProvider = StreamProvider<List<SortingSurvey>>((ref) {
 final selectedSortingSurveyIdProvider = StateProvider<String?>((ref) => null);
 
 // Provider for the currently selected survey details
-final selectedSortingSurveyProvider =
+final getSortingSurveyByIdProvider =
     FutureProvider<SortingSurvey?>((ref) async {
   final id = ref.watch(selectedSortingSurveyIdProvider);
   if (id == null) return null;

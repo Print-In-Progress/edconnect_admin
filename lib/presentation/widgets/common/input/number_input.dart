@@ -23,6 +23,10 @@ class NumberInputController {
   set value(num? newValue) {
     _value = newValue;
   }
+
+  void dispose() {
+    _value = null;
+  }
 }
 
 class NumberInput extends ConsumerStatefulWidget {

@@ -56,6 +56,8 @@ class _DarkColors {
   const _DarkColors();
   // Primary and Secondary color is selected by the organization
 
+  // TODO: change dark mode focus border color to accentLight in inputs and dropdowns
+
   // Semantic colors
   final Color success = const Color(0xFF4ADE80);
   final Color warning = const Color(0xFFFBBF24);
@@ -63,7 +65,7 @@ class _DarkColors {
   final Color info = const Color(0xFF60A5FA);
 
   // Surface colors (Dark mode)
-  final Color surface = const Color(0xFF000000); // Black at 35% opacity
+  final Color surface = const Color(0xFF0e1217); // Black at 35% opacity
   final Color surfaceHover = const Color(0xFF334155);
   final Color surfaceActive = const Color(0xFF475569);
 

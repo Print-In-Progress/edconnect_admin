@@ -1,4 +1,6 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/models/app_user.dart';
+import 'package:edconnect_admin/domain/entities/group.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
@@ -34,12 +36,19 @@ class _SortingSurveyCreatePageState
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+
+    for (final param in _parameters) {
+      (param['name'] as TextEditingController).dispose();
+      (param['priority'] as NumberInputController).dispose();
+    }
     super.dispose();
   }
 
   final List<Map<String, dynamic>> _parameters = [];
   List<String> _selectedEditorGroups = [];
   List<String> _selectedRespondentGroups = [];
+  List<String> _selectedEditorUsers = [];
+  List<String> _selectedRespondentUsers = [];
 
   void _addParameter() {
     final priorityController = NumberInputController(initialValue: 1);
@@ -202,6 +211,9 @@ class _SortingSurveyCreatePageState
   Widget _buildAccessControlCard() {
     final theme = ref.watch(appThemeProvider);
     final groups = ref.watch(allGroupsStreamProvider).value ?? [];
+    final users = ref.watch(allUsersStreamProvider).value ?? [];
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWideScreen = screenWidth > 800;
 
     return BaseCard(
       variant: CardVariant.elevated,
@@ -221,44 +233,159 @@ class _SortingSurveyCreatePageState
               ),
             ),
             SizedBox(height: Foundations.spacing.lg),
-            BaseMultiSelect<String>(
-              label: 'Editor Groups',
-              searchable: true,
-              values: _selectedEditorGroups,
-              options: groups
-                  .map((group) => SelectOption(
-                        value: group.id,
-                        label: group.name,
-                      ))
-                  .toList(),
-              onChanged: (values) {
-                setState(() {
-                  _selectedEditorGroups = values;
-                });
-              },
-            ),
-            SizedBox(height: Foundations.spacing.md),
-            BaseMultiSelect<String>(
-              label: 'Respondent Groups',
-              values: _selectedRespondentGroups,
-              searchable: true,
-              options: groups
-                  .map((group) => SelectOption(
-                        value: group.id,
-                        label: group.name,
-                      ))
-                  .toList(),
-              onChanged: (values) {
-                setState(() {
-                  _selectedRespondentGroups = values;
-                });
-              },
-            ),
-
-            //TODO: Addd Editor User and Respondent User dropdowns
+            if (isWideScreen)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _buildEditorsSection(groups, users),
+                  ),
+                  SizedBox(width: Foundations.spacing.lg),
+                  Expanded(
+                    child: _buildRespondentsSection(groups, users),
+                  ),
+                ],
+              )
+            else
+              Column(
+                children: [
+                  _buildEditorsSection(groups, users),
+                  SizedBox(height: Foundations.spacing.lg),
+                  _buildRespondentsSection(groups, users),
+                ],
+              ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildEditorsSection(List<Group> groups, List<AppUser> users) {
+    final theme = ref.watch(appThemeProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Editors',
+          style: TextStyle(
+            fontSize: Foundations.typography.base,
+            fontWeight: Foundations.typography.semibold,
+            color: theme.isDarkMode
+                ? Foundations.darkColors.textSecondary
+                : Foundations.colors.textSecondary,
+          ),
+        ),
+        Text(
+          'Users and groups that can edit this survey',
+          style: TextStyle(
+            fontSize: Foundations.typography.sm,
+            color: theme.isDarkMode
+                ? Foundations.darkColors.textMuted
+                : Foundations.colors.textMuted,
+          ),
+        ),
+        SizedBox(height: Foundations.spacing.md),
+        BaseMultiSelect<String>(
+          label: 'Editor Groups',
+          searchable: true,
+          values: _selectedEditorGroups,
+          options: groups
+              .map((group) => SelectOption(
+                    value: group.id,
+                    label: group.name,
+                    icon: Icons.group_outlined,
+                  ))
+              .toList(),
+          onChanged: (values) {
+            setState(() {
+              _selectedEditorGroups = values;
+            });
+          },
+        ),
+        SizedBox(height: Foundations.spacing.md),
+        BaseMultiSelect<String>(
+          label: 'Editor Users',
+          values: _selectedEditorUsers,
+          searchable: true,
+          options: users
+              .map((user) => SelectOption(
+                    value: user.id,
+                    label: user.fullName,
+                    icon: Icons.person_outline,
+                  ))
+              .toList(),
+          onChanged: (values) {
+            setState(() {
+              _selectedEditorUsers = values;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRespondentsSection(List<Group> groups, List<AppUser> users) {
+    final theme = ref.watch(appThemeProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Respondents',
+          style: TextStyle(
+            fontSize: Foundations.typography.base,
+            fontWeight: Foundations.typography.semibold,
+            color: theme.isDarkMode
+                ? Foundations.darkColors.textSecondary
+                : Foundations.colors.textSecondary,
+          ),
+        ),
+        Text(
+          'Users and groups that can respond to this survey',
+          style: TextStyle(
+            fontSize: Foundations.typography.sm,
+            color: theme.isDarkMode
+                ? Foundations.darkColors.textMuted
+                : Foundations.colors.textMuted,
+          ),
+        ),
+        SizedBox(height: Foundations.spacing.md),
+        BaseMultiSelect<String>(
+          label: 'Respondent Groups',
+          searchable: true,
+          values: _selectedRespondentGroups,
+          options: groups
+              .map((group) => SelectOption(
+                    value: group.id,
+                    label: group.name,
+                    icon: Icons.group_outlined,
+                  ))
+              .toList(),
+          onChanged: (values) {
+            setState(() {
+              _selectedRespondentGroups = values;
+            });
+          },
+        ),
+        SizedBox(height: Foundations.spacing.md),
+        BaseMultiSelect<String>(
+          label: 'Respondent Users',
+          values: _selectedRespondentUsers,
+          searchable: true,
+          options: users
+              .map((user) => SelectOption(
+                    value: user.id,
+                    label: user.fullName,
+                    icon: Icons.person_outline,
+                  ))
+              .toList(),
+          onChanged: (values) {
+            setState(() {
+              _selectedRespondentUsers = values;
+            });
+          },
+        ),
+      ],
     );
   }
 
@@ -383,6 +510,16 @@ class _SortingSurveyCreatePageState
 
   void _saveSurvey() {
     if (_formKey.currentState!.validate()) {
+      // TODO: Replace underscores with underscore in the title
+      final transformedParameters = _parameters.map((param) {
+        return {
+          'name': (param['name'] as TextEditingController).text.trim(),
+          'type': param['type'],
+          'strategy': param['strategy'],
+          'priority': (param['priority'] as NumberInputController).value,
+        };
+      }).toList();
+
       final survey = SortingSurvey(
         id: '',
         title: _titleController.text.trim(),
@@ -391,10 +528,11 @@ class _SortingSurveyCreatePageState
         status: SortingSurveyStatus.draft,
         creatorId: '',
         creatorName: '',
-        respondentsGroups: [],
-        editorUsers: [],
-        editorGroups: [],
-        parameters: [],
+        respondentsUsers: _selectedRespondentUsers,
+        respondentsGroups: _selectedRespondentGroups,
+        editorUsers: _selectedEditorUsers,
+        editorGroups: _selectedEditorGroups,
+        parameters: transformedParameters,
         responses: [],
         askBiologicalSex: _askBiologicalSex,
       );
