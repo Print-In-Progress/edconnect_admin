@@ -298,7 +298,7 @@ class _SortingSurveyCreatePageState
             SizedBox(height: Foundations.spacing.lg),
             BaseCheckbox(
                 value: _askBiologicalSex,
-                label: 'Ask the respondents their biological sex',
+                label: 'Ask respondents their biological sex',
                 size: CheckboxSize.medium,
                 onChanged: (value) {
                   setState(() {

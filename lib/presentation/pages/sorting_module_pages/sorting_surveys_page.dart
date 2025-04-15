@@ -55,7 +55,6 @@ class SortingSurveysPage extends ConsumerWidget {
                   ),
                 ),
                 SizedBox(width: Foundations.spacing.md),
-                // TODO: Bugfix: Filter status All not selectable after selecting another status
                 SizedBox(
                   width: 160,
                   child: BaseSelect<SortingSurveyStatus?>(
@@ -67,7 +66,9 @@ class SortingSurveysPage extends ConsumerWidget {
                     variant: SelectVariant.outlined,
                     onChanged: (value) {
                       ref.read(surveyFilterProvider.notifier).state =
-                          filterState.copyWith(statusFilter: value);
+                          filterState.copyWith(
+                              statusFilter: value,
+                              clearStatusFilter: value == null);
                     },
                   ),
                 ),
