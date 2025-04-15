@@ -56,7 +56,7 @@ class _DarkColors {
   const _DarkColors();
   // Primary and Secondary color is selected by the organization
 
-  // TODO: change dark mode focus border color to accentLight in inputs and dropdowns
+  // TODO: change dark mode focus border color to accentLight in inputs and dropdowns (use it for chips and other elements too)
 
   // Semantic colors
   final Color success = const Color(0xFF4ADE80);

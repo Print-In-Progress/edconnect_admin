@@ -8,6 +8,7 @@ import 'package:edconnect_admin/presentation/pages/settings_pages/settings_updat
 import 'package:edconnect_admin/presentation/pages/settings_pages/submit_registration_update.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
 import 'package:edconnect_admin/presentation/widgets/common/cards/section_card_settings.dart';
+import 'package:edconnect_admin/presentation/widgets/common/dialogs/dialogs.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
 import 'package:edconnect_admin/presentation/widgets/common/switch.dart';
@@ -186,13 +187,7 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
                               label: l10n.globalDeleteAccount,
                               textColor: Foundations.colors.error,
                               iconColor: Foundations.colors.error,
-                              onTap: () async {
-                                await showDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      _buildDeleteAccountDialog(context),
-                                );
-                              },
+                              onTap: _handleDeleteAccountAction,
                             ),
                           ],
                         ),
@@ -279,103 +274,97 @@ class _AccountOverviewState extends ConsumerState<AccountOverview> {
     );
   }
 
-  Widget _buildDeleteAccountDialog(BuildContext context) {
+  void _handleDeleteAccountAction() async {
     final l10n = AppLocalizations.of(context)!;
-    final theme = ref.watch(appThemeProvider);
-    final isDarkMode = theme.isDarkMode;
 
-    return StatefulBuilder(
+    // Create a TextEditingController for the password field
+    final passwordController = TextEditingController();
+    bool passwordVisible = false;
+
+    // Build the form content
+    Widget formContent = StatefulBuilder(
       builder: (context, setState) {
-        final deleteAccountState = ref.watch(deleteAccountProvider);
-
-        return AlertDialog(
-          title: Text(
-            l10n.globalReauthenticate,
-            style: TextStyle(
-              fontSize: Foundations.typography.lg,
-              fontWeight: Foundations.typography.semibold,
-              color: isDarkMode
-                  ? Foundations.darkColors.textPrimary
-                  : Foundations.colors.textPrimary,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              l10n.settingsDeleteDialogBody,
+              style: TextStyle(
+                fontSize: Foundations.typography.base,
+                color: ref.watch(appThemeProvider).isDarkMode
+                    ? Foundations.darkColors.textSecondary
+                    : Foundations.colors.textSecondary,
+              ),
             ),
-          ),
-          backgroundColor: isDarkMode
-              ? Foundations.darkColors.surface
-              : Foundations.colors.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: Foundations.borders.md,
-          ),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                l10n.settingsDeleteDialogBody,
-                style: TextStyle(
-                  fontSize: Foundations.typography.base,
-                  color: isDarkMode
+            SizedBox(height: Foundations.spacing.lg),
+            BaseInput(
+              controller: passwordController,
+              label: l10n.authPasswordLabel,
+              obscureText: !passwordVisible,
+              trailingIcon: IconButton(
+                icon: Icon(
+                  passwordVisible ? Icons.visibility : Icons.visibility_off,
+                  size: 20,
+                  color: ref.watch(appThemeProvider).isDarkMode
                       ? Foundations.darkColors.textSecondary
                       : Foundations.colors.textSecondary,
                 ),
+                onPressed: () {
+                  setState(() {
+                    passwordVisible = !passwordVisible;
+                  });
+                },
               ),
-              SizedBox(height: Foundations.spacing.lg),
-              BaseInput(
-                controller: _reauthenticatePasswordController,
-                label: l10n.authPasswordLabel,
-                obscureText: !reauthenticatePasswordVisible,
-                trailingIcon: IconButton(
-                  icon: Icon(
-                    reauthenticatePasswordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                    size: 20,
-                    color: isDarkMode
-                        ? Foundations.darkColors.textSecondary
-                        : Foundations.colors.textSecondary,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      reauthenticatePasswordVisible =
-                          !reauthenticatePasswordVisible;
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            BaseButton(
-              label: l10n.globalCancel,
-              variant: ButtonVariant.text,
-              onPressed: () => Navigator.of(context).pop(),
             ),
-            BaseButton(
+          ],
+        );
+      },
+    );
+
+    // Show the dialog and handle the result
+    await Dialogs.form(
+      context: context,
+      title: l10n.globalReauthenticate,
+      form: formContent,
+      variant: DialogVariant.danger,
+      actions: [
+        Consumer(
+          builder: (context, ref, _) {
+            final deleteAccountState = ref.watch(deleteAccountProvider);
+
+            return BaseButton(
               label: l10n.globalOk,
               variant: ButtonVariant.filled,
+              backgroundColor: Foundations.colors.error,
               isLoading: deleteAccountState.isLoading,
               onPressed: () async {
                 try {
                   await ref
                       .read(deleteAccountProvider.notifier)
-                      .deleteAccount(_reauthenticatePasswordController.text);
+                      .deleteAccount(passwordController.text);
 
                   if (!context.mounted) return;
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(true); // Indicate success
                   Navigator.of(context).pop(); // Pop settings page
                   Toaster.success(context, l10n.successDefault);
                 } catch (e) {
                   if (!context.mounted) return;
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(false); // Indicate failure
                   Toaster.error(
                     context,
                     AppLocalizations.of(context)!.errorUnexpected,
                   );
                 }
               },
-            ),
-          ],
-        );
-      },
+            );
+          },
+        ),
+      ],
+      showCancelButton: true,
     );
+
+    // Clean up the controller
+    passwordController.dispose();
   }
 }

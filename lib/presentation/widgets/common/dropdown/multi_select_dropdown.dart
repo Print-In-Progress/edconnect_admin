@@ -931,8 +931,8 @@ class _BaseMultiSelectState<T> extends ConsumerState<BaseMultiSelect<T>> {
       size: ChipSize.small,
       onDismissed: widget.isDisabled ? null : () => _removeValue(option.value),
       backgroundColor:
-          ref.watch(appThemeProvider).primaryColor.withValues(alpha: 0.1),
-      textColor: ref.watch(appThemeProvider).primaryColor,
+          ref.watch(appThemeProvider).accentLight.withValues(alpha: 0.1),
+      textColor: ref.watch(appThemeProvider).accentLight,
     );
   }
 }
