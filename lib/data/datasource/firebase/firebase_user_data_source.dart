@@ -330,4 +330,16 @@ class FirebaseUserDataSource implements UserDataSource {
 
     return registrationFieldList;
   }
+
+  @override
+  Stream<List<AppUser>> getAllUsersStream() {
+    return _firestore
+        .collection(customerSpecificCollectionUsers)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return AppUser.fromMap(doc.data(), doc.id);
+      }).toList();
+    });
+  }
 }

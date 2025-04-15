@@ -29,4 +29,7 @@ abstract class UserDataSource {
 
   /// Fetch registration fields
   Future<List<BaseRegistrationField>> getRegistrationFields();
+
+  /// Stream of all users
+  Stream<List<AppUser>> getAllUsersStream();
 }

@@ -125,4 +125,13 @@ class FirebaseUserRepositoryImpl implements UserRepository {
       throw ErrorHandler.handle(e);
     }
   }
+
+  @override
+  Stream<List<AppUser>> getAllUsersStream() {
+    try {
+      return _userDataSource.getAllUsersStream();
+    } catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
 }

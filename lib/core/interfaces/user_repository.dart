@@ -24,4 +24,7 @@ abstract class UserRepository {
 
   /// Fetch registration fields
   Future<List<BaseRegistrationField>> getRegistrationFields();
+
+  /// Stream of all users
+  Stream<List<AppUser>> getAllUsersStream();
 }

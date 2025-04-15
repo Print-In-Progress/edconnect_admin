@@ -2,6 +2,7 @@ import 'package:edconnect_admin/data/providers/repository_providers.dart';
 import 'package:edconnect_admin/domain/usecases/auth/delete_account_use_case.dart';
 import 'package:edconnect_admin/domain/usecases/auth/get_registration_fields_use_case.dart';
 import 'package:edconnect_admin/domain/usecases/sorting_survey_use_case.dart';
+import 'package:edconnect_admin/domain/usecases/user_management_use_case.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/usecases/auth/sign_in_usecase.dart';
@@ -77,4 +78,11 @@ final getRegistrationFieldsUseCaseProvider =
 final sortingSurveyUseCaseProvider = Provider<SortingSurveyUseCase>((ref) {
   final repository = ref.watch(sortingSurveyRepositoryProvider);
   return SortingSurveyUseCase(repository);
+});
+
+final userManagementUseCaseProvider = Provider<UserManagementUseCase>((ref) {
+  return UserManagementUseCase(
+    ref.watch(userRepositoryProvider),
+    ref.watch(storageRepositoryProvider),
+  );
 });

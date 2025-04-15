@@ -10,6 +10,7 @@ import 'package:edconnect_admin/domain/usecases/auth/user_credential_repository.
 import 'package:edconnect_admin/domain/usecases/auth/user_profile_use_case.dart';
 import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import 'package:edconnect_admin/domain/usecases/sorting_survey_use_case.dart';
+import 'package:edconnect_admin/domain/usecases/user_management_use_case.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/registration_request.dart';
@@ -393,6 +394,35 @@ final moduleStorageFilesProvider =
 
   // Combine all files into a single list
   return filesLists.expand((files) => files).toList();
+});
+
+// ---------------- USER MANAGEMENT ACTIONS -----------------
+class UserManagementNotifier extends StateNotifier<AsyncValue<void>> {
+  final UserManagementUseCase _useCase;
+
+  UserManagementNotifier(this._useCase) : super(const AsyncValue.data(null));
+
+  Future<void> deleteUser(String userId) async {
+    state = const AsyncValue.loading();
+    try {
+      await _useCase.deleteUser(userId);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
+    }
+  }
+}
+
+final userManagementProvider =
+    StateNotifierProvider<UserManagementNotifier, AsyncValue<void>>((ref) {
+  return UserManagementNotifier(ref.watch(userManagementUseCaseProvider));
 });
 
 // ---------------- MODULE ACTIONS -----------------

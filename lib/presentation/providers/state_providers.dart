@@ -108,6 +108,33 @@ final allGroupsStreamProvider = StreamProvider<List<Group>>((ref) {
   });
 });
 
+// ---------------- USER MANAGEMENT STATE  -----------------
+final allUsersStreamProvider = StreamProvider<List<AppUser>>((ref) {
+  final userManagementUseCase = ref.watch(userManagementUseCaseProvider);
+  return userManagementUseCase.getAllUsers();
+});
+
+final filteredUsersProvider = Provider<AsyncValue<List<AppUser>>>((ref) {
+  final usersAsync = ref.watch(allUsersStreamProvider);
+  final searchQuery = ref.watch(userSearchQueryProvider);
+
+  return usersAsync.when(
+    data: (users) {
+      if (searchQuery.isEmpty) return AsyncValue.data(users);
+
+      return AsyncValue.data(users
+          .where((user) =>
+              user.fullName.toLowerCase().contains(searchQuery.toLowerCase()) ||
+              user.email.toLowerCase().contains(searchQuery.toLowerCase()))
+          .toList());
+    },
+    loading: () => const AsyncValue.loading(),
+    error: (err, stack) => AsyncValue.error(err, stack),
+  );
+});
+
+final userSearchQueryProvider = StateProvider<String>((ref) => '');
+
 // ---------------- MODULES STATE  -----------------
 
 // ---------------- SORTING SURVEY MODULE STATE  -----------------
