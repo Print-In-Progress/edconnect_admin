@@ -237,3 +237,142 @@ final filteredSortingSurveysProvider =
     error: (err, stack) => AsyncValue.error(err, stack),
   );
 });
+
+final selectedSortingSurveyProvider =
+    Provider.family<AsyncValue<SortingSurvey?>, String>(
+  (ref, surveyId) {
+    final surveysAsync = ref.watch(sortingSurveysProvider);
+
+    return surveysAsync.when(
+      data: (surveys) {
+        final survey = surveys.where((s) => s.id == surveyId).firstOrNull;
+        return AsyncValue.data(survey);
+      },
+      loading: () => const AsyncValue.loading(),
+      error: (error, stack) => AsyncValue.error(error, stack),
+    );
+  },
+);
+
+class ResponsesFilterState {
+  final String searchQuery;
+  final Map<String, String?> parameterFilters;
+  final SortOrder sortOrder;
+
+  const ResponsesFilterState({
+    this.searchQuery = '',
+    this.parameterFilters = const {},
+    this.sortOrder = SortOrder.asc,
+  });
+
+  ResponsesFilterState copyWith({
+    String? searchQuery,
+    Map<String, String?>? parameterFilters,
+    SortOrder? sortOrder,
+  }) {
+    return ResponsesFilterState(
+      searchQuery: searchQuery ?? this.searchQuery,
+      parameterFilters: parameterFilters ?? this.parameterFilters,
+      sortOrder: sortOrder ?? this.sortOrder,
+    );
+  }
+}
+
+enum SortOrder { asc, desc }
+
+// Filter state provider for responses
+final responsesFilterProvider =
+    StateProvider.family<ResponsesFilterState, String>(
+  (ref, surveyId) => const ResponsesFilterState(),
+);
+
+final filteredResponsesProvider =
+    Provider.family<Map<String, Map<String, dynamic>>, String>(
+  (ref, surveyId) {
+    final surveyAsync = ref.watch(selectedSortingSurveyProvider(surveyId));
+    final filterState = ref.watch(responsesFilterProvider(surveyId));
+    final users = ref.watch(allUsersStreamProvider).value ?? [];
+
+    return surveyAsync.when(
+      data: (survey) {
+        if (survey == null) return {};
+
+        var filtered = Map<String, Map<String, dynamic>>.from(survey.responses);
+
+        // Transform UIDs to names for non-manual entries
+        filtered = Map.fromEntries(
+          filtered.entries.map((entry) {
+            var response = Map<String, dynamic>.from(entry.value);
+
+            // Skip manual entries as they already have names
+            if (response['_manual_entry'] == true) {
+              return MapEntry(entry.key, response);
+            }
+
+            // Find matching user
+            final user = users.firstWhere(
+              (u) => u.id == entry.key,
+              orElse: () => AppUser(
+                id: entry.key,
+                firstName: 'Unknown',
+                lastName: 'User',
+                email: '',
+                fcmTokens: [],
+                groupIds: [],
+                permissions: [],
+                deviceIds: {},
+                accountType: '',
+              ),
+            );
+
+            // Add first and last name to response data
+            response['_first_name'] = user.firstName;
+            response['_last_name'] = user.lastName;
+
+            return MapEntry(entry.key, response);
+          }),
+        );
+
+        // Apply search filter
+        if (filterState.searchQuery.isNotEmpty) {
+          filtered = Map.fromEntries(
+            filtered.entries.where((entry) {
+              final firstName = entry.value['_first_name']?.toString() ?? '';
+              final lastName = entry.value['_last_name']?.toString() ?? '';
+              final fullName = '$firstName $lastName';
+              return fullName
+                  .toLowerCase()
+                  .contains(filterState.searchQuery.toLowerCase());
+            }),
+          );
+        }
+
+        // Apply parameter filters
+        if (filterState.parameterFilters.isNotEmpty) {
+          filtered = Map.fromEntries(
+            filtered.entries.where((entry) {
+              return filterState.parameterFilters.entries.every((filter) {
+                if (filter.value == null) return true;
+                return entry.value[filter.key]?.toString() == filter.value;
+              });
+            }),
+          );
+        }
+
+        // Apply sorting
+        var sortedEntries = filtered.entries.toList();
+        sortedEntries.sort((a, b) {
+          final aName = '${a.value['_first_name']} ${a.value['_last_name']}';
+          final bName = '${b.value['_first_name']} ${b.value['_last_name']}';
+          return filterState.sortOrder == SortOrder.asc
+              ? aName.compareTo(bName)
+              : bName.compareTo(aName);
+        });
+
+        return Map.fromEntries(sortedEntries);
+      },
+      loading: () => {},
+      error: (_, __) => {},
+    );
+  },
+);

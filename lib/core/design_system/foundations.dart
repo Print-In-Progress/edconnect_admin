@@ -132,17 +132,26 @@ class _Typography {
 class _Spacing {
   const _Spacing();
 
-  // Base spacing unit (4px)
   final double px = 1; // 1px
+  /// Base unit (4px)
   final double xs = 4; // 0.25rem
+  /// Small spacing (8px)
   final double sm = 8; // 0.5rem
+  /// Medium spacing (12px)
   final double md = 12; // 0.75rem
+  /// Large spacing (16px)
   final double lg = 16; // 1rem
+  /// Extra large spacing (20px)
   final double xl = 20; // 1.25rem
+  /// 2xl spacing (24px)
   final double xl2 = 24; // 1.5rem
+  /// 3xl spacing (32px)
   final double xl3 = 32; // 2rem
+  /// 4xl spacing (40px)
   final double xl4 = 40; // 2.5rem
+  /// 5xl spacing (48px)
   final double xl5 = 48; // 3rem
+  /// 6xl spacing (56px)
   final double xl6 = 64; // 4rem
 
   // Layout Spacing

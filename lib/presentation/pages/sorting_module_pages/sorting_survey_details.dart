@@ -3,6 +3,7 @@ import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module_pages/sorting_survey_overview_tab.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module_pages/sorting_survey_responses_tab.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
+import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
@@ -14,53 +15,68 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // TODO: Display Toasts after action is completed
 
 class SortingSurveyDetailsPage extends ConsumerWidget {
-  final SortingSurvey survey;
-  const SortingSurveyDetailsPage({super.key, required this.survey});
+  final String surveyId;
+  const SortingSurveyDetailsPage({super.key, required this.surveyId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(appThemeProvider);
     final notifierState = ref.watch(sortingSurveyNotifierProvider);
+    final surveyAsync = ref.watch(selectedSortingSurveyProvider(surveyId));
 
-    return Scaffold(
-        backgroundColor: theme.isDarkMode
-            ? Foundations.darkColors.background
-            : Foundations.colors.background,
-        appBar: BaseAppBar(
-          title: survey.title,
-          showLeading: true,
-          actions: [
-            if (survey.status == SortingSurveyStatus.draft) ...[
+    return surveyAsync.when(
+      data: (survey) {
+        if (survey == null) {
+          return const Center(child: Text('Survey not found'));
+        }
+        return Scaffold(
+          backgroundColor: theme.isDarkMode
+              ? Foundations.darkColors.background
+              : Foundations.colors.background,
+          appBar: BaseAppBar(
+            title: survey.title,
+            showLeading: true,
+            actions: [
+              if (survey.status == SortingSurveyStatus.draft) ...[
+                BaseButton(
+                  label: 'Publish',
+                  prefixIcon: Icons.publish_outlined,
+                  variant: ButtonVariant.filled,
+                  isLoading: notifierState.isLoading,
+                  onPressed: () => _publishSurvey(context, ref, survey.id),
+                ),
+                SizedBox(width: Foundations.spacing.md),
+              ],
+              if (survey.status == SortingSurveyStatus.published) ...[
+                BaseButton(
+                  label: 'Close',
+                  prefixIcon: Icons.close,
+                  variant: ButtonVariant.outlined,
+                  isLoading: notifierState.isLoading,
+                  onPressed: () => _closeSurvey(context, ref, survey.id),
+                ),
+                SizedBox(width: Foundations.spacing.md),
+              ],
               BaseButton(
-                label: 'Publish',
-                prefixIcon: Icons.publish_outlined,
+                label: 'Delete',
+                prefixIcon: Icons.delete_outline,
+                backgroundColor: Foundations.colors.error,
                 variant: ButtonVariant.filled,
                 isLoading: notifierState.isLoading,
-                onPressed: () => _publishSurvey(context, ref, survey.id),
+                onPressed: () => _deleteSurvey(context, ref, survey.id),
               ),
-              SizedBox(width: Foundations.spacing.md),
             ],
-            if (survey.status == SortingSurveyStatus.published) ...[
-              BaseButton(
-                label: 'Close',
-                prefixIcon: Icons.close,
-                variant: ButtonVariant.outlined,
-                isLoading: notifierState.isLoading,
-                onPressed: () => _closeSurvey(context, ref, survey.id),
-              ),
-              SizedBox(width: Foundations.spacing.md),
-            ],
-            BaseButton(
-              label: 'Delete',
-              prefixIcon: Icons.delete_outline,
-              backgroundColor: Foundations.colors.error,
-              variant: ButtonVariant.filled,
-              isLoading: notifierState.isLoading,
-              onPressed: () => _deleteSurvey(context, ref, survey.id),
-            ),
-          ],
-        ),
-        body: _buildContent(context, ref, survey));
+          ),
+          body: _buildContent(context, ref, survey),
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      error: (error, stack) => Center(
+        child: Text('Error: $error'),
+      ),
+    );
   }
 
   Widget _buildContent(
@@ -164,24 +180,27 @@ class _ResultsTab extends ConsumerWidget {
     return const Center(child: Text('Parameters Content'));
   }
 }
-// students_data = [
+// responses = [
 //     "uid1": {
 //         "sex": "m",
 //         "prefs": ["uid2", "uid3"],
 //         "special_needs": "no", 
 //         "elementary_school": "Washington"
+//         // other parameters
 //     },
 //     "uid2": {
 //         "sex": "f",
 //         "prefs": ["uid1", "uid3"],
 //         "special_needs": "yes",
 //         "elementary_school": "Lincoln"
+//         // other parameters
 //     },
 //     "uid3": {
 //         "sex": "nb",
 //         "prefs": ["uid1", "uid5"],
 //         "special_needs": "no",
 //         "elementary_school": "Washington"
+//         // other parameters
 //     }
 //     "manual_uid": {
 //       "sex": "m",
@@ -191,6 +210,7 @@ class _ResultsTab extends ConsumerWidget {
 //       "_first_name": "John",
 //       "_last_name": "Doe",
 //       "_manual_entry": true,
+//       // other parameters
 //     }
 //     # ... more students
 // }

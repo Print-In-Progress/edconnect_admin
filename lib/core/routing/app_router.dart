@@ -1,4 +1,3 @@
-import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:flutter/material.dart';
 import 'app_routes.dart';
 
@@ -15,11 +14,11 @@ class AppRouter {
   }
 
   static void toSortingSurveyDetails(BuildContext context,
-      {required SortingSurvey survey}) {
+      {required String surveyId}) {
     Navigator.pushNamed(
       context,
       AppRoutes.sortingSurveyDetails,
-      arguments: survey,
+      arguments: surveyId,
     );
   }
 }

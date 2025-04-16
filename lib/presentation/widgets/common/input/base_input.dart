@@ -10,6 +10,8 @@ enum InputSize { small, medium, large }
 
 enum InputVariant { default_, outlined, filled }
 
+// TODO: Add suggestions option
+
 class BaseInput extends ConsumerWidget {
   /// Text editing controller
   final TextEditingController? controller;
