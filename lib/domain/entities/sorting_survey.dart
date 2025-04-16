@@ -26,7 +26,7 @@ class SortingSurvey {
   final List<String> editorUsers;
   final List<String> editorGroups;
   final List<Map<String, dynamic>> parameters;
-  final List<Map<String, dynamic>> responses;
+  final Map<String, dynamic> responses;
   final bool askBiologicalSex;
 
   const SortingSurvey({
@@ -60,7 +60,7 @@ class SortingSurvey {
       editorUsers: List<String>.from(map['editor_users'] ?? []),
       editorGroups: List<String>.from(map['editor_groups'] ?? []),
       parameters: List<Map<String, dynamic>>.from(map['parameters'] ?? []),
-      responses: List<Map<String, dynamic>>.from(map['responses'] ?? []),
+      responses: map['responses'] ?? {},
       askBiologicalSex: map['ask_biological_sex'] ?? true,
     );
   }
@@ -118,7 +118,7 @@ class SortingSurvey {
     List<String>? editorUsers,
     List<String>? editorGroups,
     List<Map<String, dynamic>>? parameters,
-    List<Map<String, dynamic>>? responses,
+    Map<String, dynamic>? responses,
     bool? askBiologicalSex,
   }) {
     return SortingSurvey(

@@ -533,7 +533,7 @@ class _SortingSurveyCreatePageState
         editorUsers: _selectedEditorUsers,
         editorGroups: _selectedEditorGroups,
         parameters: transformedParameters,
-        responses: [],
+        responses: {},
         askBiologicalSex: _askBiologicalSex,
       );
 
