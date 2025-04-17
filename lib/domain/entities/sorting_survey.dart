@@ -27,6 +27,7 @@ class SortingSurvey {
   final List<String> editorGroups;
   final List<Map<String, dynamic>> parameters;
   final Map<String, dynamic> responses;
+  final int? maxPreferences;
   final bool askBiologicalSex;
 
   const SortingSurvey({
@@ -43,6 +44,7 @@ class SortingSurvey {
     required this.editorGroups,
     required this.parameters,
     required this.responses,
+    this.maxPreferences,
     required this.askBiologicalSex,
   });
 
@@ -61,6 +63,7 @@ class SortingSurvey {
       editorGroups: List<String>.from(map['editor_groups'] ?? []),
       parameters: List<Map<String, dynamic>>.from(map['parameters'] ?? []),
       responses: map['responses'] ?? {},
+      maxPreferences: map['max_preferences'],
       askBiologicalSex: map['ask_biological_sex'] ?? true,
     );
   }
@@ -79,6 +82,7 @@ class SortingSurvey {
       'editor_groups': editorGroups,
       'parameters': parameters,
       'responses': responses,
+      'max_preferences': maxPreferences,
       'ask_biological_sex': askBiologicalSex,
     };
   }
@@ -119,6 +123,7 @@ class SortingSurvey {
     List<String>? editorGroups,
     List<Map<String, dynamic>>? parameters,
     Map<String, dynamic>? responses,
+    int? maxPreferences,
     bool? askBiologicalSex,
   }) {
     return SortingSurvey(
@@ -135,6 +140,7 @@ class SortingSurvey {
       editorGroups: editorGroups ?? this.editorGroups,
       parameters: parameters ?? this.parameters,
       responses: responses ?? this.responses,
+      maxPreferences: maxPreferences ?? this.maxPreferences,
       askBiologicalSex: askBiologicalSex ?? this.askBiologicalSex,
     );
   }

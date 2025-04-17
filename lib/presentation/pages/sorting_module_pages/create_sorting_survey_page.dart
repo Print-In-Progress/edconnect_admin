@@ -31,6 +31,8 @@ class _SortingSurveyCreatePageState
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   bool _askBiologicalSex = true;
+  bool _allowPreferences = true;
+  final _maxPreferencesController = NumberInputController(initialValue: 3);
 
   @override
   void dispose() {
@@ -41,6 +43,8 @@ class _SortingSurveyCreatePageState
       (param['name'] as TextEditingController).dispose();
       (param['priority'] as NumberInputController).dispose();
     }
+
+    _maxPreferencesController.dispose();
     super.dispose();
   }
 
@@ -432,6 +436,27 @@ class _SortingSurveyCreatePageState
                     _askBiologicalSex = value ?? false;
                   });
                 }),
+            BaseCheckbox(
+              value: _allowPreferences,
+              label: 'Allow respondents to select preferred people',
+              size: CheckboxSize.medium,
+              onChanged: (value) {
+                setState(() {
+                  _allowPreferences = value ?? false;
+                });
+              },
+            ),
+            if (_allowPreferences) ...[
+              SizedBox(height: Foundations.spacing.sm),
+              NumberInput(
+                label: 'Maximum Preferences',
+                description: 'Maximum number of people that can be selected',
+                controller: _maxPreferencesController,
+                min: 1,
+                max: 5,
+                showStepper: true,
+              ),
+            ],
             SizedBox(height: Foundations.spacing.lg),
             ..._parameters.map((param) => _buildParameterItem(param)),
           ],
@@ -510,10 +535,10 @@ class _SortingSurveyCreatePageState
 
   void _saveSurvey() {
     if (_formKey.currentState!.validate()) {
-      // TODO: Replace underscores with underscore in the title
       final transformedParameters = _parameters.map((param) {
         return {
-          'name': (param['name'] as TextEditingController).text.trim(),
+          'name': _formatParameterName(
+              (param['name'] as TextEditingController).text.trim()),
           'type': param['type'],
           'strategy': param['strategy'],
           'priority': (param['priority'] as NumberInputController).value,
@@ -534,6 +559,8 @@ class _SortingSurveyCreatePageState
         editorGroups: _selectedEditorGroups,
         parameters: transformedParameters,
         responses: {},
+        maxPreferences:
+            _allowPreferences ? _maxPreferencesController.value!.toInt() : null,
         askBiologicalSex: _askBiologicalSex,
       );
 
@@ -541,5 +568,19 @@ class _SortingSurveyCreatePageState
           .read(sortingSurveyNotifierProvider.notifier)
           .createSortingSurvey(survey);
     }
+  }
+
+  String _formatParameterName(String value) {
+    return value
+        .trim() // Remove leading/trailing spaces
+        .toLowerCase() // Make case insensitive
+        .replaceAll(RegExp(r'\s+'),
+            '_') // Replace multiple spaces with single underscore
+        .replaceAll(RegExp(r'[^a-z0-9_]'),
+            '') // Remove special characters except underscore
+        .replaceAll(
+            RegExp(r'_+'), '_') // Replace multiple underscores with single
+        .replaceAll(
+            RegExp(r'^_|_$'), ''); // Remove leading/trailing underscores
   }
 }

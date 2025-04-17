@@ -4,6 +4,9 @@ import 'package:edconnect_admin/domain/entities/group.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/domain/providers/usecase_providers.dart';
 import 'package:edconnect_admin/domain/services/group_service.dart';
+import 'package:edconnect_admin/domain/services/sorting_survey_import_service.dart';
+import 'package:edconnect_admin/presentation/providers/action_providers.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/app_user.dart';
 import '../../core/providers/interface_providers.dart';
@@ -376,3 +379,93 @@ final filteredResponsesProvider =
     );
   },
 );
+
+class ImportState {
+  final bool isLoading;
+  final String? error;
+  final Map<String, dynamic>? previewData;
+  final List<String>? duplicates;
+
+  const ImportState({
+    this.isLoading = false,
+    this.error,
+    this.previewData,
+    this.duplicates,
+  });
+
+  ImportState copyWith({
+    bool? isLoading,
+    String? error,
+    Map<String, dynamic>? previewData,
+    List<String>? duplicates,
+    bool clearError = false,
+  }) {
+    return ImportState(
+      isLoading: isLoading ?? this.isLoading,
+      error: clearError ? null : (error ?? this.error),
+      previewData: previewData ?? this.previewData,
+      duplicates: duplicates ?? this.duplicates,
+    );
+  }
+}
+
+class ResponseImportNotifier extends StateNotifier<ImportState> {
+  final ResponseImportService _service;
+  final Ref _ref;
+
+  ResponseImportNotifier(this._service, this._ref) : super(const ImportState());
+
+  void reset() {
+    state = const ImportState();
+  }
+
+  Future<void> parseFile(PlatformFile file, SortingSurvey survey) async {
+    state = const ImportState(isLoading: true);
+
+    try {
+      final (headers, rows) = await _service.parseFile(
+        file.bytes!,
+        file.extension!,
+      );
+
+      final (data, duplicates) = _service.processData(headers, rows, survey);
+
+      state = ImportState(
+        previewData: data,
+        duplicates: duplicates,
+      );
+    } catch (e) {
+      state = ImportState(error: e.toString());
+    }
+  }
+
+  Future<void> confirmImport(SortingSurvey survey) async {
+    if (state.previewData == null) return;
+
+    state = state.copyWith(isLoading: true, clearError: true);
+
+    try {
+      await _ref
+          .read(sortingSurveyNotifierProvider.notifier)
+          .updateSortingSurvey(
+            survey.copyWith(
+              responses: {
+                ...survey.responses,
+                ...state.previewData!['responses'] as Map<String, dynamic>,
+              },
+            ),
+          );
+      state = const ImportState();
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+    }
+  }
+}
+
+final responseImportProvider =
+    StateNotifierProvider<ResponseImportNotifier, ImportState>((ref) {
+  return ResponseImportNotifier(
+    ResponseImportService(),
+    ref,
+  );
+});

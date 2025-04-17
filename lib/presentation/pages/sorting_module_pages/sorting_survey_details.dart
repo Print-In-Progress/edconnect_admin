@@ -6,6 +6,7 @@ import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
+import 'package:edconnect_admin/presentation/widgets/common/dialogs/dialogs.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/tabs.dart';
 import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
@@ -125,29 +126,20 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
   Future<void> _deleteSurvey(
       BuildContext context, WidgetRef ref, String id) async {
     // Show confirmation dialog
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Survey'),
-        content: const Text('Are you sure you want to delete this survey?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
+    final bool? confirmed = await Dialogs.confirm(
+        context: context,
+        title: 'Delete Survey',
+        message: 'Are you sure you want to delete this survey?',
+        dangerous: true);
+    if (confirmed == null || !confirmed) return;
 
     if (confirmed == true) {
+      if (!context.mounted) return;
+      Navigator.pop(context);
+
       await ref
           .read(sortingSurveyNotifierProvider.notifier)
           .deleteSortingSurvey(id);
-      Navigator.pop(context);
       Future.microtask(() {
         if (context.mounted) {
           Toaster.success(context, 'Survey deleted successfully');

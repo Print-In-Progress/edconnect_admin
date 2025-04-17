@@ -131,11 +131,14 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   bool _isHovering = false;
+  bool _isInteracting = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _focusNode.addListener(_onFocusChange);
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus && _isOpen && !_isInteracting) {
+      Future.delayed(Duration.zero, () {
+        _removeOverlay();
+      });
+    }
   }
 
   @override
@@ -154,16 +157,6 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
           .firstWhere((option) => option.value == widget.value);
     } catch (_) {
       return null;
-    }
-  }
-
-  void _onFocusChange() {
-    // When focus is lost, close the dropdown
-    if (!_focusNode.hasFocus && _isOpen) {
-      // Use a slight delay to allow for complete focus transition
-      Future.delayed(Duration.zero, () {
-        _removeOverlay();
-      });
     }
   }
 
@@ -219,13 +212,41 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
   void _showOverlay() {
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
+    final offset = renderBox.localToGlobal(Offset.zero);
 
-    // Use the actual height based on the size variant
-    final double offsetHeight = switch (widget.size) {
+    // Calculate available space below and above
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double bottomSpace = screenHeight - offset.dy - size.height;
+    final double topSpace = offset.dy;
+
+    // Calculate content height
+    final double searchHeight = widget.searchable ? 48.0 : 0.0;
+    const double itemHeight = 44.0;
+    final double totalItemsHeight = _getFilteredOptions().length * itemHeight;
+
+    // Calculate actual content height (with padding and dividers)
+    final double contentHeight = searchHeight +
+        totalItemsHeight +
+        (widget.searchable ? 1.0 : 0.0) + // Divider
+        8.0; // Padding
+
+    const double verticalGap = 4.0;
+
+    // Constrain to max height of 320
+    final double overlayHeight = contentHeight.clamp(0.0, 320.0);
+
+    // Determine if overlay should show above or below
+    final bool showAbove =
+        bottomSpace < overlayHeight && topSpace > bottomSpace;
+
+    final double fieldHeight = switch (widget.size) {
       SelectSize.small => 36.0,
       SelectSize.medium => 40.0,
       SelectSize.large => 48.0,
     };
+
+    final double overlayOffset =
+        showAbove ? -(overlayHeight + verticalGap) : fieldHeight + verticalGap;
 
     _overlayEntry = OverlayEntry(
       builder: (context) {
@@ -256,7 +277,7 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
               child: CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                offset: Offset(0, offsetHeight),
+                offset: Offset(0, overlayOffset),
                 child: Material(
                   color: Colors.transparent,
                   child: AnimatedOpacity(
@@ -315,63 +336,72 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
                                 Padding(
                                   padding:
                                       EdgeInsets.all(Foundations.spacing.sm),
-                                  child: TextFormField(
-                                    controller: _searchController,
-                                    autofocus: true,
-                                    // Search field styling remains the same
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: Foundations.spacing.md,
-                                        vertical: Foundations.spacing.sm,
-                                      ),
-                                      hintText: widget.searchPlaceholder ??
-                                          l10n.globalSearch,
-                                      prefixIcon: Icon(
-                                        Icons.search,
-                                        color: isDarkMode
-                                            ? Foundations.darkColors.textMuted
-                                            : Foundations.colors.textMuted,
-                                        size: 18,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: Foundations.borders.md,
-                                        borderSide: BorderSide(
-                                          color: isDarkMode
-                                              ? Foundations.darkColors.border
-                                              : Foundations.colors.border,
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: Foundations.borders.md,
-                                        borderSide: BorderSide(
-                                          color: isDarkMode
-                                              ? Foundations.darkColors.border
-                                              : Foundations.colors.border,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: Foundations.borders.md,
-                                        borderSide: BorderSide(
-                                          color: theme.primaryColor,
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                    ),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _searchQuery = value;
-                                        _overlayEntry?.markNeedsBuild();
-                                      });
+                                  child: Focus(
+                                    canRequestFocus: true,
+                                    onFocusChange: (hasFocus) {
+                                      if (hasFocus) {
+                                        _isInteracting = true;
+                                      } else {
+                                        Future.delayed(
+                                            const Duration(milliseconds: 100),
+                                            () {
+                                          _isInteracting = false;
+                                        });
+                                      }
                                     },
+                                    child: TextFormField(
+                                      controller: _searchController,
+                                      autofocus: true,
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.symmetric(
+                                          horizontal: Foundations.spacing.md,
+                                          vertical: Foundations.spacing.sm,
+                                        ),
+                                        hintText: widget.searchPlaceholder ??
+                                            l10n.globalSearch,
+                                        prefixIcon: Icon(
+                                          Icons.search,
+                                          color: isDarkMode
+                                              ? Foundations.darkColors.textMuted
+                                              : Foundations.colors.textMuted,
+                                          size: 18,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: Foundations.borders.md,
+                                          borderSide: BorderSide(
+                                            color: isDarkMode
+                                                ? Foundations.darkColors.border
+                                                : Foundations.colors.border,
+                                          ),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: Foundations.borders.md,
+                                          borderSide: BorderSide(
+                                            color: isDarkMode
+                                                ? Foundations.darkColors.border
+                                                : Foundations.colors.border,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: Foundations.borders.md,
+                                          borderSide: BorderSide(
+                                            color: theme.primaryColor,
+                                            width: 1.5,
+                                          ),
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        _isInteracting = true;
+                                      },
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _searchQuery = value;
+                                          _overlayEntry?.markNeedsBuild();
+                                        });
+                                      },
+                                    ),
                                   ),
-                                ),
-                                Divider(
-                                  height: 1,
-                                  thickness: 1,
-                                  color: isDarkMode
-                                      ? Foundations.darkColors.border
-                                      : Foundations.colors.border,
                                 ),
                               ],
 
@@ -392,24 +422,19 @@ class _BaseSelectState<T> extends ConsumerState<BaseSelect<T>> {
                                   ),
                                 )
                               else
-                                SizedBox(
-                                  // If we need to scroll, use the max height, otherwise use the content height
-                                  height: needsScroll
-                                      ? constraints.maxHeight - searchHeight
-                                      : totalItemsHeight,
+                                Flexible(
                                   child: ListView.builder(
                                     padding: EdgeInsets.symmetric(
                                         vertical: Foundations.spacing.sm),
-                                    // Always allow scrolling for consistency
                                     physics:
                                         const AlwaysScrollableScrollPhysics(),
-                                    // Don't use shrinkWrap when scrollable
                                     shrinkWrap: !needsScroll,
                                     itemCount: filteredOptions.length,
                                     itemBuilder: (context, index) {
                                       final option = filteredOptions[index];
                                       final isSelected =
                                           widget.value == option.value;
+
                                       return _buildOptionItem(
                                           option, isSelected, isDarkMode);
                                     },
