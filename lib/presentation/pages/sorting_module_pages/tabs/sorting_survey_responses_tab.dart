@@ -3,8 +3,8 @@ import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
-import 'package:edconnect_admin/presentation/pages/sorting_module_pages/export_responses_dialog.dart';
-import 'package:edconnect_admin/presentation/pages/sorting_module_pages/import_responses_dialog.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module_pages/dialogs/export_responses_dialog.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module_pages/dialogs/import_responses_dialog.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
@@ -16,6 +16,7 @@ import 'package:edconnect_admin/presentation/widgets/common/dropdown/multi_selec
 import 'package:edconnect_admin/presentation/widgets/common/dropdown/single_select_dropdown.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/pagination.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
@@ -528,6 +529,101 @@ class ResponsesTab extends ConsumerWidget {
 
         // Get paginated entries
         final paginatedResponses = allEntries.sublist(start, end);
+
+        if (responses.isEmpty) {
+          return BaseCard(
+            variant: CardVariant.outlined,
+            margin: EdgeInsets.zero,
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.all(Foundations.spacing.xl2),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.inbox_outlined,
+                      size: 64,
+                      color: isDarkMode
+                          ? Foundations.darkColors.textMuted
+                          : Foundations.colors.textMuted,
+                    ),
+                    SizedBox(height: Foundations.spacing.lg),
+                    Text(
+                      'No Responses Yet',
+                      style: TextStyle(
+                        fontSize: Foundations.typography.xl,
+                        fontWeight: Foundations.typography.semibold,
+                        color: isDarkMode
+                            ? Foundations.darkColors.textPrimary
+                            : Foundations.colors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: Foundations.spacing.md),
+                    Text(
+                      survey.status == SortingSurveyStatus.draft
+                          ? 'Publish the survey to start collecting responses'
+                          : 'Start by adding responses manually or importing from a file',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: Foundations.typography.base,
+                        color: isDarkMode
+                            ? Foundations.darkColors.textMuted
+                            : Foundations.colors.textMuted,
+                      ),
+                    ),
+                    SizedBox(height: Foundations.spacing.xl),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (survey.status == SortingSurveyStatus.draft) ...[
+                          BaseButton(
+                            label: 'Publish Survey',
+                            prefixIcon: Icons.publish_outlined,
+                            variant: ButtonVariant.filled,
+                            onPressed: () async {
+                              await ref
+                                  .read(sortingSurveyNotifierProvider.notifier)
+                                  .publishSortingSurvey(survey.id);
+
+                              // Invalidate providers to force refresh
+                              ref.invalidate(
+                                  selectedSortingSurveyProvider(survey.id));
+                              ref.invalidate(getSortingSurveyByIdProvider);
+
+                              if (context.mounted) {
+                                Toaster.success(
+                                    context, 'Survey published successfully');
+                              }
+                            },
+                          ),
+                        ] else ...[
+                          BaseButton(
+                            label: 'Add Manually',
+                            prefixIcon: Icons.person_add_outlined,
+                            variant: ButtonVariant.outlined,
+                            onPressed: () => _addUserManually(
+                              context,
+                              ref,
+                              isDarkMode,
+                              accentColor,
+                            ),
+                          ),
+                          SizedBox(width: Foundations.spacing.md),
+                          BaseButton(
+                            label: 'Import Responses',
+                            prefixIcon: Icons.upload_file_outlined,
+                            variant: ButtonVariant.outlined,
+                            onPressed: () => _showImportDialog(context, ref),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
 
         return BaseCard(
           variant: CardVariant.outlined,

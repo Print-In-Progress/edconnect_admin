@@ -27,7 +27,9 @@ class Pagination extends ConsumerWidget {
     final state = ref.watch(paginationStateProvider(paginationKey));
     final theme = ref.watch(appThemeProvider);
 
-    // Calculate visible page numbers
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 768; // Breakpoint for small screens
+
     List<int> getVisiblePages() {
       const maxVisible = 5;
       final totalPages = state.totalPages;
@@ -56,158 +58,168 @@ class Pagination extends ConsumerWidget {
       return pages;
     }
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Items per page selector
-        Row(
-          children: [
-            Text(
-              'Showing ${state.currentPage * state.itemsPerPage + 1} to ${min((state.currentPage + 1) * state.itemsPerPage, state.totalItems)} of ${state.totalItems} entries',
-              style: TextStyle(
-                fontSize: Foundations.typography.sm,
-                color: isDarkMode
-                    ? Foundations.darkColors.textMuted
-                    : Foundations.colors.textMuted,
-              ),
+    Widget buildItemsPerPageSelector() {
+      return Wrap(
+        alignment: isSmallScreen ? WrapAlignment.center : WrapAlignment.start,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Text(
+            'Showing ${state.currentPage * state.itemsPerPage + 1} to ${min((state.currentPage + 1) * state.itemsPerPage, state.totalItems)} of ${state.totalItems} entries',
+            style: TextStyle(
+              fontSize: Foundations.typography.sm,
+              color: isDarkMode
+                  ? Foundations.darkColors.textMuted
+                  : Foundations.colors.textMuted,
             ),
-            SizedBox(width: Foundations.spacing.lg),
-            SizedBox(
-              width: 80,
-              child: BaseSelect<int>(
-                value: state.itemsPerPage,
-                options: itemsPerPageOptions
-                    .map((value) => SelectOption(
-                          value: value,
-                          label: value.toString(),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    ref
-                        .read(paginationStateProvider(paginationKey).notifier)
-                        .setItemsPerPage(value);
-                    onItemsPerPageChanged?.call(value);
-                  }
-                },
-                size: SelectSize.small,
-              ),
-            ),
-            SizedBox(width: Foundations.spacing.sm),
-            Text(
-              'per page',
-              style: TextStyle(
-                fontSize: Foundations.typography.sm,
-                color: isDarkMode
-                    ? Foundations.darkColors.textMuted
-                    : Foundations.colors.textMuted,
-              ),
-            ),
-          ],
-        ),
-
-        // Navigation buttons
-        if (state.totalPages > 1)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              BaseIconButton(
-                icon: Icons.keyboard_double_arrow_left,
-                variant: IconButtonVariant.ghost,
-                size: IconButtonSize.small,
-                onPressed: state.currentPage > 0
-                    ? () => ref
-                        .read(paginationStateProvider(paginationKey).notifier)
-                        .setPage(0)
-                    : null,
-                color: isDarkMode
-                    ? Foundations.darkColors.textMuted
-                    : Foundations.colors.textMuted,
-              ),
-              BaseIconButton(
-                icon: Icons.chevron_left,
-                variant: IconButtonVariant.ghost,
-                size: IconButtonSize.small,
-                onPressed: state.currentPage > 0
-                    ? () => ref
-                        .read(paginationStateProvider(paginationKey).notifier)
-                        .setPage(state.currentPage - 1)
-                    : null,
-                color: isDarkMode
-                    ? Foundations.darkColors.textMuted
-                    : Foundations.colors.textMuted,
-              ),
-              ...getVisiblePages().map((pageIndex) {
-                if (pageIndex == -1) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Foundations.spacing.xs,
-                    ),
-                    child: Text(
-                      '...',
-                      style: TextStyle(
-                        color: isDarkMode
-                            ? Foundations.darkColors.textMuted
-                            : Foundations.colors.textMuted,
-                      ),
-                    ),
-                  );
+          ),
+          SizedBox(width: Foundations.spacing.lg),
+          SizedBox(
+            width: 80,
+            child: BaseSelect<int>(
+              value: state.itemsPerPage,
+              options: itemsPerPageOptions
+                  .map((value) => SelectOption(
+                        value: value,
+                        label: value.toString(),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  ref
+                      .read(paginationStateProvider(paginationKey).notifier)
+                      .setItemsPerPage(value);
+                  onItemsPerPageChanged?.call(value);
                 }
+              },
+              size: SelectSize.small,
+            ),
+          ),
+          SizedBox(width: Foundations.spacing.sm),
+          Text(
+            'per page',
+            style: TextStyle(
+              fontSize: Foundations.typography.sm,
+              color: isDarkMode
+                  ? Foundations.darkColors.textMuted
+                  : Foundations.colors.textMuted,
+            ),
+          ),
+        ],
+      );
+    }
 
-                final isActive = pageIndex == state.currentPage;
+    Widget buildNavigationButtons() {
+      if (state.totalPages <= 1) return const SizedBox.shrink();
+
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BaseIconButton(
+              icon: Icons.keyboard_double_arrow_left,
+              variant: IconButtonVariant.ghost,
+              size: IconButtonSize.small,
+              onPressed: state.currentPage > 0
+                  ? () => ref
+                      .read(paginationStateProvider(paginationKey).notifier)
+                      .setPage(0)
+                  : null,
+              color: isDarkMode
+                  ? Foundations.darkColors.textMuted
+                  : Foundations.colors.textMuted,
+            ),
+            BaseIconButton(
+              icon: Icons.chevron_left,
+              variant: IconButtonVariant.ghost,
+              size: IconButtonSize.small,
+              onPressed: state.currentPage > 0
+                  ? () => ref
+                      .read(paginationStateProvider(paginationKey).notifier)
+                      .setPage(state.currentPage - 1)
+                  : null,
+              color: isDarkMode
+                  ? Foundations.darkColors.textMuted
+                  : Foundations.colors.textMuted,
+            ),
+            ...getVisiblePages().map((pageIndex) {
+              if (pageIndex == -1) {
                 return Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: Foundations.spacing.xs,
                   ),
-                  child: BaseButton(
-                    label: '${pageIndex + 1}',
-                    variant:
-                        isActive ? ButtonVariant.filled : ButtonVariant.text,
-                    size: ButtonSize.small,
-                    backgroundColor:
-                        isActive ? theme.primaryColor : Colors.transparent,
-                    foregroundColor: isActive
-                        ? Colors.white
-                        : isDarkMode
-                            ? Foundations.darkColors.textMuted
-                            : Foundations.colors.textMuted,
-                    onPressed: isActive
-                        ? null
-                        : () => ref
-                            .read(
-                                paginationStateProvider(paginationKey).notifier)
-                            .setPage(pageIndex),
+                  child: Text(
+                    '...',
+                    style: TextStyle(
+                      color: isDarkMode
+                          ? Foundations.darkColors.textMuted
+                          : Foundations.colors.textMuted,
+                    ),
                   ),
                 );
-              }),
-              BaseIconButton(
-                icon: Icons.chevron_right,
-                variant: IconButtonVariant.ghost,
-                size: IconButtonSize.small,
-                onPressed: state.currentPage < state.totalPages - 1
-                    ? () => ref
-                        .read(paginationStateProvider(paginationKey).notifier)
-                        .setPage(state.currentPage + 1)
-                    : null,
-                color: isDarkMode
-                    ? Foundations.darkColors.textMuted
-                    : Foundations.colors.textMuted,
-              ),
-              BaseIconButton(
-                icon: Icons.keyboard_double_arrow_right,
-                variant: IconButtonVariant.ghost,
-                size: IconButtonSize.small,
-                onPressed: state.currentPage < state.totalPages - 1
-                    ? () => ref
-                        .read(paginationStateProvider(paginationKey).notifier)
-                        .setPage(state.totalPages - 1)
-                    : null,
-                color: isDarkMode
-                    ? Foundations.darkColors.textMuted
-                    : Foundations.colors.textMuted,
-              ),
-            ],
-          ),
+              }
+
+              final isActive = pageIndex == state.currentPage;
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Foundations.spacing.xs,
+                ),
+                child: BaseButton(
+                  label: '${pageIndex + 1}',
+                  variant: isActive ? ButtonVariant.filled : ButtonVariant.text,
+                  size: ButtonSize.small,
+                  backgroundColor:
+                      isActive ? theme.primaryColor : Colors.transparent,
+                  foregroundColor: isActive
+                      ? Colors.white
+                      : isDarkMode
+                          ? Foundations.darkColors.textMuted
+                          : Foundations.colors.textMuted,
+                  onPressed: isActive
+                      ? null
+                      : () => ref
+                          .read(paginationStateProvider(paginationKey).notifier)
+                          .setPage(pageIndex),
+                ),
+              );
+            }),
+            BaseIconButton(
+              icon: Icons.chevron_right,
+              variant: IconButtonVariant.ghost,
+              size: IconButtonSize.small,
+              onPressed: state.currentPage < state.totalPages - 1
+                  ? () => ref
+                      .read(paginationStateProvider(paginationKey).notifier)
+                      .setPage(state.currentPage + 1)
+                  : null,
+              color: isDarkMode
+                  ? Foundations.darkColors.textMuted
+                  : Foundations.colors.textMuted,
+            ),
+            BaseIconButton(
+              icon: Icons.keyboard_double_arrow_right,
+              variant: IconButtonVariant.ghost,
+              size: IconButtonSize.small,
+              onPressed: state.currentPage < state.totalPages - 1
+                  ? () => ref
+                      .read(paginationStateProvider(paginationKey).notifier)
+                      .setPage(state.totalPages - 1)
+                  : null,
+              color: isDarkMode
+                  ? Foundations.darkColors.textMuted
+                  : Foundations.colors.textMuted,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        buildItemsPerPageSelector(),
+        if (isSmallScreen && state.totalPages > 1)
+          SizedBox(height: Foundations.spacing.md),
+        buildNavigationButtons(),
       ],
     );
   }

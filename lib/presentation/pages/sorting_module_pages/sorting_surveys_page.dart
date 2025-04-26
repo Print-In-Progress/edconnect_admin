@@ -289,6 +289,11 @@ class _SurveyCard extends ConsumerWidget {
       isSelectable: true,
       onTap: () {
         ref.read(selectedSortingSurveyIdProvider.notifier).state = survey.id;
+
+        // Trigger response prefetch
+        ref.read(sortingSurveyResponsesPrefetchProvider(survey.id));
+
+        // Navigate to details
         AppRouter.toSortingSurveyDetails(context, surveyId: survey.id);
       },
       child: Padding(

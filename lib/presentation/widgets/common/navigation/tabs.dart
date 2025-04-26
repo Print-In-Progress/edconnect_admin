@@ -248,7 +248,10 @@ class TabsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return tabs[selectedIndex].content;
+    return IndexedStack(
+      index: selectedIndex,
+      children: tabs.map((tab) => tab.content).toList(),
+    );
   }
 }
 

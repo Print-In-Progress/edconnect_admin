@@ -229,16 +229,6 @@ final sortingSurveysProvider = StreamProvider<List<SortingSurvey>>((ref) {
 
 final selectedSortingSurveyIdProvider = StateProvider<String?>((ref) => null);
 
-// Provider for the currently selected survey details
-final getSortingSurveyByIdProvider =
-    FutureProvider<SortingSurvey?>((ref) async {
-  final id = ref.watch(selectedSortingSurveyIdProvider);
-  if (id == null) return null;
-
-  final useCase = ref.watch(sortingSurveyUseCaseProvider);
-  return await useCase.getSortingSurveyById(id);
-});
-
 class SurveyFilterState {
   final String searchQuery;
   final SortingSurveyStatus? statusFilter;
@@ -326,18 +316,34 @@ final filteredSortingSurveysProvider =
 final selectedSortingSurveyProvider =
     Provider.family<AsyncValue<SortingSurvey?>, String>(
   (ref, surveyId) {
-    final surveysAsync = ref.watch(sortingSurveysProvider);
-
-    return surveysAsync.when(
-      data: (surveys) {
-        final survey = surveys.where((s) => s.id == surveyId).firstOrNull;
-        return AsyncValue.data(survey);
-      },
-      loading: () => const AsyncValue.loading(),
-      error: (error, stack) => AsyncValue.error(error, stack),
-    );
+    // Watch the notifier state to trigger rebuilds
+    ref.watch(sortingSurveyNotifierProvider);
+    return ref.watch(getSortingSurveyByIdProvider);
   },
 );
+
+// Update getSortingSurveyByIdProvider to be autoDispose
+final getSortingSurveyByIdProvider =
+    FutureProvider.autoDispose<SortingSurvey?>((ref) async {
+  final id = ref.watch(selectedSortingSurveyIdProvider);
+  if (id == null) return null;
+
+  final useCase = ref.watch(sortingSurveyUseCaseProvider);
+  return await useCase.getSortingSurveyById(id);
+});
+
+// Create a new provider to handle response prefetching
+final sortingSurveyResponsesPrefetchProvider =
+    Provider.family<void, String>((ref, surveyId) {
+  // Watch notifier state
+  ref.watch(sortingSurveyNotifierProvider);
+
+  // Watch filtered responses
+  ref.watch(filteredResponsesProvider(surveyId));
+
+  // Watch pagination state
+  ref.watch(paginationStateProvider(surveyId));
+});
 
 class ResponsesFilterState {
   final String searchQuery;
@@ -374,6 +380,7 @@ final responsesFilterProvider =
 final filteredResponsesProvider =
     Provider.family<AsyncValue<Map<String, Map<String, dynamic>>>, String>(
   (ref, surveyId) {
+    ref.watch(sortingSurveyNotifierProvider);
     final surveyAsync = ref.watch(selectedSortingSurveyProvider(surveyId));
     final filterState = ref.watch(responsesFilterProvider(surveyId));
     final users = ref.watch(allUsersStreamProvider).value ?? [];

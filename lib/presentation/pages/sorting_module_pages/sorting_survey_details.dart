@@ -1,11 +1,12 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
-import 'package:edconnect_admin/presentation/pages/sorting_module_pages/sorting_survey_overview_tab.dart';
-import 'package:edconnect_admin/presentation/pages/sorting_module_pages/sorting_survey_responses_tab.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module_pages/tabs/sorting_survey_overview_tab.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module_pages/tabs/sorting_survey_responses_tab.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
+import 'package:edconnect_admin/presentation/widgets/common/cards/base_card.dart';
 import 'package:edconnect_admin/presentation/widgets/common/dialogs/dialogs.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/tabs.dart';
@@ -25,59 +26,85 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
     final notifierState = ref.watch(sortingSurveyNotifierProvider);
     final surveyAsync = ref.watch(selectedSortingSurveyProvider(surveyId));
 
-    return surveyAsync.when(
-      data: (survey) {
-        if (survey == null) {
-          return const Center(child: Text('Survey not found'));
-        }
-        return Scaffold(
-          backgroundColor: theme.isDarkMode
-              ? Foundations.darkColors.background
-              : Foundations.colors.background,
-          appBar: BaseAppBar(
-            title: survey.title,
-            showLeading: true,
-            actions: [
-              if (survey.status == SortingSurveyStatus.draft) ...[
-                BaseButton(
-                  label: 'Publish',
-                  prefixIcon: Icons.publish_outlined,
-                  variant: ButtonVariant.filled,
-                  isLoading: notifierState.isLoading,
-                  onPressed: () => _publishSurvey(context, ref, survey.id),
-                ),
-                SizedBox(width: Foundations.spacing.md),
-              ],
-              if (survey.status == SortingSurveyStatus.published) ...[
-                BaseButton(
-                  label: 'Close',
-                  prefixIcon: Icons.close,
-                  variant: ButtonVariant.outlined,
-                  isLoading: notifierState.isLoading,
-                  onPressed: () => _closeSurvey(context, ref, survey.id),
-                ),
-                SizedBox(width: Foundations.spacing.md),
-              ],
-              BaseButton(
-                label: 'Delete',
-                prefixIcon: Icons.delete_outline,
-                backgroundColor: Foundations.colors.error,
-                variant: ButtonVariant.filled,
-                isLoading: notifierState.isLoading,
-                onPressed: () => _deleteSurvey(context, ref, survey.id),
+    return Scaffold(
+      backgroundColor: theme.isDarkMode
+          ? Foundations.darkColors.background
+          : Foundations.colors.background,
+      appBar: BaseAppBar(
+        title: surveyAsync.when(
+          data: (survey) => survey?.title ?? 'Survey not found',
+          loading: () => 'Loading Survey...',
+          error: (_, __) => 'Error',
+        ),
+        showLeading: true,
+        // Show skeleton buttons during loading
+        actions: surveyAsync.when(
+          data: (survey) => _buildActions(context, ref, survey, notifierState),
+          loading: () => [
+            Container(
+              width: 100,
+              height: 36,
+              margin: EdgeInsets.only(right: Foundations.spacing.md),
+              decoration: BoxDecoration(
+                color: theme.isDarkMode
+                    ? Foundations.darkColors.surfaceActive
+                    : Foundations.colors.surfaceActive,
+                borderRadius: Foundations.borders.md,
               ),
-            ],
-          ),
-          body: _buildContent(context, ref, survey),
-        );
-      },
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
+            ),
+          ],
+          error: (_, __) => [],
+        ),
       ),
-      error: (error, stack) => Center(
-        child: Text('Error: $error'),
+      body: surveyAsync.when(
+        data: (survey) {
+          if (survey == null) {
+            return const Center(child: Text('Survey not found'));
+          }
+          return _buildContent(context, ref, survey);
+        },
+        loading: () => _buildSkeletonContent(context, ref),
+        error: (error, stack) => Center(
+          child: Text('Error: $error'),
+        ),
       ),
     );
+  }
+
+  List<Widget> _buildActions(BuildContext context, WidgetRef ref,
+      SortingSurvey? survey, notifierState) {
+    if (survey == null) return [];
+
+    return [
+      if (survey.status == SortingSurveyStatus.draft) ...[
+        BaseButton(
+          label: 'Publish',
+          prefixIcon: Icons.publish_outlined,
+          variant: ButtonVariant.filled,
+          isLoading: notifierState.isLoading,
+          onPressed: () => _publishSurvey(context, ref, survey.id),
+        ),
+        SizedBox(width: Foundations.spacing.md),
+      ],
+      if (survey.status == SortingSurveyStatus.published) ...[
+        BaseButton(
+          label: 'Close',
+          prefixIcon: Icons.close,
+          variant: ButtonVariant.outlined,
+          isLoading: notifierState.isLoading,
+          onPressed: () => _closeSortingSurvey(context, ref, survey.id),
+        ),
+        SizedBox(width: Foundations.spacing.md),
+      ],
+      BaseButton(
+        label: 'Delete',
+        prefixIcon: Icons.delete_outline,
+        backgroundColor: Foundations.colors.error,
+        variant: ButtonVariant.filled,
+        isLoading: notifierState.isLoading,
+        onPressed: () => _deleteSurvey(context, ref, survey.id),
+      ),
+    ];
   }
 
   Widget _buildContent(
@@ -114,13 +141,29 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
     await ref
         .read(sortingSurveyNotifierProvider.notifier)
         .publishSortingSurvey(id);
+
+    // Invalidate providers to force refresh
+    ref.invalidate(selectedSortingSurveyProvider(id));
+    ref.invalidate(getSortingSurveyByIdProvider);
+
+    if (context.mounted) {
+      Toaster.success(context, 'Survey published successfully');
+    }
   }
 
-  Future<void> _closeSurvey(
+  Future<void> _closeSortingSurvey(
       BuildContext context, WidgetRef ref, String id) async {
     await ref
         .read(sortingSurveyNotifierProvider.notifier)
         .closeSortingSurvey(id);
+
+    // Invalidate providers to force refresh
+    ref.invalidate(selectedSortingSurveyProvider(id));
+    ref.invalidate(getSortingSurveyByIdProvider);
+
+    if (context.mounted) {
+      Toaster.success(context, 'Survey closed successfully');
+    }
   }
 
   Future<void> _deleteSurvey(
@@ -171,6 +214,140 @@ class _ResultsTab extends ConsumerWidget {
     // Implement parameters tab content
     return const Center(child: Text('Parameters Content'));
   }
+}
+
+Widget _buildSkeletonContent(BuildContext context, WidgetRef ref) {
+  final theme = ref.watch(appThemeProvider);
+  final isDarkMode = theme.isDarkMode;
+
+  return Padding(
+    padding: EdgeInsets.all(Foundations.spacing.lg),
+    child: Column(
+      children: [
+        // Tabs skeleton
+        Container(
+          height: 40,
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: isDarkMode
+                    ? Foundations.darkColors.border
+                    : Foundations.colors.border,
+              ),
+            ),
+          ),
+          child: Row(
+            children: List.generate(4, (index) {
+              return Padding(
+                padding: EdgeInsets.only(right: Foundations.spacing.md),
+                child: Container(
+                  width: 120,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: isDarkMode
+                        ? Foundations.darkColors.surfaceActive
+                        : Foundations.colors.surfaceActive,
+                    borderRadius: Foundations.borders.md,
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+        SizedBox(height: Foundations.spacing.lg),
+
+        // Content skeleton
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Section headers
+                _buildSkeletonSection(isDarkMode),
+                SizedBox(height: Foundations.spacing.lg),
+
+                // Info cards
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: _buildSkeletonCard(
+                        isDarkMode,
+                        itemCount: 6,
+                      ),
+                    ),
+                    SizedBox(width: Foundations.spacing.lg),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        children: [
+                          _buildSkeletonCard(
+                            isDarkMode,
+                            itemCount: 2,
+                          ),
+                          SizedBox(height: Foundations.spacing.lg),
+                          _buildSkeletonCard(
+                            isDarkMode,
+                            itemCount: 4,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildSkeletonSection(bool isDarkMode) {
+  return Container(
+    height: 24,
+    width: 200,
+    decoration: BoxDecoration(
+      color: isDarkMode
+          ? Foundations.darkColors.surfaceActive
+          : Foundations.colors.surfaceActive,
+      borderRadius: Foundations.borders.md,
+    ),
+  );
+}
+
+Widget _buildSkeletonCard(bool isDarkMode, {required int itemCount}) {
+  return BaseCard(
+    variant: CardVariant.outlined,
+    child: Padding(
+      padding: EdgeInsets.all(Foundations.spacing.lg),
+      child: Column(
+        children: List.generate(itemCount, (index) {
+          return Column(
+            children: [
+              Container(
+                height: 20,
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? Foundations.darkColors.surfaceActive
+                      : Foundations.colors.surfaceActive,
+                  borderRadius: Foundations.borders.md,
+                ),
+              ),
+              if (index < itemCount - 1)
+                Divider(
+                  height: Foundations.spacing.xl,
+                  color: isDarkMode
+                      ? Foundations.darkColors.border
+                      : Foundations.colors.border,
+                ),
+            ],
+          );
+        }),
+      ),
+    ),
+  );
 }
 // responses = [
 //     "uid1": {
