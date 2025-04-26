@@ -3,6 +3,7 @@ import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module_pages/export_responses_dialog.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module_pages/import_responses_dialog.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
@@ -14,8 +15,10 @@ import 'package:edconnect_admin/presentation/widgets/common/dialogs/dialogs.dart
 import 'package:edconnect_admin/presentation/widgets/common/dropdown/multi_select_dropdown.dart';
 import 'package:edconnect_admin/presentation/widgets/common/dropdown/single_select_dropdown.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
+import 'package:edconnect_admin/presentation/widgets/common/navigation/pagination.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:math';
 
 class ResponsesTab extends ConsumerWidget {
   final SortingSurvey survey;
@@ -82,7 +85,12 @@ class ResponsesTab extends ConsumerWidget {
                         variant: ButtonVariant.outlined,
                         size: ButtonSize.medium,
                         onPressed: () {
-                          // TODO: Implement export
+                          Dialogs.show(
+                            context: context,
+                            title: 'Export Responses',
+                            content: const ExportResponsesDialog(),
+                            showCancelButton: true,
+                          );
                         },
                       ),
                     ],
@@ -464,7 +472,7 @@ class ResponsesTab extends ConsumerWidget {
 
       return _buildDistributionRow(
         context,
-        _formatParameterName(name),
+        name,
         {'Yes': yes, 'No': no},
         isDarkMode,
         limitEntries: false,
@@ -478,7 +486,7 @@ class ResponsesTab extends ConsumerWidget {
 
       return _buildDistributionRow(
         context,
-        _formatParameterName(name),
+        name,
         distribution,
         isDarkMode,
         limitEntries: true,
@@ -493,356 +501,421 @@ class ResponsesTab extends ConsumerWidget {
     final horizontalScrollController = ScrollController();
     final verticalScrollController = ScrollController();
 
-    return BaseCard(
-      variant: CardVariant.outlined,
-      margin: EdgeInsets.zero,
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(Foundations.spacing.md),
-            child: Row(
-              children: [
-                Expanded(
-                  child: BaseInput(
-                    leadingIcon: Icons.search,
-                    hint: 'Search by name...',
-                    size: InputSize.small,
-                    onChanged: (value) {
-                      ref
-                              .read(responsesFilterProvider(survey.id).notifier)
-                              .state =
-                          ref.read(responsesFilterProvider(survey.id)).copyWith(
-                                searchQuery: value,
-                              );
-                    },
-                  ),
-                ),
-                SizedBox(width: Foundations.spacing.md),
-                SizedBox(
-                  width: 160,
-                  child: BaseSelect<SortOrder>(
-                    value:
-                        ref.watch(responsesFilterProvider(survey.id)).sortOrder,
-                    options: [
-                      SelectOption(
-                        value: SortOrder.asc,
-                        label: 'Name A-Z',
-                        icon: Icons.arrow_upward,
-                      ),
-                      SelectOption(
-                        value: SortOrder.desc,
-                        label: 'Name Z-A',
-                        icon: Icons.arrow_downward,
-                      ),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) {
-                        ref
-                                .read(responsesFilterProvider(survey.id).notifier)
-                                .state =
-                            ref
-                                .read(responsesFilterProvider(survey.id))
-                                .copyWith(
-                                  sortOrder: value,
-                                );
-                      }
-                    },
-                    size: SelectSize.small,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Scrollbar(
-            thickness: 8,
-            thumbVisibility: true,
-            controller: horizontalScrollController,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller: horizontalScrollController,
-              child: Column(
-                children: [
-                  // Parameter filters row
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Foundations.spacing.md,
-                      vertical: Foundations.spacing.sm,
-                    ),
-                    child: Row(
-                      children: [
-                        if (survey.askBiologicalSex)
-                          Padding(
-                            padding:
-                                EdgeInsets.only(right: Foundations.spacing.sm),
-                            child: SizedBox(
-                              width: 140,
-                              child: BaseSelect<String?>(
-                                hint: 'Sex',
-                                size: SelectSize.small,
-                                value: ref
-                                    .watch(responsesFilterProvider(survey.id))
-                                    .parameterFilters['sex'],
-                                options: [
-                                  SelectOption(value: null, label: 'All'),
-                                  SelectOption(value: 'm', label: 'Male'),
-                                  SelectOption(value: 'f', label: 'Female'),
-                                  SelectOption(
-                                      value: 'nb', label: 'Non-Binary'),
-                                ],
-                                onChanged: (value) {
-                                  final currentFilters =
-                                      Map<String, String?>.from(
-                                    ref
-                                        .read(
-                                            responsesFilterProvider(survey.id))
-                                        .parameterFilters,
+    ref.listen<AsyncValue<Map<String, Map<String, dynamic>>>>(
+      filteredResponsesProvider(survey.id),
+      (previous, next) {
+        next.whenData((data) {
+          ref
+              .read(paginationStateProvider('responses_${survey.id}').notifier)
+              .setTotalItems(data.length);
+        });
+      },
+    );
+
+    return responses.when(
+      data: (responses) {
+        final paginationState =
+            ref.watch(paginationStateProvider('responses_${survey.id}'));
+
+        // Get entries list from map
+        final allEntries = responses.entries.toList();
+
+        // Calculate start and end indices
+        final start =
+            paginationState.currentPage * paginationState.itemsPerPage;
+        final end =
+            min(start + paginationState.itemsPerPage, allEntries.length);
+
+        // Get paginated entries
+        final paginatedResponses = allEntries.sublist(start, end);
+
+        return BaseCard(
+          variant: CardVariant.outlined,
+          margin: EdgeInsets.zero,
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(Foundations.spacing.md),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: BaseInput(
+                        leadingIcon: Icons.search,
+                        hint: 'Search by name...',
+                        size: InputSize.small,
+                        onChanged: (value) {
+                          ref
+                                  .read(responsesFilterProvider(survey.id).notifier)
+                                  .state =
+                              ref
+                                  .read(responsesFilterProvider(survey.id))
+                                  .copyWith(
+                                    searchQuery: value,
                                   );
-                                  currentFilters['sex'] = value;
-                                  ref
-                                          .read(
-                                              responsesFilterProvider(survey.id)
-                                                  .notifier)
-                                          .state =
-                                      ref
-                                          .read(responsesFilterProvider(
-                                              survey.id))
-                                          .copyWith(
-                                            parameterFilters: currentFilters,
-                                          );
-                                },
-                              ),
-                            ),
+                        },
+                      ),
+                    ),
+                    SizedBox(width: Foundations.spacing.md),
+                    SizedBox(
+                      width: 160,
+                      child: BaseSelect<SortOrder>(
+                        value: ref
+                            .watch(responsesFilterProvider(survey.id))
+                            .sortOrder,
+                        options: [
+                          SelectOption(
+                            value: SortOrder.asc,
+                            label: 'Name A-Z',
+                            icon: Icons.arrow_upward,
                           ),
-                        ...survey.parameters.map((param) {
-                          if (param['type'] == 'binary') {
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                  right: Foundations.spacing.sm),
-                              child: SizedBox(
-                                width: 140,
-                                child: BaseSelect<String?>(
-                                  hint: _formatParameterName(param['name']),
-                                  size: SelectSize.small,
-                                  value: ref
-                                      .watch(responsesFilterProvider(survey.id))
-                                      .parameterFilters[param['name']],
-                                  options: [
-                                    SelectOption(value: null, label: 'All'),
-                                    SelectOption(value: 'yes', label: 'Yes'),
-                                    SelectOption(value: 'no', label: 'No'),
-                                  ],
-                                  onChanged: (value) {
-                                    final currentFilters =
-                                        Map<String, String?>.from(
-                                      ref
-                                          .read(responsesFilterProvider(
-                                              survey.id))
-                                          .parameterFilters,
+                          SelectOption(
+                            value: SortOrder.desc,
+                            label: 'Name Z-A',
+                            icon: Icons.arrow_downward,
+                          ),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) {
+                            ref
+                                    .read(responsesFilterProvider(survey.id)
+                                        .notifier)
+                                    .state =
+                                ref
+                                    .read(responsesFilterProvider(survey.id))
+                                    .copyWith(
+                                      sortOrder: value,
                                     );
-                                    currentFilters[param['name']] = value;
-                                    ref
-                                            .read(responsesFilterProvider(
-                                                    survey.id)
-                                                .notifier)
-                                            .state =
+                          }
+                        },
+                        size: SelectSize.small,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Scrollbar(
+                thickness: 8,
+                thumbVisibility: true,
+                controller: horizontalScrollController,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  controller: horizontalScrollController,
+                  child: Column(
+                    children: [
+                      // Parameter filters row
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Foundations.spacing.md,
+                          vertical: Foundations.spacing.sm,
+                        ),
+                        child: Row(
+                          children: [
+                            if (survey.askBiologicalSex)
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    right: Foundations.spacing.sm),
+                                child: SizedBox(
+                                  width: 140,
+                                  child: BaseSelect<String?>(
+                                    hint: 'Sex',
+                                    size: SelectSize.small,
+                                    value: ref
+                                        .watch(
+                                            responsesFilterProvider(survey.id))
+                                        .parameterFilters['sex'],
+                                    options: [
+                                      SelectOption(value: null, label: 'All'),
+                                      SelectOption(value: 'm', label: 'Male'),
+                                      SelectOption(value: 'f', label: 'Female'),
+                                      SelectOption(
+                                          value: 'nb', label: 'Non-Binary'),
+                                    ],
+                                    onChanged: (value) {
+                                      final currentFilters =
+                                          Map<String, String?>.from(
                                         ref
                                             .read(responsesFilterProvider(
                                                 survey.id))
-                                            .copyWith(
-                                              parameterFilters: currentFilters,
-                                            );
-                                  },
+                                            .parameterFilters,
+                                      );
+                                      currentFilters['sex'] = value;
+                                      ref
+                                              .read(responsesFilterProvider(
+                                                      survey.id)
+                                                  .notifier)
+                                              .state =
+                                          ref
+                                              .read(responsesFilterProvider(
+                                                  survey.id))
+                                              .copyWith(
+                                                parameterFilters:
+                                                    currentFilters,
+                                              );
+                                    },
+                                  ),
                                 ),
                               ),
-                            );
-                          }
-                          // For categorical parameters
-                          final uniqueValues = survey.responses.values
-                              .map((r) => r[param['name']]?.toString())
-                              .where((v) => v != null)
-                              .toSet()
-                              .toList()
-                            ..sort();
-
-                          return Padding(
-                            padding:
-                                EdgeInsets.only(right: Foundations.spacing.sm),
-                            child: SizedBox(
-                              width: 140,
-                              child: BaseSelect<String?>(
-                                hint: _formatParameterName(param['name']),
-                                size: SelectSize.small,
-                                searchable: true,
-                                value: ref
-                                    .watch(responsesFilterProvider(survey.id))
-                                    .parameterFilters[param['name']],
-                                options: [
-                                  SelectOption(value: null, label: 'All'),
-                                  ...uniqueValues.map((v) => SelectOption(
-                                      value: v,
-                                      label: _formatParameterName(v!))),
-                                ],
-                                onChanged: (value) {
-                                  final currentFilters =
-                                      Map<String, String?>.from(
-                                    ref
-                                        .read(
-                                            responsesFilterProvider(survey.id))
-                                        .parameterFilters,
-                                  );
-                                  currentFilters[param['name']] = value;
-                                  ref
-                                          .read(
-                                              responsesFilterProvider(survey.id)
-                                                  .notifier)
-                                          .state =
-                                      ref
-                                          .read(responsesFilterProvider(
+                            ...survey.parameters.map((param) {
+                              if (param['type'] == 'binary') {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      right: Foundations.spacing.sm),
+                                  child: SizedBox(
+                                    width: 140,
+                                    child: BaseSelect<String?>(
+                                      hint: _formatParameterName(param['name']),
+                                      size: SelectSize.small,
+                                      value: ref
+                                          .watch(responsesFilterProvider(
                                               survey.id))
-                                          .copyWith(
-                                            parameterFilters: currentFilters,
-                                          );
-                                },
-                              ),
+                                          .parameterFilters[param['name']],
+                                      options: [
+                                        SelectOption(value: null, label: 'All'),
+                                        SelectOption(
+                                            value: 'yes', label: 'Yes'),
+                                        SelectOption(value: 'no', label: 'No'),
+                                      ],
+                                      onChanged: (value) {
+                                        final currentFilters =
+                                            Map<String, String?>.from(
+                                          ref
+                                              .read(responsesFilterProvider(
+                                                  survey.id))
+                                              .parameterFilters,
+                                        );
+                                        currentFilters[param['name']] = value;
+                                        ref
+                                                .read(responsesFilterProvider(
+                                                        survey.id)
+                                                    .notifier)
+                                                .state =
+                                            ref
+                                                .read(responsesFilterProvider(
+                                                    survey.id))
+                                                .copyWith(
+                                                  parameterFilters:
+                                                      currentFilters,
+                                                );
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+                              // For categorical parameters
+                              final uniqueValues = survey.responses.values
+                                  .map((r) => r[param['name']]?.toString())
+                                  .where((v) => v != null)
+                                  .toSet()
+                                  .toList()
+                                ..sort();
+
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                    right: Foundations.spacing.sm),
+                                child: SizedBox(
+                                  width: 140,
+                                  child: BaseSelect<String?>(
+                                    hint: _formatParameterName(param['name']),
+                                    size: SelectSize.small,
+                                    searchable: true,
+                                    value: ref
+                                        .watch(
+                                            responsesFilterProvider(survey.id))
+                                        .parameterFilters[param['name']],
+                                    options: [
+                                      SelectOption(value: null, label: 'All'),
+                                      ...uniqueValues.map((v) => SelectOption(
+                                          value: v,
+                                          label: _formatParameterName(v!))),
+                                    ],
+                                    onChanged: (value) {
+                                      final currentFilters =
+                                          Map<String, String?>.from(
+                                        ref
+                                            .read(responsesFilterProvider(
+                                                survey.id))
+                                            .parameterFilters,
+                                      );
+                                      currentFilters[param['name']] = value;
+                                      ref
+                                              .read(responsesFilterProvider(
+                                                      survey.id)
+                                                  .notifier)
+                                              .state =
+                                          ref
+                                              .read(responsesFilterProvider(
+                                                  survey.id))
+                                              .copyWith(
+                                                parameterFilters:
+                                                    currentFilters,
+                                              );
+                                    },
+                                  ),
+                                ),
+                              );
+                            }),
+                            BaseIconButton(
+                              icon: Icons.clear_all,
+                              onPressed: () {
+                                ref
+                                    .read(responsesFilterProvider(survey.id)
+                                        .notifier)
+                                    .state = const ResponsesFilterState();
+                              },
+                              tooltip: 'Clear filters',
+                              variant: IconButtonVariant.outlined,
+                              size: IconButtonSize.small,
                             ),
-                          );
-                        }),
-                        BaseIconButton(
-                          icon: Icons.clear_all,
-                          onPressed: () {
-                            ref
-                                .read(
-                                    responsesFilterProvider(survey.id).notifier)
-                                .state = const ResponsesFilterState();
-                          },
-                          tooltip: 'Clear filters',
-                          variant: IconButtonVariant.outlined,
-                          size: IconButtonSize.small,
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Table
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxHeight: 600,
-                      minHeight: 200,
-                    ),
-                    child: Scrollbar(
-                      thumbVisibility: true,
-                      controller: verticalScrollController,
-                      child: SingleChildScrollView(
-                        controller: verticalScrollController,
-                        child: DataTable(
-                          columns: [
-                            DataColumn(label: Text('Name')),
-                            if (survey.askBiologicalSex)
-                              DataColumn(label: Text('Sex')),
-                            ...survey.parameters.map(
-                              (param) => DataColumn(
-                                label:
-                                    Text(_formatParameterName(param['name'])),
-                              ),
-                            ),
-                            if (survey.maxPreferences != null)
-                              DataColumn(label: Text('Preferences')),
-                            DataColumn(
-                                label: Text('Actions')), // Add actions column
                           ],
-                          rows: responses.entries.map((entry) {
-                            final response = entry.value;
-                            return DataRow(
-                              cells: [
-                                DataCell(Text(
-                                    '${response['_first_name']} ${response['_last_name']}')),
+                        ),
+                      ),
+                      // Table
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxHeight: 600,
+                          minHeight: 200,
+                        ),
+                        child: Scrollbar(
+                          thumbVisibility: true,
+                          controller: verticalScrollController,
+                          child: SingleChildScrollView(
+                            controller: verticalScrollController,
+                            child: DataTable(
+                              columns: [
+                                DataColumn(label: Text('Name')),
                                 if (survey.askBiologicalSex)
-                                  _buildColoredDataCell(
-                                      'sex', response['sex'], isDarkMode),
+                                  DataColumn(label: Text('Sex')),
                                 ...survey.parameters.map(
-                                  (param) => _buildColoredDataCell(
-                                    param['name'],
-                                    response[param['name']]?.toString() ?? '',
-                                    isDarkMode,
+                                  (param) => DataColumn(
+                                    label: Text(
+                                        _formatParameterName(param['name'])),
                                   ),
                                 ),
                                 if (survey.maxPreferences != null)
-                                  _buildPreferencesCell(
-                                    context,
-                                    (response['prefs'] as List?)
-                                            ?.cast<String>() ??
-                                        [],
-                                    isDarkMode,
-                                    accentColor,
-                                  ),
-                                DataCell(Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    BaseIconButton(
-                                      icon: Icons.edit_outlined,
-                                      onPressed: () => _editResponse(
+                                  DataColumn(label: Text('Preferences')),
+                                DataColumn(
+                                    label:
+                                        Text('Actions')), // Add actions column
+                              ],
+                              rows: paginatedResponses.map((entry) {
+                                final response = entry.value;
+                                return DataRow(
+                                  cells: [
+                                    DataCell(Text(
+                                        '${response['_first_name']} ${response['_last_name']}')),
+                                    if (survey.askBiologicalSex)
+                                      _buildColoredDataCell(
+                                          'sex', response['sex'], isDarkMode),
+                                    ...survey.parameters.map(
+                                      (param) => _buildColoredDataCell(
+                                        param['name'],
+                                        response[param['name']]?.toString() ??
+                                            '',
+                                        isDarkMode,
+                                      ),
+                                    ),
+                                    if (survey.maxPreferences != null)
+                                      _buildPreferencesCell(
                                         context,
-                                        ref,
+                                        (response['prefs'] as List?)
+                                                ?.cast<String>() ??
+                                            [],
                                         isDarkMode,
                                         accentColor,
-                                        entry.key,
-                                        entry.value,
                                       ),
-                                      variant: IconButtonVariant.ghost,
-                                      size: IconButtonSize.small,
-                                      tooltip: 'Edit response',
-                                    ),
-                                    SizedBox(width: Foundations.spacing.xs),
-                                    BaseIconButton(
-                                      icon: Icons.delete_outline,
-                                      onPressed: () async {
-                                        final bool? confirmed =
-                                            await Dialogs.confirm(
-                                          context: context,
-                                          title: 'Delete Response',
-                                          message:
-                                              'Are you sure you want to delete this response?',
-                                          variant: DialogVariant.danger,
-                                          dangerous: true,
-                                          confirmText:
-                                              AppLocalizations.of(context)!
-                                                  .globalDelete,
-                                        );
-                                        if (confirmed != null && confirmed) {
-                                          final updatedResponses = Map<String,
-                                                  Map<String, dynamic>>.from(
-                                              survey.responses);
-                                          updatedResponses.remove(entry.key);
+                                    DataCell(Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        BaseIconButton(
+                                          icon: Icons.edit_outlined,
+                                          onPressed: () => _editResponse(
+                                            context,
+                                            ref,
+                                            isDarkMode,
+                                            accentColor,
+                                            entry.key,
+                                            entry.value,
+                                          ),
+                                          variant: IconButtonVariant.ghost,
+                                          size: IconButtonSize.small,
+                                          tooltip: 'Edit response',
+                                        ),
+                                        SizedBox(width: Foundations.spacing.xs),
+                                        BaseIconButton(
+                                          icon: Icons.delete_outline,
+                                          onPressed: () async {
+                                            final bool? confirmed =
+                                                await Dialogs.confirm(
+                                              context: context,
+                                              title: 'Delete Response',
+                                              message:
+                                                  'Are you sure you want to delete this response?',
+                                              variant: DialogVariant.danger,
+                                              dangerous: true,
+                                              confirmText:
+                                                  AppLocalizations.of(context)!
+                                                      .globalDelete,
+                                            );
+                                            if (confirmed != null &&
+                                                confirmed) {
+                                              final updatedResponses = Map<
+                                                      String,
+                                                      Map<String,
+                                                          dynamic>>.from(
+                                                  survey.responses);
+                                              updatedResponses
+                                                  .remove(entry.key);
 
-                                          ref
-                                              .read(
-                                                  sortingSurveyNotifierProvider
-                                                      .notifier)
-                                              .updateSortingSurvey(
-                                                survey.copyWith(
-                                                    responses:
-                                                        updatedResponses),
-                                              );
-                                        }
-                                      },
-                                      variant: IconButtonVariant.ghost,
-                                      size: IconButtonSize.small,
-                                      tooltip: 'Delete response',
-                                      color: Foundations.colors.error,
-                                    ),
+                                              ref
+                                                  .read(
+                                                      sortingSurveyNotifierProvider
+                                                          .notifier)
+                                                  .updateSortingSurvey(
+                                                    survey.copyWith(
+                                                        responses:
+                                                            updatedResponses),
+                                                  );
+                                            }
+                                          },
+                                          variant: IconButtonVariant.ghost,
+                                          size: IconButtonSize.small,
+                                          tooltip: 'Delete response',
+                                          color: Foundations.colors.error,
+                                        ),
+                                      ],
+                                    )),
                                   ],
-                                )),
-                              ],
-                            );
-                          }).toList(),
+                                );
+                              }).toList(),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              Padding(
+                padding: EdgeInsets.all(Foundations.spacing.md),
+                child: Pagination(
+                  paginationKey: 'responses_${survey.id}',
+                  isDarkMode: isDarkMode,
+                  itemsPerPageOptions: const [10, 25, 50, 100],
+                  onItemsPerPageChanged: (value) {
+                    // Reset scroll position when changing items per page
+                    verticalScrollController.jumpTo(0);
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
+        );
+      },
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      error: (error, stack) => Center(
+        child: Text('Error: $error'),
       ),
     );
   }
@@ -863,7 +936,8 @@ class ResponsesTab extends ConsumerWidget {
     );
 
     // Format display value
-    final displayValue = isSexParameter ? _formatSex(value) : value;
+    final displayValue =
+        isSexParameter ? _formatSex(value) : _formatParameterName(value);
 
     return DataCell(
       Tooltip(
@@ -880,7 +954,7 @@ class ResponsesTab extends ConsumerWidget {
           borderRadius: Foundations.borders.md,
         ),
         child: Text(
-          isSexParameter ? displayValue : _formatDisplayValue(displayValue),
+          displayValue,
           style: TextStyle(color: color),
         ),
       ),
@@ -1024,8 +1098,6 @@ class ResponsesTab extends ConsumerWidget {
     // Build distribution map
     Map<String, int> distribution = {};
     for (final response in responses.values) {
-      print(paramName);
-      print(response[paramName]);
       final rawValue = response[paramName]?.toString() ?? 'Unknown';
 
       // Format value based on parameter type
@@ -1188,263 +1260,274 @@ class ResponsesTab extends ConsumerWidget {
       title: 'Add Response Manually',
       width: 600,
       variant: DialogVariant.default_,
-      form: StatefulBuilder(
-        builder: (context, setState) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Wrap(
-                spacing: Foundations.spacing.xs,
+      form: responses.when(
+        data: (responses) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  FilterChip(
-                    label: const Text('Manual Entry'),
-                    selected: isManualEntry,
-                    onSelected: (_) => setState(() {
-                      isManualEntry = true;
-                      selectedUserId = null;
-                      manualFirstNameController.clear();
-                      manualLastNameController.clear();
-                    }),
-                    showCheckmark: false,
-                    backgroundColor: isDarkMode
-                        ? Foundations.darkColors.backgroundMuted
-                        : Foundations.colors.backgroundMuted,
-                    selectedColor: accentColor.withValues(alpha: 0.1),
-                    labelStyle: TextStyle(
-                      color: isManualEntry
-                          ? accentColor
-                          : isDarkMode
-                              ? Foundations.darkColors.textPrimary
-                              : Foundations.colors.textPrimary,
-                      fontWeight: isManualEntry
-                          ? Foundations.typography.medium
-                          : Foundations.typography.regular,
-                    ),
-                  ),
-                  FilterChip(
-                    label: const Text('Select User'),
-                    selected: !isManualEntry,
-                    onSelected: (_) => setState(() {
-                      isManualEntry = false;
-                      manualFirstNameController.clear();
-                      manualLastNameController.clear();
-                    }),
-                    showCheckmark: false,
-                    backgroundColor: isDarkMode
-                        ? Foundations.darkColors.backgroundMuted
-                        : Foundations.colors.backgroundMuted,
-                    selectedColor: accentColor.withValues(alpha: 0.1),
-                    labelStyle: TextStyle(
-                      color: !isManualEntry
-                          ? accentColor
-                          : isDarkMode
-                              ? Foundations.darkColors.textPrimary
-                              : Foundations.colors.textPrimary,
-                      fontWeight: !isManualEntry
-                          ? Foundations.typography.medium
-                          : Foundations.typography.regular,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: Foundations.spacing.lg),
-
-              // Either show manual entry fields or user dropdown
-              if (isManualEntry) ...[
-                Text(
-                  'Name',
-                  style: TextStyle(
-                    fontSize: Foundations.typography.base,
-                    fontWeight: Foundations.typography.medium,
-                    color: isDarkMode
-                        ? Foundations.darkColors.textPrimary
-                        : Foundations.colors.textPrimary,
-                  ),
-                ),
-                SizedBox(height: Foundations.spacing.sm),
-                Row(
-                  children: [
-                    Expanded(
-                      child: BaseInput(
-                        label: 'First Name',
-                        controller: manualFirstNameController,
-                      ),
-                    ),
-                    SizedBox(width: Foundations.spacing.md),
-                    Expanded(
-                      child: BaseInput(
-                        label: 'Last Name',
-                        controller: manualLastNameController,
-                      ),
-                    ),
-                  ],
-                ),
-              ] else ...[
-                BaseSelect<String>(
-                  label: 'Select User',
-                  value: selectedUserId,
-                  searchable: true,
-                  options: users
-                      .where((u) => !responses.containsKey(u.id))
-                      .map((u) => SelectOption(
-                            value: u.id,
-                            label: '${u.firstName} ${u.lastName}',
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedUserId = value;
-                      if (value != null) {
-                        final user = users.firstWhere((u) => u.id == value);
-                        manualFirstNameController.text = user.firstName;
-                        manualLastNameController.text = user.lastName;
-                      }
-                    });
-                  },
-                ),
-              ],
-
-              // Sex selection with toggle chips
-              if (survey.askBiologicalSex) ...[
-                SizedBox(height: Foundations.spacing.lg),
-                _ToggleChipGroup<String>(
-                  label: 'Biological Sex',
-                  options: [
-                    (
-                      'm',
-                      'Male',
-                      ColorGenerator.getColor('sex', 'm',
-                          isDarkMode: isDarkMode)
-                    ),
-                    (
-                      'f',
-                      'Female',
-                      ColorGenerator.getColor('sex', 'f',
-                          isDarkMode: isDarkMode)
-                    ),
-                    (
-                      'nb',
-                      'Non-Binary',
-                      ColorGenerator.getColor('sex', 'nb',
-                          isDarkMode: isDarkMode)
-                    ),
-                  ],
-                  selectedValue: selectedSex,
-                  onChanged: (value) => setState(() => selectedSex = value),
-                ),
-              ],
-              if (survey.maxPreferences != null) ...[
-                SizedBox(height: Foundations.spacing.lg),
-                BaseMultiSelect<String>(
-                  label: 'Preferences',
-                  hint: 'Select preferences',
-                  description:
-                      'Select up to ${survey.maxPreferences} preferred users',
-                  searchable: true,
-                  values: selectedPreferences,
-                  options: survey.responses.entries.map((e) {
-                    // Get name either from manual entry or users stream
-                    if (e.value['_manual_entry'] == true) {
-                      return SelectOption(
-                        value: e.key,
-                        label:
-                            '${e.value['_first_name']} ${e.value['_last_name']}',
-                      );
-                    } else {
-                      // Find user from stream
-                      final allUsers =
-                          ref.watch(allUsersStreamProvider).value ?? [];
-                      final user = allUsers.firstWhere(
-                        (u) => u.id == e.key,
-                        orElse: () => AppUser(
-                          id: e.key,
-                          firstName: 'Unknown',
-                          lastName: 'User',
-                          email: '',
-                          fcmTokens: [],
-                          groupIds: [],
-                          permissions: [],
-                          deviceIds: {},
-                          accountType: '',
-                        ),
-                      );
-                      return SelectOption(
-                        value: e.key,
-                        label: '${user.firstName} ${user.lastName}',
-                      );
-                    }
-                  }).toList(),
-                  onChanged: (values) {
-                    if (values.length <= survey.maxPreferences!) {
-                      setState(() => selectedPreferences = values);
-                    }
-                  },
-                  maxChipsVisible: 2,
-                ),
-              ],
-              // Parameters with toggle chips for binary parameters
-              SizedBox(height: Foundations.spacing.lg),
-              Text(
-                'Parameters',
-                style: TextStyle(
-                  fontSize: Foundations.typography.base,
-                  fontWeight: Foundations.typography.medium,
-                  color: isDarkMode
-                      ? Foundations.darkColors.textPrimary
-                      : Foundations.colors.textPrimary,
-                ),
-              ),
-              SizedBox(height: Foundations.spacing.md),
-              ...survey.parameters.map((param) {
-                final name = param['name'] as String;
-                final type = param['type'] as String;
-
-                if (type == 'binary') {
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: Foundations.spacing.md),
-                    child: _ToggleChipGroup<String>(
-                      label: _formatParameterName(name),
-                      options: [
-                        ('yes', 'Yes', ColorGenerator.yesColor),
-                        ('no', 'No', ColorGenerator.noColor),
-                      ],
-                      selectedValue: parameterResponses[name],
-                      onChanged: (value) => setState(
-                          () => parameterResponses[name] = value ?? ''),
-                    ),
-                  );
-                }
-
-                // Regular input for categorical parameters
-                return Padding(
-                  padding: EdgeInsets.only(bottom: Foundations.spacing.md),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Wrap(
+                    spacing: Foundations.spacing.xs,
                     children: [
-                      Text(
-                        _formatParameterName(name),
-                        style: TextStyle(
-                          fontSize: Foundations.typography.sm,
-                          color: isDarkMode
-                              ? Foundations.darkColors.textMuted
-                              : Foundations.colors.textMuted,
+                      FilterChip(
+                        label: const Text('Manual Entry'),
+                        selected: isManualEntry,
+                        onSelected: (_) => setState(() {
+                          isManualEntry = true;
+                          selectedUserId = null;
+                          manualFirstNameController.clear();
+                          manualLastNameController.clear();
+                        }),
+                        showCheckmark: false,
+                        backgroundColor: isDarkMode
+                            ? Foundations.darkColors.backgroundMuted
+                            : Foundations.colors.backgroundMuted,
+                        selectedColor: accentColor.withValues(alpha: 0.1),
+                        labelStyle: TextStyle(
+                          color: isManualEntry
+                              ? accentColor
+                              : isDarkMode
+                                  ? Foundations.darkColors.textPrimary
+                                  : Foundations.colors.textPrimary,
+                          fontWeight: isManualEntry
+                              ? Foundations.typography.medium
+                              : Foundations.typography.regular,
                         ),
                       ),
-                      SizedBox(height: Foundations.spacing.xs),
-                      BaseInput(
-                        hint: 'Enter answer',
-                        controller: parameterControllers[name],
-                        onChanged: (value) {
-                          setState(() => parameterResponses[name] = value);
-                        },
+                      FilterChip(
+                        label: const Text('Select User'),
+                        selected: !isManualEntry,
+                        onSelected: (_) => setState(() {
+                          isManualEntry = false;
+                          manualFirstNameController.clear();
+                          manualLastNameController.clear();
+                        }),
+                        showCheckmark: false,
+                        backgroundColor: isDarkMode
+                            ? Foundations.darkColors.backgroundMuted
+                            : Foundations.colors.backgroundMuted,
+                        selectedColor: accentColor.withValues(alpha: 0.1),
+                        labelStyle: TextStyle(
+                          color: !isManualEntry
+                              ? accentColor
+                              : isDarkMode
+                                  ? Foundations.darkColors.textPrimary
+                                  : Foundations.colors.textPrimary,
+                          fontWeight: !isManualEntry
+                              ? Foundations.typography.medium
+                              : Foundations.typography.regular,
+                        ),
                       ),
                     ],
                   ),
-                );
-              }),
-            ],
+                  SizedBox(height: Foundations.spacing.lg),
+
+                  // Either show manual entry fields or user dropdown
+                  if (isManualEntry) ...[
+                    Text(
+                      'Name',
+                      style: TextStyle(
+                        fontSize: Foundations.typography.base,
+                        fontWeight: Foundations.typography.medium,
+                        color: isDarkMode
+                            ? Foundations.darkColors.textPrimary
+                            : Foundations.colors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: Foundations.spacing.sm),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: BaseInput(
+                            label: 'First Name',
+                            controller: manualFirstNameController,
+                          ),
+                        ),
+                        SizedBox(width: Foundations.spacing.md),
+                        Expanded(
+                          child: BaseInput(
+                            label: 'Last Name',
+                            controller: manualLastNameController,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ] else ...[
+                    BaseSelect<String>(
+                      label: 'Select User',
+                      value: selectedUserId,
+                      searchable: true,
+                      options: users
+                          .where((u) => !responses.containsKey(u.id))
+                          .map((u) => SelectOption(
+                                value: u.id,
+                                label: '${u.firstName} ${u.lastName}',
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedUserId = value;
+                          if (value != null) {
+                            final user = users.firstWhere((u) => u.id == value);
+                            manualFirstNameController.text = user.firstName;
+                            manualLastNameController.text = user.lastName;
+                          }
+                        });
+                      },
+                    ),
+                  ],
+
+                  // Sex selection with toggle chips
+                  if (survey.askBiologicalSex) ...[
+                    SizedBox(height: Foundations.spacing.lg),
+                    _ToggleChipGroup<String>(
+                      label: 'Biological Sex',
+                      options: [
+                        (
+                          'm',
+                          'Male',
+                          ColorGenerator.getColor('sex', 'm',
+                              isDarkMode: isDarkMode)
+                        ),
+                        (
+                          'f',
+                          'Female',
+                          ColorGenerator.getColor('sex', 'f',
+                              isDarkMode: isDarkMode)
+                        ),
+                        (
+                          'nb',
+                          'Non-Binary',
+                          ColorGenerator.getColor('sex', 'nb',
+                              isDarkMode: isDarkMode)
+                        ),
+                      ],
+                      selectedValue: selectedSex,
+                      onChanged: (value) => setState(() => selectedSex = value),
+                    ),
+                  ],
+                  if (survey.maxPreferences != null) ...[
+                    SizedBox(height: Foundations.spacing.lg),
+                    BaseMultiSelect<String>(
+                      label: 'Preferences',
+                      hint: 'Select preferences',
+                      description:
+                          'Select up to ${survey.maxPreferences} preferred users',
+                      searchable: true,
+                      values: selectedPreferences,
+                      options: survey.responses.entries.map((e) {
+                        // Get name either from manual entry or users stream
+                        if (e.value['_manual_entry'] == true) {
+                          return SelectOption(
+                            value: e.key,
+                            label:
+                                '${e.value['_first_name']} ${e.value['_last_name']}',
+                          );
+                        } else {
+                          // Find user from stream
+                          final allUsers =
+                              ref.watch(allUsersStreamProvider).value ?? [];
+                          final user = allUsers.firstWhere(
+                            (u) => u.id == e.key,
+                            orElse: () => AppUser(
+                              id: e.key,
+                              firstName: 'Unknown',
+                              lastName: 'User',
+                              email: '',
+                              fcmTokens: [],
+                              groupIds: [],
+                              permissions: [],
+                              deviceIds: {},
+                              accountType: '',
+                            ),
+                          );
+                          return SelectOption(
+                            value: e.key,
+                            label: '${user.firstName} ${user.lastName}',
+                          );
+                        }
+                      }).toList(),
+                      onChanged: (values) {
+                        if (values.length <= survey.maxPreferences!) {
+                          setState(() => selectedPreferences = values);
+                        }
+                      },
+                      maxChipsVisible: 2,
+                    ),
+                  ],
+                  // Parameters with toggle chips for binary parameters
+                  SizedBox(height: Foundations.spacing.lg),
+                  Text(
+                    'Parameters',
+                    style: TextStyle(
+                      fontSize: Foundations.typography.base,
+                      fontWeight: Foundations.typography.medium,
+                      color: isDarkMode
+                          ? Foundations.darkColors.textPrimary
+                          : Foundations.colors.textPrimary,
+                    ),
+                  ),
+                  SizedBox(height: Foundations.spacing.md),
+                  ...survey.parameters.map((param) {
+                    final name = param['name'] as String;
+                    final type = param['type'] as String;
+
+                    if (type == 'binary') {
+                      return Padding(
+                        padding:
+                            EdgeInsets.only(bottom: Foundations.spacing.md),
+                        child: _ToggleChipGroup<String>(
+                          label: _formatParameterName(name),
+                          options: [
+                            ('yes', 'Yes', ColorGenerator.yesColor),
+                            ('no', 'No', ColorGenerator.noColor),
+                          ],
+                          selectedValue: parameterResponses[name],
+                          onChanged: (value) => setState(
+                              () => parameterResponses[name] = value ?? ''),
+                        ),
+                      );
+                    }
+
+                    // Regular input for categorical parameters
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: Foundations.spacing.md),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _formatParameterName(name),
+                            style: TextStyle(
+                              fontSize: Foundations.typography.sm,
+                              color: isDarkMode
+                                  ? Foundations.darkColors.textMuted
+                                  : Foundations.colors.textMuted,
+                            ),
+                          ),
+                          SizedBox(height: Foundations.spacing.xs),
+                          BaseInput(
+                            hint: 'Enter answer',
+                            controller: parameterControllers[name],
+                            onChanged: (value) {
+                              setState(() => parameterResponses[name] = value);
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                ],
+              );
+            },
           );
         },
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        error: (error, stackTrace) => Center(
+          child: Text('Error: $error'),
+        ),
       ),
       actions: [
         BaseButton(

@@ -453,7 +453,6 @@ class OverviewTab extends ConsumerWidget {
       }
 
       if (isUserIds) {
-        // Find matching user
         final user = users.firstWhere((u) => u.id == id,
             orElse: () => AppUser(
                 id: id,
@@ -483,7 +482,7 @@ class OverviewTab extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 160, // Fixed width for labels
+          width: 160,
           child: Text(
             label,
             style: TextStyle(

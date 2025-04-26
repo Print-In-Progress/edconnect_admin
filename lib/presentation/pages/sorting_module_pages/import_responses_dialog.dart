@@ -44,7 +44,7 @@ class ImportResponsesDialog extends ConsumerWidget {
               ),
               SizedBox(height: Foundations.spacing.md),
               FileInput(
-                allowedExtensions: ['xlsx', 'csv'],
+                allowedExtensions: const ['xlsx', 'csv'],
                 hint: 'Select file to import',
                 description: 'Supported formats: Excel (.xlsx), CSV (.csv)',
                 onFilesChanged: (files) {
@@ -122,7 +122,7 @@ class ImportResponsesDialog extends ConsumerWidget {
     return Container(
       padding: EdgeInsets.all(Foundations.spacing.md),
       decoration: BoxDecoration(
-        color: Foundations.colors.warning.withOpacity(0.1),
+        color: Foundations.colors.warning.withValues(alpha: 0.1),
         borderRadius: Foundations.borders.sm,
         border: Border.all(
           color: Foundations.colors.warning,
@@ -261,7 +261,8 @@ class ImportResponsesDialog extends ConsumerWidget {
                           DataCell(Text(_formatSex(response['sex']))),
                         ...survey.parameters.map(
                           (param) => DataCell(
-                            Text(response[param['name']]?.toString() ?? ''),
+                            Text(_formatDisplayValue(response[param['name']])
+                                .toString()),
                           ),
                         ),
                         if (survey.maxPreferences != null)
@@ -294,4 +295,12 @@ class ImportResponsesDialog extends ConsumerWidget {
       _ => 'Unknown',
     };
   }
+}
+
+String _formatDisplayValue(String value) {
+  return value
+      .split('_')
+      .map((word) =>
+          word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '')
+      .join(' ');
 }

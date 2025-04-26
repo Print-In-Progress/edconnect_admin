@@ -64,8 +64,6 @@ class ResponseImportService {
         .where((header) => header.isNotEmpty)
         .toList();
 
-    print('Headers found: ${headers.join(', ')}');
-
     final rows = csv
         .sublist(1)
         .where((row) => row

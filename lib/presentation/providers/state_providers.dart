@@ -96,6 +96,88 @@ final userWithResolvedGroupsProvider = Provider<AppUser?>((ref) {
   );
 });
 
+// ---------------- PAGINATION STATE -----------------
+class PaginationState {
+  final int currentPage;
+  final int itemsPerPage;
+  final int totalItems;
+  final int totalPages;
+
+  const PaginationState({
+    this.currentPage = 0,
+    this.itemsPerPage = 10,
+    this.totalItems = 0,
+    this.totalPages = 0,
+  });
+
+  PaginationState copyWith({
+    int? currentPage,
+    int? itemsPerPage,
+    int? totalItems,
+    int? totalPages,
+  }) {
+    return PaginationState(
+      currentPage: currentPage ?? this.currentPage,
+      itemsPerPage: itemsPerPage ?? this.itemsPerPage,
+      totalItems: totalItems ?? this.totalItems,
+      totalPages: totalPages ?? this.totalPages,
+    );
+  }
+}
+
+final paginationInitProvider =
+    Provider.family<AsyncValue<void>, String>((ref, surveyId) {
+  final responses = ref.watch(filteredResponsesProvider(surveyId));
+
+  return responses.when(
+    data: (data) {
+      // Return success state instead of directly modifying
+      return const AsyncValue.data(null);
+    },
+    loading: () => const AsyncValue.loading(),
+    error: (err, stack) => AsyncValue.error(err, stack),
+  );
+});
+
+final paginationStateProvider =
+    StateNotifierProvider.family<PaginationNotifier, PaginationState, String>(
+        (ref, key) {
+  return PaginationNotifier();
+});
+
+class PaginationNotifier extends StateNotifier<PaginationState> {
+  PaginationNotifier() : super(const PaginationState());
+
+  void setTotalItems(int total) {
+    // Calculate total pages correctly
+    final totalPages = (total / state.itemsPerPage).ceil();
+    state = state.copyWith(
+      totalItems: total,
+      totalPages: totalPages,
+      // Reset to page 0 if current page would be out of bounds
+      currentPage: state.currentPage >= totalPages ? 0 : state.currentPage,
+    );
+  }
+
+  void setPage(int page) {
+    // Ensure page is within bounds
+    if (page >= 0 && page < state.totalPages) {
+      state = state.copyWith(currentPage: page);
+    }
+  }
+
+  void setItemsPerPage(int items) {
+    // Recalculate total pages when changing items per page
+    final newTotalPages = (state.totalItems / items).ceil();
+    state = state.copyWith(
+      itemsPerPage: items,
+      totalPages: newTotalPages,
+      // Reset to page 0 when changing items per page
+      currentPage: 0,
+    );
+  }
+}
+
 // ---------------- GROUPS STATE  -----------------
 final groupServiceProvider = Provider<GroupService>((ref) {
   return GroupService(ref.watch(groupManagementUseCaseProvider));
@@ -290,7 +372,7 @@ final responsesFilterProvider =
 );
 
 final filteredResponsesProvider =
-    Provider.family<Map<String, Map<String, dynamic>>, String>(
+    Provider.family<AsyncValue<Map<String, Map<String, dynamic>>>, String>(
   (ref, surveyId) {
     final surveyAsync = ref.watch(selectedSortingSurveyProvider(surveyId));
     final filterState = ref.watch(responsesFilterProvider(surveyId));
@@ -298,7 +380,7 @@ final filteredResponsesProvider =
 
     return surveyAsync.when(
       data: (survey) {
-        if (survey == null) return {};
+        if (survey == null) return const AsyncValue.data({});
 
         var filtered = Map<String, Map<String, dynamic>>.from(survey.responses);
 
@@ -372,10 +454,16 @@ final filteredResponsesProvider =
               : bName.compareTo(aName);
         });
 
-        return Map.fromEntries(sortedEntries);
+        Future.microtask(() {
+          ref
+              .read(paginationStateProvider('responses_$surveyId').notifier)
+              .setTotalItems(filtered.length);
+        });
+
+        return AsyncValue.data(Map.fromEntries(sortedEntries));
       },
-      loading: () => {},
-      error: (_, __) => {},
+      loading: () => const AsyncValue.loading(),
+      error: (err, stack) => AsyncValue.error(err, stack),
     );
   },
 );
