@@ -435,6 +435,10 @@ class SortingSurveyNotifier extends StateNotifier<AsyncValue<void>> {
   SortingSurveyNotifier(this._useCase, this._ref)
       : super(const AsyncValue.data(null));
 
+  Future<void> _invalidateProviders(String surveyId) async {
+    _ref.invalidate(filteredResponsesProvider(surveyId));
+  }
+
   Future<String?> createSortingSurvey(SortingSurvey survey) async {
     state = const AsyncValue.loading();
     try {
@@ -477,16 +481,11 @@ class SortingSurveyNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _useCase.updateSortingSurvey(survey);
+      await _invalidateProviders(survey.id);
+
       state = const AsyncValue.data(null);
     } catch (e, stack) {
-      state = AsyncValue.error(
-        DomainException(
-          code: ErrorCode.unexpected,
-          type: ExceptionType.unexpected,
-          originalError: e,
-        ),
-        stack,
-      );
+      state = AsyncValue.error(e, stack);
     }
   }
 
@@ -513,6 +512,7 @@ class SortingSurveyNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _useCase.publishSortingSurvey(id);
+      await _invalidateProviders(id);
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error(
@@ -530,6 +530,7 @@ class SortingSurveyNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _useCase.closeSortingSurvey(id);
+      await _invalidateProviders(id);
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error(
@@ -540,6 +541,87 @@ class SortingSurveyNotifier extends StateNotifier<AsyncValue<void>> {
         ),
         stack,
       );
+    }
+  }
+
+  Future<void> addResponse(String surveyId, String responseId,
+      Map<String, dynamic> responseData) async {
+    state = const AsyncValue.loading();
+    try {
+      final survey = await _useCase.getSortingSurveyById(surveyId);
+      if (survey != null) {
+        final updatedResponses = {
+          ...survey.responses,
+          responseId: responseData
+        };
+        final updatedSurvey = survey.copyWith(responses: updatedResponses);
+        await _useCase.updateSortingSurvey(updatedSurvey);
+        await _invalidateProviders(surveyId);
+        state = const AsyncValue.data(null);
+      } else {
+        throw Exception('Survey not found');
+      }
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
+  // Add a method to delete a single response
+  Future<void> deleteResponse(String surveyId, String responseId) async {
+    state = const AsyncValue.loading();
+    try {
+      final survey = await _useCase.getSortingSurveyById(surveyId);
+      if (survey != null) {
+        final updatedResponses = {...survey.responses};
+        updatedResponses.remove(responseId);
+        final updatedSurvey = survey.copyWith(responses: updatedResponses);
+        await _useCase.updateSortingSurvey(updatedSurvey);
+        await _invalidateProviders(surveyId);
+        state = const AsyncValue.data(null);
+      } else {
+        throw Exception('Survey not found');
+      }
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
+  // Add a method to update a single response
+  Future<void> updateResponse(String surveyId, String responseId,
+      Map<String, dynamic> responseData) async {
+    state = const AsyncValue.loading();
+    try {
+      final survey = await _useCase.getSortingSurveyById(surveyId);
+      if (survey != null) {
+        final updatedResponses = {...survey.responses};
+        updatedResponses[responseId] = responseData;
+        final updatedSurvey = survey.copyWith(responses: updatedResponses);
+        await _useCase.updateSortingSurvey(updatedSurvey);
+        await _invalidateProviders(surveyId);
+        state = const AsyncValue.data(null);
+      } else {
+        throw Exception('Survey not found');
+      }
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
+  // Add a method to delete all responses
+  Future<void> deleteAllResponses(String surveyId) async {
+    state = const AsyncValue.loading();
+    try {
+      final survey = await _useCase.getSortingSurveyById(surveyId);
+      if (survey != null) {
+        final updatedSurvey = survey.copyWith(responses: {});
+        await _useCase.updateSortingSurvey(updatedSurvey);
+        await _invalidateProviders(surveyId);
+        state = const AsyncValue.data(null);
+      } else {
+        throw Exception('Survey not found');
+      }
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
     }
   }
 }

@@ -30,289 +30,293 @@ class OverviewTab extends ConsumerWidget {
 
     return SingleChildScrollView(
       padding: EdgeInsets.zero,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionHeader(context, 'Basic Information', Icons.info_outline,
-              theme.isDarkMode),
-          SizedBox(height: Foundations.spacing.md),
-          if (isWideScreen)
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: _buildInfoCard(
-                    context,
-                    theme.isDarkMode,
-                    children: [
-                      _buildInfoRow(
-                          context, 'Title', survey.title, theme.isDarkMode),
-                      if (survey.description.isNotEmpty)
-                        _buildInfoRow(context, 'Description',
-                            survey.description, theme.isDarkMode),
-                      _buildInfoRow(
-                        context,
-                        'Status',
-                        _getStatusText(survey.status),
-                        theme.isDarkMode,
-                        chip: _buildStatusChip(survey.status),
-                      ),
-                      _buildInfoRow(
-                        context,
-                        'Created',
-                        _formatDate(survey.createdAt),
-                        theme.isDarkMode,
-                      ),
-                      _buildInfoRow(context, 'Created By', survey.creatorName,
+      child: Padding(
+        padding: EdgeInsets.all(Foundations.spacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionHeader(context, 'Basic Information',
+                Icons.info_outline, theme.isDarkMode),
+            SizedBox(height: Foundations.spacing.md),
+            if (isWideScreen)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: _buildInfoCard(
+                      context,
+                      theme.isDarkMode,
+                      children: [
+                        _buildInfoRow(
+                            context, 'Title', survey.title, theme.isDarkMode),
+                        if (survey.description.isNotEmpty)
+                          _buildInfoRow(context, 'Description',
+                              survey.description, theme.isDarkMode),
+                        _buildInfoRow(
+                          context,
+                          'Status',
+                          _getStatusText(survey.status),
+                          theme.isDarkMode,
+                          chip: _buildStatusChip(survey.status),
+                        ),
+                        _buildInfoRow(
+                          context,
+                          'Created',
+                          _formatDate(survey.createdAt),
+                          theme.isDarkMode,
+                        ),
+                        _buildInfoRow(context, 'Created By', survey.creatorName,
+                            theme.isDarkMode),
+                        _buildInfoRow(
+                          context,
+                          'Ask Biological Sex',
+                          survey.askBiologicalSex ? 'Yes' : 'No',
+                          theme.isDarkMode,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: Foundations.spacing.lg),
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionHeader(context, 'Statistics',
+                            Icons.bar_chart, theme.isDarkMode),
+                        SizedBox(height: Foundations.spacing.md),
+                        _buildInfoCard(
+                          context,
+                          theme.isDarkMode,
+                          children: [
+                            _buildInfoRow(
+                              context,
+                              'Parameters',
+                              '${survey.parameters.length}',
+                              theme.isDarkMode,
+                              onTap: () => _showParametersDialog(
+                                  context, survey.parameters),
+                            ),
+                            _buildInfoRow(
+                              context,
+                              'Responses',
+                              '${survey.responses.length}',
+                              theme.isDarkMode,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: Foundations.spacing.lg),
+                        _buildSectionHeader(
+                          context,
+                          'Access Control',
+                          Icons.people_outline,
+                          theme.isDarkMode,
+                          actionButton:
+                              survey.status == SortingSurveyStatus.draft
+                                  ? BaseButton(
+                                      label: 'Edit Access',
+                                      prefixIcon: Icons.edit,
+                                      variant: ButtonVariant.outlined,
+                                      size: ButtonSize.small,
+                                      isLoading: notifierState.isLoading,
+                                      onPressed: () => _showEditAccessDialog(
+                                          context, ref, survey),
+                                    )
+                                  : null,
+                        ),
+                        SizedBox(height: Foundations.spacing.md),
+                        _buildInfoCard(
+                          context,
+                          theme.isDarkMode,
+                          children: [
+                            _buildMultiValueRow(
+                              context,
+                              'Editor Groups',
+                              survey.editorGroups.isEmpty
+                                  ? ['No editor groups']
+                                  : survey.editorGroups,
+                              theme.isDarkMode,
+                              ref,
+                              isUserIds: false,
+                              icon: Icons.group_outlined,
+                            ),
+                            _buildMultiValueRow(
+                              context,
+                              'Editor Users',
+                              survey.editorUsers.isEmpty
+                                  ? ['No editor users']
+                                  : survey.editorUsers,
+                              theme.isDarkMode,
+                              ref,
+                              isUserIds: true,
+                              icon: Icons.person_outlined,
+                            ),
+                            _buildMultiValueRow(
+                              context,
+                              'Respondent Groups',
+                              survey.respondentsGroups.isEmpty
+                                  ? ['No respondent groups']
+                                  : survey.respondentsGroups,
+                              theme.isDarkMode,
+                              ref,
+                              isUserIds: false,
+                              icon: Icons.groups_outlined,
+                            ),
+                            _buildMultiValueRow(
+                              context,
+                              'Respondent Users',
+                              survey.respondentsUsers.isEmpty
+                                  ? ['No respondent users']
+                                  : survey.respondentsUsers,
+                              theme.isDarkMode,
+                              ref,
+                              isUserIds: true,
+                              icon: Icons.person_outlined,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            if (!isWideScreen)
+              Column(children: [
+                _buildInfoCard(
+                  context,
+                  theme.isDarkMode,
+                  children: [
+                    _buildInfoRow(
+                        context, 'Title', survey.title, theme.isDarkMode),
+                    if (survey.description.isNotEmpty)
+                      _buildInfoRow(context, 'Description', survey.description,
                           theme.isDarkMode),
-                      _buildInfoRow(
-                        context,
-                        'Ask Biological Sex',
-                        survey.askBiologicalSex ? 'Yes' : 'No',
-                        theme.isDarkMode,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: Foundations.spacing.lg),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSectionHeader(context, 'Statistics',
-                          Icons.bar_chart, theme.isDarkMode),
-                      SizedBox(height: Foundations.spacing.md),
-                      _buildInfoCard(
-                        context,
-                        theme.isDarkMode,
-                        children: [
-                          _buildInfoRow(
-                            context,
-                            'Parameters',
-                            '${survey.parameters.length}',
-                            theme.isDarkMode,
-                            onTap: () => _showParametersDialog(
-                                context, survey.parameters),
-                          ),
-                          _buildInfoRow(
-                            context,
-                            'Responses',
-                            '${survey.responses.length}',
-                            theme.isDarkMode,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: Foundations.spacing.lg),
-                      _buildSectionHeader(
-                        context,
-                        'Access Control',
-                        Icons.people_outline,
-                        theme.isDarkMode,
-                        actionButton: survey.status == SortingSurveyStatus.draft
-                            ? BaseButton(
-                                label: 'Edit Access',
-                                prefixIcon: Icons.edit,
-                                variant: ButtonVariant.outlined,
-                                size: ButtonSize.small,
-                                isLoading: notifierState.isLoading,
-                                onPressed: () =>
-                                    _showEditAccessDialog(context, ref, survey),
-                              )
-                            : null,
-                      ),
-                      SizedBox(height: Foundations.spacing.md),
-                      _buildInfoCard(
-                        context,
-                        theme.isDarkMode,
-                        children: [
-                          _buildMultiValueRow(
-                            context,
-                            'Editor Groups',
-                            survey.editorGroups.isEmpty
-                                ? ['No editor groups']
-                                : survey.editorGroups,
-                            theme.isDarkMode,
-                            ref,
-                            isUserIds: false,
-                            icon: Icons.group_outlined,
-                          ),
-                          _buildMultiValueRow(
-                            context,
-                            'Editor Users',
-                            survey.editorUsers.isEmpty
-                                ? ['No editor users']
-                                : survey.editorUsers,
-                            theme.isDarkMode,
-                            ref,
-                            isUserIds: true,
-                            icon: Icons.person_outlined,
-                          ),
-                          _buildMultiValueRow(
-                            context,
-                            'Respondent Groups',
-                            survey.respondentsGroups.isEmpty
-                                ? ['No respondent groups']
-                                : survey.respondentsGroups,
-                            theme.isDarkMode,
-                            ref,
-                            isUserIds: false,
-                            icon: Icons.groups_outlined,
-                          ),
-                          _buildMultiValueRow(
-                            context,
-                            'Respondent Users',
-                            survey.respondentsUsers.isEmpty
-                                ? ['No respondent users']
-                                : survey.respondentsUsers,
-                            theme.isDarkMode,
-                            ref,
-                            isUserIds: true,
-                            icon: Icons.person_outlined,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          if (!isWideScreen)
-            Column(children: [
-              _buildInfoCard(
-                context,
-                theme.isDarkMode,
-                children: [
-                  _buildInfoRow(
-                      context, 'Title', survey.title, theme.isDarkMode),
-                  if (survey.description.isNotEmpty)
-                    _buildInfoRow(context, 'Description', survey.description,
+                    _buildInfoRow(
+                      context,
+                      'Status',
+                      _getStatusText(survey.status),
+                      theme.isDarkMode,
+                      chip: _buildStatusChip(survey.status),
+                    ),
+                    _buildInfoRow(
+                      context,
+                      'Created',
+                      _formatDate(survey.createdAt),
+                      theme.isDarkMode,
+                    ),
+                    _buildInfoRow(context, 'Created By', survey.creatorName,
                         theme.isDarkMode),
-                  _buildInfoRow(
-                    context,
-                    'Status',
-                    _getStatusText(survey.status),
-                    theme.isDarkMode,
-                    chip: _buildStatusChip(survey.status),
-                  ),
-                  _buildInfoRow(
-                    context,
-                    'Created',
-                    _formatDate(survey.createdAt),
-                    theme.isDarkMode,
-                  ),
-                  _buildInfoRow(context, 'Created By', survey.creatorName,
-                      theme.isDarkMode),
-                  _buildInfoRow(
-                    context,
-                    'Ask Biological Sex',
-                    survey.askBiologicalSex ? 'Yes' : 'No',
-                    theme.isDarkMode,
-                  ),
-                ],
-              ),
+                    _buildInfoRow(
+                      context,
+                      'Ask Biological Sex',
+                      survey.askBiologicalSex ? 'Yes' : 'No',
+                      theme.isDarkMode,
+                    ),
+                  ],
+                ),
 
-              SizedBox(height: Foundations.spacing.xl),
+                SizedBox(height: Foundations.spacing.xl),
 
-              // Statistics Section
-              _buildSectionHeader(
-                  context, 'Statistics', Icons.bar_chart, theme.isDarkMode),
-              SizedBox(height: Foundations.spacing.md),
-              _buildInfoCard(
-                context,
-                theme.isDarkMode,
-                children: [
-                  _buildInfoRow(
-                    context,
-                    'Parameters',
-                    '${survey.parameters.length}',
-                    theme.isDarkMode,
-                    onTap: () =>
-                        _showParametersDialog(context, survey.parameters),
-                  ),
-                  _buildInfoRow(
-                    context,
-                    'Responses',
-                    '${survey.responses.length}',
-                    theme.isDarkMode,
-                  ),
-                ],
-              ),
+                // Statistics Section
+                _buildSectionHeader(
+                    context, 'Statistics', Icons.bar_chart, theme.isDarkMode),
+                SizedBox(height: Foundations.spacing.md),
+                _buildInfoCard(
+                  context,
+                  theme.isDarkMode,
+                  children: [
+                    _buildInfoRow(
+                      context,
+                      'Parameters',
+                      '${survey.parameters.length}',
+                      theme.isDarkMode,
+                      onTap: () =>
+                          _showParametersDialog(context, survey.parameters),
+                    ),
+                    _buildInfoRow(
+                      context,
+                      'Responses',
+                      '${survey.responses.length}',
+                      theme.isDarkMode,
+                    ),
+                  ],
+                ),
 
-              SizedBox(height: Foundations.spacing.xl),
+                SizedBox(height: Foundations.spacing.xl),
 
-              // Access Control Section - Editable
-              _buildSectionHeader(
-                context,
-                'Access Control',
-                Icons.people_outline,
-                theme.isDarkMode,
-                actionButton: survey.status == SortingSurveyStatus.draft
-                    ? BaseButton(
-                        label: 'Edit Access',
-                        prefixIcon: Icons.edit,
-                        variant: ButtonVariant.outlined,
-                        size: ButtonSize.small,
-                        isLoading: notifierState.isLoading,
-                        onPressed: () =>
-                            _showEditAccessDialog(context, ref, survey),
-                      )
-                    : null,
-              ),
-              SizedBox(height: Foundations.spacing.md),
-              _buildInfoCard(
-                context,
-                theme.isDarkMode,
-                children: [
-                  _buildMultiValueRow(
-                    context,
-                    'Editor Groups',
-                    survey.editorGroups.isEmpty
-                        ? ['No editor groups']
-                        : survey.editorGroups,
-                    theme.isDarkMode,
-                    ref,
-                    isUserIds: false,
-                    icon: Icons.group_outlined,
-                  ),
-                  _buildMultiValueRow(
-                    context,
-                    'Editor Users',
-                    survey.editorUsers.isEmpty
-                        ? ['No editor users']
-                        : survey.editorUsers,
-                    theme.isDarkMode,
-                    ref,
-                    isUserIds: true,
-                    icon: Icons.person_outlined,
-                  ),
-                  _buildMultiValueRow(
-                    context,
-                    'Respondent Groups',
-                    survey.respondentsGroups.isEmpty
-                        ? ['No respondent groups']
-                        : survey.respondentsGroups,
-                    theme.isDarkMode,
-                    ref,
-                    isUserIds: false,
-                    icon: Icons.groups_outlined,
-                  ),
-                  _buildMultiValueRow(
-                    context,
-                    'Respondent Users',
-                    survey.respondentsUsers.isEmpty
-                        ? ['No respondent users']
-                        : survey.respondentsUsers,
-                    theme.isDarkMode,
-                    ref,
-                    isUserIds: true,
-                    icon: Icons.person_outlined,
-                  ),
-                ],
-              ),
-            ])
-        ],
+                // Access Control Section - Editable
+                _buildSectionHeader(
+                  context,
+                  'Access Control',
+                  Icons.people_outline,
+                  theme.isDarkMode,
+                  actionButton: survey.status == SortingSurveyStatus.draft
+                      ? BaseButton(
+                          label: 'Edit Access',
+                          prefixIcon: Icons.edit,
+                          variant: ButtonVariant.outlined,
+                          size: ButtonSize.small,
+                          isLoading: notifierState.isLoading,
+                          onPressed: () =>
+                              _showEditAccessDialog(context, ref, survey),
+                        )
+                      : null,
+                ),
+                SizedBox(height: Foundations.spacing.md),
+                _buildInfoCard(
+                  context,
+                  theme.isDarkMode,
+                  children: [
+                    _buildMultiValueRow(
+                      context,
+                      'Editor Groups',
+                      survey.editorGroups.isEmpty
+                          ? ['No editor groups']
+                          : survey.editorGroups,
+                      theme.isDarkMode,
+                      ref,
+                      isUserIds: false,
+                      icon: Icons.group_outlined,
+                    ),
+                    _buildMultiValueRow(
+                      context,
+                      'Editor Users',
+                      survey.editorUsers.isEmpty
+                          ? ['No editor users']
+                          : survey.editorUsers,
+                      theme.isDarkMode,
+                      ref,
+                      isUserIds: true,
+                      icon: Icons.person_outlined,
+                    ),
+                    _buildMultiValueRow(
+                      context,
+                      'Respondent Groups',
+                      survey.respondentsGroups.isEmpty
+                          ? ['No respondent groups']
+                          : survey.respondentsGroups,
+                      theme.isDarkMode,
+                      ref,
+                      isUserIds: false,
+                      icon: Icons.groups_outlined,
+                    ),
+                    _buildMultiValueRow(
+                      context,
+                      'Respondent Users',
+                      survey.respondentsUsers.isEmpty
+                          ? ['No respondent users']
+                          : survey.respondentsUsers,
+                      theme.isDarkMode,
+                      ref,
+                      isUserIds: true,
+                      icon: Icons.person_outlined,
+                    ),
+                  ],
+                ),
+              ])
+          ],
+        ),
       ),
     );
   }
@@ -320,33 +324,30 @@ class OverviewTab extends ConsumerWidget {
   Widget _buildSectionHeader(
       BuildContext context, String title, IconData icon, bool isDarkMode,
       {Widget? actionButton}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Foundations.spacing.lg),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 20,
-            color: isDarkMode
-                ? Foundations.darkColors.textMuted
-                : Foundations.colors.textMuted,
-          ),
-          SizedBox(width: Foundations.spacing.sm),
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: Foundations.typography.lg,
-                fontWeight: Foundations.typography.semibold,
-                color: isDarkMode
-                    ? Foundations.darkColors.textPrimary
-                    : Foundations.colors.textPrimary,
-              ),
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 20,
+          color: isDarkMode
+              ? Foundations.darkColors.textMuted
+              : Foundations.colors.textMuted,
+        ),
+        SizedBox(width: Foundations.spacing.sm),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: Foundations.typography.lg,
+              fontWeight: Foundations.typography.semibold,
+              color: isDarkMode
+                  ? Foundations.darkColors.textPrimary
+                  : Foundations.colors.textPrimary,
             ),
           ),
-          if (actionButton != null) actionButton,
-        ],
-      ),
+        ),
+        if (actionButton != null) actionButton,
+      ],
     );
   }
 
@@ -354,6 +355,7 @@ class OverviewTab extends ConsumerWidget {
       {required List<Widget> children}) {
     return BaseCard(
       variant: CardVariant.outlined,
+      margin: EdgeInsets.zero,
       child: Padding(
         padding: EdgeInsets.all(Foundations.spacing.lg),
         child: Column(

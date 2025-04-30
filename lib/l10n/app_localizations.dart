@@ -497,6 +497,36 @@ abstract class AppLocalizations {
   /// **'403 - Access Denied'**
   String get errorAccessDenied;
 
+  /// Error section - Calculation failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to calculate classes. Please try again'**
+  String get errorCalculationFailed;
+
+  /// Error section - Invalid calculation parameters message
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid calculation parameters. Please check your inputs.'**
+  String get errorInvalidCalculationParameters;
+
+  /// Error section - Calculation timeout message
+  ///
+  /// In en, this message translates to:
+  /// **'Calculation timed out. Try reducing complexity or increasing time limit.'**
+  String get errorCalculationTimeout;
+
+  /// Error section - Insufficient class capacity message
+  ///
+  /// In en, this message translates to:
+  /// **'Total class capacity must be at least equal to the number of students'**
+  String get errorInsufficientClassCapacity;
+
+  /// Error section - Calculation server error message
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to reach calculation server. Please check your connection and try again.'**
+  String get errorCalculationServerError;
+
   /// Error section - Terms acceptance message
   ///
   /// In en, this message translates to:

@@ -61,4 +61,36 @@ class FirebaseSortingSurveyRepositoryImpl implements SortingSurveyRepository {
       throw ErrorHandler.handle(e);
     }
   }
+
+  @override
+  Future<void> saveCalculationResults(
+      String surveyId, Map<String, dynamic> calculationResponse) async {
+    // Get the current survey
+    final survey = await getSortingSurveyById(surveyId);
+    if (survey == null) {
+      throw Exception('Survey not found');
+    }
+
+    // Check if calculation was successful
+    final success = calculationResponse['success'] as bool;
+
+    if (success) {
+      // Extract the data and metrics
+      final data = calculationResponse['data'] as Map<String, dynamic>;
+      final metrics = calculationResponse['metrics'] as Map<String, dynamic>;
+
+      // Update the survey with the new data
+      final updatedSurvey = survey.copyWith(
+        calculationResults: data,
+        calculationMetrics: metrics,
+      );
+
+      // Save to Firestore
+      await _dataSource.updateSortingSurvey(updatedSurvey);
+    } else {
+      // Handle error case
+      final error = calculationResponse['error'] as Map<String, dynamic>;
+      throw Exception('Calculation failed: ${error['message']}');
+    }
+  }
 }

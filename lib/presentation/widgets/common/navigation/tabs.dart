@@ -5,13 +5,13 @@ import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 
 class Tabs extends ConsumerStatefulWidget {
   final List<TabItem> tabs;
-  final int defaultValue;
+  final int currentValue;
   final ValueChanged<int>? onChanged;
 
   const Tabs({
     super.key,
     required this.tabs,
-    this.defaultValue = 0,
+    this.currentValue = 0,
     this.onChanged,
   });
 
@@ -21,13 +21,11 @@ class Tabs extends ConsumerStatefulWidget {
 
 class _TabsState extends ConsumerState<Tabs>
     with SingleTickerProviderStateMixin {
-  late int _selectedIndex;
   late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.defaultValue;
     _animationController = AnimationController(
       duration: Foundations.effects.shortAnimation,
       vsync: this,
@@ -42,16 +40,23 @@ class _TabsState extends ConsumerState<Tabs>
   }
 
   void _handleTabChange(int index) {
-    if (index == _selectedIndex) return;
+    if (index == widget.currentValue) return;
 
     // Reset animation and play it forward for smooth transition
     _animationController.reset();
     _animationController.forward();
 
-    setState(() {
-      _selectedIndex = index;
-    });
     widget.onChanged?.call(index);
+  }
+
+  @override
+  void didUpdateWidget(Tabs oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // React to external tab index changes
+    if (oldWidget.currentValue != widget.currentValue) {
+      _animationController.reset();
+      _animationController.forward();
+    }
   }
 
   @override
@@ -61,7 +66,7 @@ class _TabsState extends ConsumerState<Tabs>
       children: [
         TabsList(
           tabs: widget.tabs,
-          selectedIndex: _selectedIndex,
+          selectedIndex: widget.currentValue,
           onChanged: _handleTabChange,
           animationController: _animationController,
         ),
@@ -74,7 +79,7 @@ class _TabsState extends ConsumerState<Tabs>
             ),
             child: TabsContent(
               tabs: widget.tabs,
-              selectedIndex: _selectedIndex,
+              selectedIndex: widget.currentValue,
             ),
           ),
         ),

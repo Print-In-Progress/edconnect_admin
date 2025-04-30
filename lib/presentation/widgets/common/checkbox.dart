@@ -168,48 +168,49 @@ class BaseCheckbox extends ConsumerWidget {
           ),
         ),
 
-        SizedBox(width: Foundations.spacing.md),
-
-        // Either display the provided child or the label/description
-        Expanded(
-          child: child ??
-              (description != null
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (label != null)
+        if (child != null || label != null || description != null) ...[
+          SizedBox(width: Foundations.spacing.md),
+          Flexible(
+            fit: FlexFit.loose,
+            child: child ??
+                (description != null
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (label != null)
+                            Text(
+                              label!,
+                              style: TextStyle(
+                                fontSize: labelFontSize,
+                                fontWeight: value == true
+                                    ? Foundations.typography.medium
+                                    : Foundations.typography.regular,
+                                color: textColor,
+                              ),
+                            ),
+                          SizedBox(height: Foundations.spacing.xs),
                           Text(
-                            label!,
+                            description!,
                             style: TextStyle(
-                              fontSize: labelFontSize,
-                              fontWeight: value == true
-                                  ? Foundations.typography.medium
-                                  : Foundations.typography.regular,
-                              color: textColor,
+                              fontSize: descriptionFontSize,
+                              color: descriptionColor,
                             ),
                           ),
-                        SizedBox(height: Foundations.spacing.xs),
-                        Text(
-                          description!,
-                          style: TextStyle(
-                            fontSize: descriptionFontSize,
-                            color: descriptionColor,
-                          ),
+                        ],
+                      )
+                    : Text(
+                        label ?? '',
+                        style: TextStyle(
+                          fontSize: labelFontSize,
+                          fontWeight: value == true
+                              ? Foundations.typography.medium
+                              : Foundations.typography.regular,
+                          color: textColor,
                         ),
-                      ],
-                    )
-                  // If only label, align with checkbox
-                  : Text(
-                      label ?? '',
-                      style: TextStyle(
-                        fontSize: labelFontSize,
-                        fontWeight: value == true
-                            ? Foundations.typography.medium
-                            : Foundations.typography.regular,
-                        color: textColor,
-                      ),
-                    )),
-        ),
+                      )),
+          ),
+        ],
 
         // Optional trailing widget
         if (trailing != null) ...[

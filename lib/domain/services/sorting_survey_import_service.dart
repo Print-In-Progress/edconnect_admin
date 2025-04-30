@@ -173,6 +173,7 @@ class ResponseImportService {
         '_manual_entry': true,
         '_first_name': firstName,
         '_last_name': lastName,
+        'prefs': <String>[],
       };
 
       if (survey.askBiologicalSex) {
@@ -208,11 +209,9 @@ class ResponseImportService {
             .take(survey.maxPreferences!)
             .toList();
 
-        if (prefs.isNotEmpty) {
-          response['prefs'] = prefs;
-        }
+        response['prefs'] =
+            prefs; // This will override the empty list if there are prefs
       }
-
       // Add parameters
       for (final param in survey.parameters) {
         final paramIndex =

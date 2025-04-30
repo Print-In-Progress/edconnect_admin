@@ -57,4 +57,10 @@ class SortingSurveyUseCase {
       await _repository.updateSortingSurvey(updatedSurvey);
     }
   }
+
+  /// Save calculation results to a survey
+  Future<void> saveCalculationResults(
+      String surveyId, Map<String, dynamic> calculationResponse) {
+    return _repository.saveCalculationResults(surveyId, calculationResponse);
+  }
 }

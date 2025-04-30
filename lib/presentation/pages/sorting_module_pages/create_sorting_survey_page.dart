@@ -55,7 +55,7 @@ class _SortingSurveyCreatePageState
   List<String> _selectedRespondentUsers = [];
 
   void _addParameter() {
-    final priorityController = NumberInputController(initialValue: 1);
+    final priorityController = NumberInputController(initialValue: 5);
     setState(() {
       _parameters.add({
         'name': TextEditingController(),

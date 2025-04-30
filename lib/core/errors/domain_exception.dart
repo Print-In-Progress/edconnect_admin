@@ -34,6 +34,13 @@ enum ErrorCode {
   fileListFailed,
   storageOperationFailed,
 
+  // Calculation errors
+  calculationFailed,
+  invalidCalculationParameters,
+  calculationServerError,
+  calculationTimeout,
+  insufficientClassCapacity,
+
   // Network errors
   networkError,
 

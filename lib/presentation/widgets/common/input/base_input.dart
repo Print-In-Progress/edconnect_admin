@@ -333,7 +333,7 @@ class BaseInput extends ConsumerWidget {
 
         // Input field with optional button alongside
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             fullWidth
                 ? Expanded(child: buildInput())

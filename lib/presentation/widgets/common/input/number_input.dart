@@ -327,7 +327,13 @@ class _NumberInputState extends ConsumerState<NumberInput> {
                       }
                     }),
                   ],
-                  onChanged: (value) => _updateValue(_parseValue(value)),
+                  onChanged: (value) {
+                    _updateValue(_parseValue(value));
+                    // Maintain cursor position at the end of input
+                    _controller.selection = TextSelection.fromPosition(
+                      TextPosition(offset: _controller.text.length),
+                    );
+                  },
                 ),
               ),
               if (widget.showStepper) ...[

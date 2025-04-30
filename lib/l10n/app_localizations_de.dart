@@ -212,6 +212,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get errorAccessDenied => '403 - Access Denied';
 
   @override
+  String get errorCalculationFailed => 'Failed to calculate classes. Please try again';
+
+  @override
+  String get errorInvalidCalculationParameters => 'Invalid calculation parameters. Please check your inputs.';
+
+  @override
+  String get errorCalculationTimeout => 'Calculation timed out. Try reducing complexity or increasing time limit.';
+
+  @override
+  String get errorInsufficientClassCapacity => 'Total class capacity must be at least equal to the number of students';
+
+  @override
+  String get errorCalculationServerError => 'Unable to reach calculation server. Please check your connection and try again.';
+
+  @override
   String get errorAcceptToSAndPrivacyPolicy => 'You must accept the Terms & Conditions and Privacy Policy';
 
   @override

@@ -156,8 +156,14 @@ class _Spacing {
 
   // Layout Spacing
   final double pageMargin = 24;
+
+  /// Page spacing (32px)
   final double sectionGap = 48;
+
+  /// Card spacing (16px)
   final double componentGap = 16;
+
+  /// Inline spacing (8px)
   final double inlineGap = 8;
 }
 

@@ -15,6 +15,7 @@ import 'package:edconnect_admin/presentation/widgets/common/dialogs/dialogs.dart
 import 'package:edconnect_admin/presentation/widgets/common/dropdown/multi_select_dropdown.dart';
 import 'package:edconnect_admin/presentation/widgets/common/dropdown/single_select_dropdown.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
+import 'package:edconnect_admin/presentation/widgets/common/loading_indicators/async_value_widget.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/pagination.dart';
 import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
@@ -25,84 +26,182 @@ class ResponsesTab extends ConsumerWidget {
   final SortingSurvey survey;
 
   const ResponsesTab({super.key, required this.survey});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(appThemeProvider);
     final isDarkMode = theme.isDarkMode;
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(Foundations.spacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Overview Statistics Section
-            _buildSectionHeader(context, 'Response Statistics',
-                Icons.analytics_outlined, isDarkMode),
-            SizedBox(height: Foundations.spacing.md),
-            _buildStatisticsGrid(context, isDarkMode),
+    final surveyAsync = ref.watch(selectedSortingSurveyProvider(survey.id));
 
-            SizedBox(height: Foundations.spacing.xl),
+    // Watch the filtered responses provider directly - it reacts to survey changes automatically
 
-            // Parameter Statistics Section
-            _buildSectionHeader(
-                context, 'Parameter Distribution', Icons.bar_chart, isDarkMode),
-            SizedBox(height: Foundations.spacing.md),
-            _buildParameterStats(context, isDarkMode),
+    return AsyncValueWidget(
+      value: surveyAsync,
+      skipLoadingOnRefresh: true,
+      data: (latestSurvey) {
+        if (latestSurvey == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final filteredResponses =
+            ref.watch(filteredResponsesProvider(survey.id));
 
-            SizedBox(height: Foundations.spacing.xl),
-
-            // Responses Table Section
-            _buildSectionHeader(
-                context, 'Individual Responses', Icons.table_chart, isDarkMode),
-            SizedBox(height: Foundations.spacing.md),
-            Row(
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(Foundations.spacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      BaseButton(
-                        label: 'Add Manually',
-                        prefixIcon: Icons.person_add_outlined,
-                        variant: ButtonVariant.outlined,
-                        size: ButtonSize.medium,
-                        onPressed: () {
-                          _addUserManually(
-                              context, ref, isDarkMode, theme.accentLight);
-                        },
-                      ),
-                      SizedBox(width: Foundations.spacing.md),
-                      BaseButton(
-                        label: 'Import Responses',
-                        prefixIcon: Icons.upload_file_outlined,
-                        variant: ButtonVariant.outlined,
-                        size: ButtonSize.medium,
-                        onPressed: () => _showImportDialog(context, ref),
-                      ),
-                      SizedBox(width: Foundations.spacing.md),
-                      BaseButton(
-                        label: 'Export',
-                        prefixIcon: Icons.download_outlined,
-                        variant: ButtonVariant.outlined,
-                        size: ButtonSize.medium,
-                        onPressed: () {
-                          Dialogs.show(
-                            context: context,
-                            title: 'Export Responses',
-                            content: const ExportResponsesDialog(),
-                            showCancelButton: true,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                // Overview Statistics Section
+                _buildSectionHeader(context, 'Response Statistics',
+                    Icons.analytics_outlined, isDarkMode),
+                SizedBox(height: Foundations.spacing.md),
+                _buildStatisticsGrid(context, isDarkMode, latestSurvey),
+
+                SizedBox(height: Foundations.spacing.xl),
+
+                // Parameter Statistics Section
+                _buildSectionHeader(context, 'Parameter Distribution',
+                    Icons.bar_chart, isDarkMode),
+                SizedBox(height: Foundations.spacing.md),
+                _buildParameterStats(context, isDarkMode, latestSurvey),
+
+                SizedBox(height: Foundations.spacing.xl),
+
+                // Responses Table Section
+                _buildSectionHeader(context, 'Individual Responses',
+                    Icons.table_chart, isDarkMode),
+                SizedBox(height: Foundations.spacing.md),
+                Wrap(
+                  runSpacing: Foundations.spacing.xs,
+                  children: [
+                    BaseButton(
+                      label: 'Add Manually',
+                      prefixIcon: Icons.person_add_outlined,
+                      variant: ButtonVariant.outlined,
+                      size: ButtonSize.medium,
+                      onPressed: () {
+                        _addUserManually(context, ref, isDarkMode,
+                            theme.accentLight, latestSurvey);
+                      },
+                    ),
+                    SizedBox(width: Foundations.spacing.md),
+                    BaseButton(
+                      label: 'Import Responses',
+                      prefixIcon: Icons.upload_file_outlined,
+                      variant: ButtonVariant.outlined,
+                      size: ButtonSize.medium,
+                      onPressed: () =>
+                          _showImportDialog(context, ref, latestSurvey),
+                    ),
+                    SizedBox(width: Foundations.spacing.md),
+                    BaseButton(
+                      label: 'Export',
+                      prefixIcon: Icons.download_outlined,
+                      variant: ButtonVariant.outlined,
+                      size: ButtonSize.medium,
+                      onPressed: () {
+                        Dialogs.show(
+                          context: context,
+                          title: 'Export Responses',
+                          content: const ExportResponsesDialog(),
+                          showCancelButton: true,
+                        );
+                      },
+                    ),
+                    SizedBox(width: Foundations.spacing.md),
+                    BaseButton(
+                      label: 'Delete All',
+                      prefixIcon: Icons.delete_sweep_outlined,
+                      variant: ButtonVariant.filled,
+                      size: ButtonSize.medium,
+                      backgroundColor: Foundations.colors.error,
+                      onPressed: () =>
+                          _deleteAllResponses(context, ref, latestSurvey),
+                    ),
+                  ],
                 ),
+                SizedBox(height: Foundations.spacing.md),
+                _buildResponsesTable(
+                    context, ref, isDarkMode, latestSurvey, filteredResponses),
               ],
             ),
+          ),
+        );
+      },
+      loading: () => _buildLoadingState(),
+      error: (error, stack) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline,
+                size: 48, color: Foundations.colors.error),
             SizedBox(height: Foundations.spacing.md),
-            _buildResponsesTable(context, ref, isDarkMode),
+            Text('Error loading survey: $error'),
+            SizedBox(height: Foundations.spacing.md),
+            BaseButton(
+              label: 'Retry',
+              variant: ButtonVariant.outlined,
+              onPressed: () =>
+                  ref.invalidate(selectedSortingSurveyProvider(survey.id)),
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Padding(
+      padding: EdgeInsets.all(Foundations.spacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Statistics section skeleton
+          Container(
+              height: 24, width: 200, color: Foundations.colors.surfaceActive),
+          SizedBox(height: Foundations.spacing.md),
+          Row(
+            children: List.generate(
+                3,
+                (_) => Expanded(
+                      child: Container(
+                        height: 100,
+                        margin: EdgeInsets.only(right: Foundations.spacing.md),
+                        color: Foundations.colors.surfaceActive,
+                      ),
+                    )),
+          ),
+
+          SizedBox(height: Foundations.spacing.xl),
+
+          // Parameter section skeleton
+          Container(
+              height: 24, width: 200, color: Foundations.colors.surfaceActive),
+          SizedBox(height: Foundations.spacing.md),
+          Wrap(
+            spacing: Foundations.spacing.md,
+            runSpacing: Foundations.spacing.md,
+            children: List.generate(
+                4,
+                (_) => Container(
+                      width: 400,
+                      height: 240,
+                      color: Foundations.colors.surfaceActive,
+                    )),
+          ),
+
+          SizedBox(height: Foundations.spacing.xl),
+
+          // Responses table skeleton
+          Container(
+              height: 24, width: 200, color: Foundations.colors.surfaceActive),
+          SizedBox(height: Foundations.spacing.md),
+          Container(
+            height: 300,
+            color: Foundations.colors.surfaceActive,
+          ),
+        ],
       ),
     );
   }
@@ -137,7 +236,8 @@ class ResponsesTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatisticsGrid(BuildContext context, bool isDarkMode) {
+  Widget _buildStatisticsGrid(
+      BuildContext context, bool isDarkMode, SortingSurvey survey) {
     final totalResponses = survey.responses.length;
     final totalPreferences = survey.responses.values
         .map((r) => (r['prefs'] as List?)?.length ?? 0)
@@ -242,7 +342,8 @@ class ResponsesTab extends ConsumerWidget {
   }
 
   // Replace existing _buildParameterStats with this:
-  Widget _buildParameterStats(BuildContext context, bool isDarkMode) {
+  Widget _buildParameterStats(
+      BuildContext context, bool isDarkMode, SortingSurvey survey) {
     return Wrap(
       spacing: Foundations.spacing.md,
       runSpacing: Foundations.spacing.md,
@@ -496,140 +597,41 @@ class ResponsesTab extends ConsumerWidget {
   }
 
   Widget _buildResponsesTable(
-      BuildContext context, WidgetRef ref, bool isDarkMode) {
-    final responses = ref.watch(filteredResponsesProvider(survey.id));
-    final accentColor = ref.watch(appThemeProvider).accentLight;
-    final horizontalScrollController = ScrollController();
-    final verticalScrollController = ScrollController();
-
-    ref.listen<AsyncValue<Map<String, Map<String, dynamic>>>>(
-      filteredResponsesProvider(survey.id),
-      (previous, next) {
-        next.whenData((data) {
-          ref
-              .read(paginationStateProvider('responses_${survey.id}').notifier)
-              .setTotalItems(data.length);
-        });
-      },
-    );
-
-    return responses.when(
+      BuildContext context,
+      WidgetRef ref,
+      bool isDarkMode,
+      SortingSurvey survey,
+      AsyncValue<Map<String, Map<String, dynamic>>> filteredResponses) {
+    return filteredResponses.when(
       data: (responses) {
         final paginationState =
             ref.watch(paginationStateProvider('responses_${survey.id}'));
-
-        // Get entries list from map
+        final accentColor = ref.watch(appThemeProvider).accentLight;
         final allEntries = responses.entries.toList();
+        final hasAnyResponses = survey.responses.isNotEmpty;
+        final filterRowScrollController = ScrollController();
+        // Set pagination after build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref
+              .read(paginationStateProvider('responses_${survey.id}').notifier)
+              .setTotalItems(responses.length);
+        });
 
-        // Calculate start and end indices
         final start =
             paginationState.currentPage * paginationState.itemsPerPage;
         final end =
             min(start + paginationState.itemsPerPage, allEntries.length);
-
-        // Get paginated entries
-        final paginatedResponses = allEntries.sublist(start, end);
-
-        if (responses.isEmpty) {
-          return BaseCard(
-            variant: CardVariant.outlined,
-            margin: EdgeInsets.zero,
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.all(Foundations.spacing.xl2),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.inbox_outlined,
-                      size: 64,
-                      color: isDarkMode
-                          ? Foundations.darkColors.textMuted
-                          : Foundations.colors.textMuted,
-                    ),
-                    SizedBox(height: Foundations.spacing.lg),
-                    Text(
-                      'No Responses Yet',
-                      style: TextStyle(
-                        fontSize: Foundations.typography.xl,
-                        fontWeight: Foundations.typography.semibold,
-                        color: isDarkMode
-                            ? Foundations.darkColors.textPrimary
-                            : Foundations.colors.textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: Foundations.spacing.md),
-                    Text(
-                      survey.status == SortingSurveyStatus.draft
-                          ? 'Publish the survey to start collecting responses'
-                          : 'Start by adding responses manually or importing from a file',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: Foundations.typography.base,
-                        color: isDarkMode
-                            ? Foundations.darkColors.textMuted
-                            : Foundations.colors.textMuted,
-                      ),
-                    ),
-                    SizedBox(height: Foundations.spacing.xl),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (survey.status == SortingSurveyStatus.draft) ...[
-                          BaseButton(
-                            label: 'Publish Survey',
-                            prefixIcon: Icons.publish_outlined,
-                            variant: ButtonVariant.filled,
-                            onPressed: () async {
-                              await ref
-                                  .read(sortingSurveyNotifierProvider.notifier)
-                                  .publishSortingSurvey(survey.id);
-
-                              // Invalidate providers to force refresh
-                              ref.invalidate(
-                                  selectedSortingSurveyProvider(survey.id));
-                              ref.invalidate(getSortingSurveyByIdProvider);
-
-                              if (context.mounted) {
-                                Toaster.success(
-                                    context, 'Survey published successfully');
-                              }
-                            },
-                          ),
-                        ] else ...[
-                          BaseButton(
-                            label: 'Add Manually',
-                            prefixIcon: Icons.person_add_outlined,
-                            variant: ButtonVariant.outlined,
-                            onPressed: () => _addUserManually(
-                              context,
-                              ref,
-                              isDarkMode,
-                              accentColor,
-                            ),
-                          ),
-                          SizedBox(width: Foundations.spacing.md),
-                          BaseButton(
-                            label: 'Import Responses',
-                            prefixIcon: Icons.upload_file_outlined,
-                            variant: ButtonVariant.outlined,
-                            onPressed: () => _showImportDialog(context, ref),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }
+        final List<MapEntry<String, Map<String, dynamic>>> paginatedResponses =
+            allEntries.isEmpty
+                ? []
+                : allEntries.sublist(start, min(end, allEntries.length));
 
         return BaseCard(
           variant: CardVariant.outlined,
           margin: EdgeInsets.zero,
           child: Column(
             children: [
+              // Always show filters
               Padding(
                 padding: EdgeInsets.all(Foundations.spacing.md),
                 child: Row(
@@ -689,122 +691,63 @@ class ResponsesTab extends ConsumerWidget {
                   ],
                 ),
               ),
-              Scrollbar(
-                thickness: 8,
-                thumbVisibility: true,
-                controller: horizontalScrollController,
-                child: SingleChildScrollView(
+              SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  controller: horizontalScrollController,
-                  child: Column(
-                    children: [
-                      // Parameter filters row
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: Foundations.spacing.md,
-                          vertical: Foundations.spacing.sm,
-                        ),
-                        child: Row(
-                          children: [
-                            if (survey.askBiologicalSex)
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    right: Foundations.spacing.sm),
-                                child: SizedBox(
-                                  width: 140,
-                                  child: BaseSelect<String?>(
-                                    hint: 'Sex',
-                                    size: SelectSize.small,
-                                    value: ref
-                                        .watch(
-                                            responsesFilterProvider(survey.id))
-                                        .parameterFilters['sex'],
-                                    options: [
-                                      SelectOption(value: null, label: 'All'),
-                                      SelectOption(value: 'm', label: 'Male'),
-                                      SelectOption(value: 'f', label: 'Female'),
-                                      SelectOption(
-                                          value: 'nb', label: 'Non-Binary'),
-                                    ],
-                                    onChanged: (value) {
-                                      final currentFilters =
-                                          Map<String, String?>.from(
+                  controller: filterRowScrollController,
+                  child: Column(children: [
+                    // Parameter filters row
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Foundations.spacing.md,
+                        vertical: Foundations.spacing.sm,
+                      ),
+                      child: Wrap(
+                        children: [
+                          if (survey.askBiologicalSex)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  right: Foundations.spacing.sm),
+                              child: SizedBox(
+                                width: 140,
+                                child: BaseSelect<String?>(
+                                  hint: 'Sex',
+                                  size: SelectSize.small,
+                                  value: ref
+                                      .watch(responsesFilterProvider(survey.id))
+                                      .parameterFilters['sex'],
+                                  options: [
+                                    SelectOption(value: null, label: 'All'),
+                                    SelectOption(value: 'm', label: 'Male'),
+                                    SelectOption(value: 'f', label: 'Female'),
+                                    SelectOption(
+                                        value: 'nb', label: 'Non-Binary'),
+                                  ],
+                                  onChanged: (value) {
+                                    final currentFilters =
+                                        Map<String, String?>.from(
+                                      ref
+                                          .read(responsesFilterProvider(
+                                              survey.id))
+                                          .parameterFilters,
+                                    );
+                                    currentFilters['sex'] = value;
+                                    ref
+                                            .read(responsesFilterProvider(
+                                                    survey.id)
+                                                .notifier)
+                                            .state =
                                         ref
                                             .read(responsesFilterProvider(
                                                 survey.id))
-                                            .parameterFilters,
-                                      );
-                                      currentFilters['sex'] = value;
-                                      ref
-                                              .read(responsesFilterProvider(
-                                                      survey.id)
-                                                  .notifier)
-                                              .state =
-                                          ref
-                                              .read(responsesFilterProvider(
-                                                  survey.id))
-                                              .copyWith(
-                                                parameterFilters:
-                                                    currentFilters,
-                                              );
-                                    },
-                                  ),
+                                            .copyWith(
+                                              parameterFilters: currentFilters,
+                                            );
+                                  },
                                 ),
                               ),
-                            ...survey.parameters.map((param) {
-                              if (param['type'] == 'binary') {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                      right: Foundations.spacing.sm),
-                                  child: SizedBox(
-                                    width: 140,
-                                    child: BaseSelect<String?>(
-                                      hint: _formatParameterName(param['name']),
-                                      size: SelectSize.small,
-                                      value: ref
-                                          .watch(responsesFilterProvider(
-                                              survey.id))
-                                          .parameterFilters[param['name']],
-                                      options: [
-                                        SelectOption(value: null, label: 'All'),
-                                        SelectOption(
-                                            value: 'yes', label: 'Yes'),
-                                        SelectOption(value: 'no', label: 'No'),
-                                      ],
-                                      onChanged: (value) {
-                                        final currentFilters =
-                                            Map<String, String?>.from(
-                                          ref
-                                              .read(responsesFilterProvider(
-                                                  survey.id))
-                                              .parameterFilters,
-                                        );
-                                        currentFilters[param['name']] = value;
-                                        ref
-                                                .read(responsesFilterProvider(
-                                                        survey.id)
-                                                    .notifier)
-                                                .state =
-                                            ref
-                                                .read(responsesFilterProvider(
-                                                    survey.id))
-                                                .copyWith(
-                                                  parameterFilters:
-                                                      currentFilters,
-                                                );
-                                      },
-                                    ),
-                                  ),
-                                );
-                              }
-                              // For categorical parameters
-                              final uniqueValues = survey.responses.values
-                                  .map((r) => r[param['name']]?.toString())
-                                  .where((v) => v != null)
-                                  .toSet()
-                                  .toList()
-                                ..sort();
-
+                            ),
+                          ...survey.parameters.map((param) {
+                            if (param['type'] == 'binary') {
                               return Padding(
                                 padding: EdgeInsets.only(
                                     right: Foundations.spacing.sm),
@@ -813,16 +756,14 @@ class ResponsesTab extends ConsumerWidget {
                                   child: BaseSelect<String?>(
                                     hint: _formatParameterName(param['name']),
                                     size: SelectSize.small,
-                                    searchable: true,
                                     value: ref
                                         .watch(
                                             responsesFilterProvider(survey.id))
                                         .parameterFilters[param['name']],
                                     options: [
                                       SelectOption(value: null, label: 'All'),
-                                      ...uniqueValues.map((v) => SelectOption(
-                                          value: v,
-                                          label: _formatParameterName(v!))),
+                                      SelectOption(value: 'yes', label: 'Yes'),
+                                      SelectOption(value: 'no', label: 'No'),
                                     ],
                                     onChanged: (value) {
                                       final currentFilters =
@@ -849,170 +790,323 @@ class ResponsesTab extends ConsumerWidget {
                                   ),
                                 ),
                               );
-                            }),
-                            BaseIconButton(
-                              icon: Icons.clear_all,
-                              onPressed: () {
-                                ref
-                                    .read(responsesFilterProvider(survey.id)
-                                        .notifier)
-                                    .state = const ResponsesFilterState();
-                              },
-                              tooltip: 'Clear filters',
-                              variant: IconButtonVariant.outlined,
-                              size: IconButtonSize.small,
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Table
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          maxHeight: 600,
-                          minHeight: 200,
-                        ),
-                        child: Scrollbar(
-                          thumbVisibility: true,
-                          controller: verticalScrollController,
-                          child: SingleChildScrollView(
-                            controller: verticalScrollController,
-                            child: DataTable(
-                              columns: [
-                                DataColumn(label: Text('Name')),
-                                if (survey.askBiologicalSex)
-                                  DataColumn(label: Text('Sex')),
-                                ...survey.parameters.map(
-                                  (param) => DataColumn(
-                                    label: Text(
-                                        _formatParameterName(param['name'])),
-                                  ),
-                                ),
-                                if (survey.maxPreferences != null)
-                                  DataColumn(label: Text('Preferences')),
-                                DataColumn(
-                                    label:
-                                        Text('Actions')), // Add actions column
-                              ],
-                              rows: paginatedResponses.map((entry) {
-                                final response = entry.value;
-                                return DataRow(
-                                  cells: [
-                                    DataCell(Text(
-                                        '${response['_first_name']} ${response['_last_name']}')),
-                                    if (survey.askBiologicalSex)
-                                      _buildColoredDataCell(
-                                          'sex', response['sex'], isDarkMode),
-                                    ...survey.parameters.map(
-                                      (param) => _buildColoredDataCell(
-                                        param['name'],
-                                        response[param['name']]?.toString() ??
-                                            '',
-                                        isDarkMode,
-                                      ),
-                                    ),
-                                    if (survey.maxPreferences != null)
-                                      _buildPreferencesCell(
-                                        context,
-                                        (response['prefs'] as List?)
-                                                ?.cast<String>() ??
-                                            [],
-                                        isDarkMode,
-                                        accentColor,
-                                      ),
-                                    DataCell(Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        BaseIconButton(
-                                          icon: Icons.edit_outlined,
-                                          onPressed: () => _editResponse(
-                                            context,
-                                            ref,
-                                            isDarkMode,
-                                            accentColor,
-                                            entry.key,
-                                            entry.value,
-                                          ),
-                                          variant: IconButtonVariant.ghost,
-                                          size: IconButtonSize.small,
-                                          tooltip: 'Edit response',
-                                        ),
-                                        SizedBox(width: Foundations.spacing.xs),
-                                        BaseIconButton(
-                                          icon: Icons.delete_outline,
-                                          onPressed: () async {
-                                            final bool? confirmed =
-                                                await Dialogs.confirm(
-                                              context: context,
-                                              title: 'Delete Response',
-                                              message:
-                                                  'Are you sure you want to delete this response?',
-                                              variant: DialogVariant.danger,
-                                              dangerous: true,
-                                              confirmText:
-                                                  AppLocalizations.of(context)!
-                                                      .globalDelete,
-                                            );
-                                            if (confirmed != null &&
-                                                confirmed) {
-                                              final updatedResponses = Map<
-                                                      String,
-                                                      Map<String,
-                                                          dynamic>>.from(
-                                                  survey.responses);
-                                              updatedResponses
-                                                  .remove(entry.key);
+                            }
+                            // For categorical parameters
+                            final uniqueValues = survey.responses.values
+                                .map((r) => r[param['name']]?.toString())
+                                .where((v) => v != null)
+                                .toSet()
+                                .toList()
+                              ..sort();
 
-                                              ref
-                                                  .read(
-                                                      sortingSurveyNotifierProvider
-                                                          .notifier)
-                                                  .updateSortingSurvey(
-                                                    survey.copyWith(
-                                                        responses:
-                                                            updatedResponses),
-                                                  );
-                                            }
-                                          },
-                                          variant: IconButtonVariant.ghost,
-                                          size: IconButtonSize.small,
-                                          tooltip: 'Delete response',
-                                          color: Foundations.colors.error,
-                                        ),
-                                      ],
-                                    )),
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  right: Foundations.spacing.sm),
+                              child: SizedBox(
+                                width: 140,
+                                child: BaseSelect<String?>(
+                                  hint: _formatParameterName(param['name']),
+                                  size: SelectSize.small,
+                                  searchable: true,
+                                  value: ref
+                                      .watch(responsesFilterProvider(survey.id))
+                                      .parameterFilters[param['name']],
+                                  options: [
+                                    SelectOption(value: null, label: 'All'),
+                                    ...uniqueValues.map((v) => SelectOption(
+                                        value: v,
+                                        label: _formatParameterName(v!))),
                                   ],
-                                );
-                              }).toList(),
-                            ),
+                                  onChanged: (value) {
+                                    final currentFilters =
+                                        Map<String, String?>.from(
+                                      ref
+                                          .read(responsesFilterProvider(
+                                              survey.id))
+                                          .parameterFilters,
+                                    );
+                                    currentFilters[param['name']] = value;
+                                    ref
+                                            .read(responsesFilterProvider(
+                                                    survey.id)
+                                                .notifier)
+                                            .state =
+                                        ref
+                                            .read(responsesFilterProvider(
+                                                survey.id))
+                                            .copyWith(
+                                              parameterFilters: currentFilters,
+                                            );
+                                  },
+                                ),
+                              ),
+                            );
+                          }),
+                          BaseIconButton(
+                            icon: Icons.clear_all,
+                            onPressed: () {
+                              ref
+                                  .read(responsesFilterProvider(survey.id)
+                                      .notifier)
+                                  .state = const ResponsesFilterState();
+                            },
+                            tooltip: 'Clear filters',
+                            variant: IconButtonVariant.outlined,
+                            size: IconButtonSize.small,
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(Foundations.spacing.md),
-                child: Pagination(
-                  paginationKey: 'responses_${survey.id}',
-                  isDarkMode: isDarkMode,
-                  itemsPerPageOptions: const [10, 25, 50, 100],
-                  onItemsPerPageChanged: (value) {
-                    // Reset scroll position when changing items per page
-                    verticalScrollController.jumpTo(0);
-                  },
-                ),
-              ),
+                    ),
+                  ])),
+              // Conditional content based on responses
+              if (responses.isEmpty)
+                _buildEmptyResponsesContent(context, isDarkMode,
+                    hasAnyResponses, accentColor, survey, ref)
+              else
+                _buildResponsesTableContent(
+                    context, ref, isDarkMode, survey, paginatedResponses)
             ],
           ),
         );
       },
-      loading: () => const Center(
-        child: CircularProgressIndicator(),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text('Error: $error')),
+    );
+  }
+
+  Widget _buildEmptyResponsesContent(
+      BuildContext context,
+      bool isDarkMode,
+      bool hasAnyResponses,
+      Color accentColor,
+      SortingSurvey survey,
+      WidgetRef ref) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(Foundations.spacing.xl2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.inbox_outlined,
+              size: 64,
+              color: isDarkMode
+                  ? Foundations.darkColors.textMuted
+                  : Foundations.colors.textMuted,
+            ),
+            SizedBox(height: Foundations.spacing.lg),
+            Text(
+              hasAnyResponses
+                  ? 'No responses match the current filters'
+                  : 'No responses yet',
+              style: TextStyle(
+                fontSize: Foundations.typography.xl,
+                fontWeight: Foundations.typography.semibold,
+                color: isDarkMode
+                    ? Foundations.darkColors.textPrimary
+                    : Foundations.colors.textPrimary,
+              ),
+            ),
+            SizedBox(height: Foundations.spacing.md),
+            Text(
+              hasAnyResponses
+                  ? 'Try adjusting your filters to see more responses'
+                  : (survey.status == SortingSurveyStatus.draft
+                      ? 'Publish the survey to start collecting responses'
+                      : 'Start by adding responses manually or importing from a file'),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: Foundations.typography.base,
+                color: isDarkMode
+                    ? Foundations.darkColors.textMuted
+                    : Foundations.colors.textMuted,
+              ),
+            ),
+            SizedBox(height: Foundations.spacing.xl),
+            if (hasAnyResponses)
+              BaseButton(
+                label: 'Clear Filters',
+                prefixIcon: Icons.clear_all,
+                variant: ButtonVariant.outlined,
+                onPressed: () {
+                  ref.read(responsesFilterProvider(survey.id).notifier).state =
+                      const ResponsesFilterState();
+                },
+              )
+            else
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (survey.status == SortingSurveyStatus.draft) ...[
+                    BaseButton(
+                      label: 'Publish Survey',
+                      prefixIcon: Icons.publish_outlined,
+                      variant: ButtonVariant.filled,
+                      onPressed: () async {
+                        await ref
+                            .read(sortingSurveyNotifierProvider.notifier)
+                            .publishSortingSurvey(survey.id);
+
+                        // Invalidate providers to force refresh
+                        ref.invalidate(
+                            selectedSortingSurveyProvider(survey.id));
+                        ref.invalidate(getSortingSurveyByIdProvider);
+
+                        if (context.mounted) {
+                          Toaster.success(
+                              context, 'Survey published successfully');
+                        }
+                      },
+                    ),
+                  ] else ...[
+                    BaseButton(
+                      label: 'Add Manually',
+                      prefixIcon: Icons.person_add_outlined,
+                      variant: ButtonVariant.outlined,
+                      onPressed: () => _addUserManually(
+                        context,
+                        ref,
+                        isDarkMode,
+                        accentColor,
+                        survey,
+                      ),
+                    ),
+                    SizedBox(width: Foundations.spacing.md),
+                    BaseButton(
+                      label: 'Import Responses',
+                      prefixIcon: Icons.upload_file_outlined,
+                      variant: ButtonVariant.outlined,
+                      onPressed: () => _showImportDialog(context, ref, survey),
+                    ),
+                  ],
+                ],
+              ),
+          ],
+        ),
       ),
-      error: (error, stack) => Center(
-        child: Text('Error: $error'),
-      ),
+    );
+  }
+
+  Widget _buildResponsesTableContent(
+      BuildContext context,
+      WidgetRef ref,
+      bool isDarkMode,
+      SortingSurvey survey,
+      List<MapEntry<String, Map<String, dynamic>>> paginatedResponses) {
+    final accentColor = ref.watch(appThemeProvider).accentLight;
+    final horizontalScrollController = ScrollController();
+
+    return Column(
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxHeight: 600,
+            minHeight: 200,
+          ),
+          child: Scrollbar(
+            thumbVisibility: true,
+            controller: horizontalScrollController,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              controller: horizontalScrollController,
+              child: DataTable(
+                columns: [
+                  DataColumn(label: Text('Name')),
+                  if (survey.askBiologicalSex) DataColumn(label: Text('Sex')),
+                  ...survey.parameters.map(
+                    (param) => DataColumn(
+                      label: Text(_formatParameterName(param['name'])),
+                    ),
+                  ),
+                  if (survey.maxPreferences != null)
+                    DataColumn(label: Text('Preferences')),
+                  DataColumn(label: Text('Actions')), // Add actions column
+                ],
+                rows: paginatedResponses.map((entry) {
+                  final response = entry.value;
+                  return DataRow(
+                    cells: [
+                      DataCell(Text(
+                          '${response['_first_name']} ${response['_last_name']}')),
+                      if (survey.askBiologicalSex)
+                        _buildColoredDataCell(
+                            'sex', response['sex'], isDarkMode),
+                      ...survey.parameters.map(
+                        (param) => _buildColoredDataCell(
+                          param['name'],
+                          response[param['name']]?.toString() ?? '',
+                          isDarkMode,
+                        ),
+                      ),
+                      if (survey.maxPreferences != null)
+                        _buildPreferencesCell(
+                          context,
+                          (response['prefs'] as List?)?.cast<String>() ?? [],
+                          isDarkMode,
+                          accentColor,
+                        ),
+                      DataCell(Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          BaseIconButton(
+                            icon: Icons.edit_outlined,
+                            onPressed: () => _editResponse(
+                              context,
+                              ref,
+                              isDarkMode,
+                              accentColor,
+                              entry.key,
+                              survey,
+                              entry.value,
+                            ),
+                            variant: IconButtonVariant.ghost,
+                            size: IconButtonSize.small,
+                            tooltip: 'Edit response',
+                          ),
+                          SizedBox(width: Foundations.spacing.xs),
+                          BaseIconButton(
+                            icon: Icons.delete_outline,
+                            onPressed: () async {
+                              final bool? confirmed = await Dialogs.confirm(
+                                context: context,
+                                title: 'Delete Response',
+                                message:
+                                    'Are you sure you want to delete this response?',
+                                variant: DialogVariant.danger,
+                                dangerous: true,
+                                confirmText:
+                                    AppLocalizations.of(context)!.globalDelete,
+                              );
+                              if (confirmed != null && confirmed) {
+                                ref
+                                    .read(
+                                        sortingSurveyNotifierProvider.notifier)
+                                    .deleteResponse(survey.id, entry.key);
+                              }
+                            },
+                            variant: IconButtonVariant.ghost,
+                            size: IconButtonSize.small,
+                            tooltip: 'Delete response',
+                            color: Foundations.colors.error,
+                          ),
+                        ],
+                      )),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(Foundations.spacing.md),
+          child: Pagination(
+            paginationKey: 'responses_${survey.id}',
+            isDarkMode: isDarkMode,
+            itemsPerPageOptions: const [10, 25, 50, 100],
+          ),
+        ),
+      ],
     );
   }
 
@@ -1323,8 +1417,32 @@ class ResponsesTab extends ConsumerWidget {
     );
   }
 
-  void _addUserManually(
-      BuildContext context, WidgetRef ref, bool isDarkMode, Color accentColor) {
+  Future<void> _deleteAllResponses(
+      BuildContext context, WidgetRef ref, SortingSurvey survey) async {
+    // Show confirmation dialog
+    final bool? confirmed = await Dialogs.confirm(
+      context: context,
+      title: 'Delete All Responses',
+      message:
+          'Are you sure you want to delete all responses? This action cannot be undone.',
+      variant: DialogVariant.danger,
+      dangerous: true,
+      confirmText: 'Delete All',
+    );
+
+    if (confirmed == true) {
+      // Update survey with empty responses
+      await ref
+          .read(sortingSurveyNotifierProvider.notifier)
+          .deleteAllResponses(survey.id);
+      if (context.mounted) {
+        Toaster.success(context, 'All responses deleted successfully');
+      }
+    }
+  }
+
+  void _addUserManually(BuildContext context, WidgetRef ref, bool isDarkMode,
+      Color accentColor, SortingSurvey survey) {
     final users = ref.watch(allUsersStreamProvider).value ?? [];
     final responses = ref.watch(filteredResponsesProvider(survey.id));
 
@@ -1677,7 +1795,7 @@ class ResponsesTab extends ConsumerWidget {
             final response = {
               ...formattedResponses,
               if (survey.askBiologicalSex) 'sex': selectedSex,
-              if (survey.maxPreferences != null) 'prefs': selectedPreferences,
+              'prefs': selectedPreferences,
             };
 
             // Add metadata for manual entries
@@ -1692,17 +1810,11 @@ class ResponsesTab extends ConsumerWidget {
                 'manual_${DateTime.now().millisecondsSinceEpoch}';
 
             // Update survey with new response
-            final updatedResponses = {
-              ...survey.responses,
-              responseId: response,
-            };
 
             // Update survey
             ref
                 .read(sortingSurveyNotifierProvider.notifier)
-                .updateSortingSurvey(
-                  survey.copyWith(responses: updatedResponses),
-                );
+                .addResponse(survey.id, responseId, response);
             dispose();
             Navigator.of(context).pop();
           },
@@ -1717,6 +1829,7 @@ class ResponsesTab extends ConsumerWidget {
     bool isDarkMode,
     Color accentColor,
     String responseId,
+    SortingSurvey survey,
     Map<String, dynamic> response,
   ) {
     // Initialize controllers with existing data
@@ -1996,17 +2109,9 @@ class ResponsesTab extends ConsumerWidget {
               updatedResponse['_last_name'] = manualLastNameController.text;
             }
 
-            // Update survey with modified response
-            final updatedResponses = {
-              ...survey.responses,
-              responseId: updatedResponse,
-            };
-
             ref
                 .read(sortingSurveyNotifierProvider.notifier)
-                .updateSortingSurvey(
-                  survey.copyWith(responses: updatedResponses),
-                );
+                .updateResponse(survey.id, responseId, updatedResponse);
             dispose();
             Navigator.of(context).pop();
           },
@@ -2015,7 +2120,8 @@ class ResponsesTab extends ConsumerWidget {
     );
   }
 
-  void _showImportDialog(BuildContext context, WidgetRef ref) {
+  void _showImportDialog(
+      BuildContext context, WidgetRef ref, SortingSurvey survey) {
     Dialogs.show(
       context: context,
       title: 'Import Responses',

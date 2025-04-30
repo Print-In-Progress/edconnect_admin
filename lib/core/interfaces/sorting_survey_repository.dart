@@ -7,4 +7,6 @@ abstract class SortingSurveyRepository {
   Future<String> createSortingSurvey(SortingSurvey survey);
   Future<void> updateSortingSurvey(SortingSurvey survey);
   Future<void> deleteSortingSurvey(String id);
+  Future<void> saveCalculationResults(
+      String surveyId, Map<String, dynamic> calculationResponse);
 }

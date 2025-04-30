@@ -45,6 +45,15 @@ extension ErrorMessages on DomainException {
       ErrorCode.fileListFailed => l10n.errorFileListFailed,
       ErrorCode.storageOperationFailed => l10n.errorStorageOperationFailed,
 
+      // Calculation errors
+      ErrorCode.calculationFailed => l10n.errorCalculationFailed,
+      ErrorCode.calculationTimeout => l10n.errorCalculationTimeout,
+      ErrorCode.calculationServerError => l10n.errorCalculationServerError,
+      ErrorCode.insufficientClassCapacity =>
+        l10n.errorInsufficientClassCapacity,
+      ErrorCode.invalidCalculationParameters =>
+        l10n.errorInvalidCalculationParameters,
+
       // Default
       ErrorCode.unexpected => l10n.errorUnexpected,
     };

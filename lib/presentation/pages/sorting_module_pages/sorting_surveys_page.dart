@@ -210,21 +210,17 @@ class SortingSurveysPage extends ConsumerWidget {
       IconData icon;
       String label;
       switch (order) {
-        case SurveySortOrder.newestFirst:
+        case SurveySortOrder.newest:
           icon = Icons.arrow_downward;
           label = 'Newest First';
           break;
-        case SurveySortOrder.oldestFirst:
+        case SurveySortOrder.oldest:
           icon = Icons.arrow_upward;
           label = 'Oldest First';
           break;
         case SurveySortOrder.alphabetical:
           icon = Icons.sort_by_alpha;
           label = 'Alphabetical';
-          break;
-        case SurveySortOrder.status:
-          icon = Icons.filter_list;
-          label = 'By Status';
           break;
       }
       return SelectOption(
@@ -284,14 +280,17 @@ class _SurveyCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(appThemeProvider);
 
+    final isCalculating = ref.watch(calculationStateProvider).isCalculating &&
+        ref.read(selectedSortingSurveyIdProvider) == survey.id;
+    // Check if results are available
+    final hasResults = survey.calculationResults != null &&
+        survey.calculationResults!.isNotEmpty;
+
     return BaseCard(
       variant: CardVariant.outlined,
       isSelectable: true,
       onTap: () {
         ref.read(selectedSortingSurveyIdProvider.notifier).state = survey.id;
-
-        // Trigger response prefetch
-        ref.read(sortingSurveyResponsesPrefetchProvider(survey.id));
 
         // Navigate to details
         AppRouter.toSortingSurveyDetails(context, surveyId: survey.id);
@@ -315,7 +314,12 @@ class _SurveyCard extends ConsumerWidget {
                     ),
                   ),
                 ),
-                _buildStatusChip(survey.status),
+                if (isCalculating)
+                  _buildCalculatingIndicator()
+                else if (hasResults)
+                  _buildResultsAvailableChip()
+                else
+                  _buildStatusChip(survey.status),
               ],
             ),
             if (survey.description.isNotEmpty) ...[
@@ -366,6 +370,36 @@ class _SurveyCard extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCalculatingIndicator() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          height: 16,
+          width: 16,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+          ),
+        ),
+        SizedBox(width: Foundations.spacing.xs),
+        BaseChip(
+          label: 'Calculating',
+          variant: ChipVariant.secondary,
+          size: ChipSize.small,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResultsAvailableChip() {
+    return BaseChip(
+      label: 'Results Available',
+      variant: ChipVariant.secondary,
+      size: ChipSize.small,
+      leadingIcon: Icons.check_circle,
     );
   }
 

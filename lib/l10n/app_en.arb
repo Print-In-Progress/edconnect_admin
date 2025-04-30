@@ -274,6 +274,26 @@
     "@errorAccessDenied": {
         "description": "Error section - Access denied message"
     },
+    "errorCalculationFailed": "Failed to calculate classes. Please try again",
+    "@errorCalculationFailed": {
+        "description": "Error section - Calculation failed message"
+    },
+    "errorInvalidCalculationParameters": "Invalid calculation parameters. Please check your inputs.",
+    "@errorInvalidCalculationParameters": {
+        "description": "Error section - Invalid calculation parameters message"
+    },
+    "errorCalculationTimeout": "Calculation timed out. Try reducing complexity or increasing time limit.",
+    "@errorCalculationTimeout": {
+        "description": "Error section - Calculation timeout message"
+    },
+    "errorInsufficientClassCapacity": "Total class capacity must be at least equal to the number of students",
+    "@errorInsufficientClassCapacity": {
+        "description": "Error section - Insufficient class capacity message"
+    },
+    "errorCalculationServerError": "Unable to reach calculation server. Please check your connection and try again.",
+    "@errorCalculationServerError": {
+        "description": "Error section - Calculation server error message"
+    },
     "errorAcceptToSAndPrivacyPolicy": "You must accept the Terms & Conditions and Privacy Policy",
     "@errorAcceptToSAndPrivacyPolicy": {
         "description": "Error section - Terms acceptance message"

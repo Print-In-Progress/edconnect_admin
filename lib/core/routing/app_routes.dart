@@ -29,11 +29,11 @@ class AppRoutes {
 
       case sortingSurveyDetails:
         final surveyId = settings.arguments as String;
-        return MaterialPageRoute(
-          builder: (_) => SortingSurveyDetailsPage(
-            surveyId: surveyId,
-          ),
-          settings: settings,
+        return PageRouteBuilder(
+          transitionDuration: Duration.zero,
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return SortingSurveyDetailsPage(surveyId: surveyId);
+          },
         );
 
       default:

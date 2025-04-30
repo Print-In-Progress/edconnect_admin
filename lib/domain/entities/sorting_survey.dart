@@ -7,10 +7,9 @@ enum SortingSurveyStatus {
 }
 
 enum SurveySortOrder {
-  newestFirst,
-  oldestFirst,
+  newest,
+  oldest,
   alphabetical,
-  status,
 }
 
 class SortingSurvey {
@@ -29,6 +28,8 @@ class SortingSurvey {
   final Map<String, dynamic> responses;
   final int? maxPreferences;
   final bool askBiologicalSex;
+  final Map<String, dynamic>? calculationResults;
+  final Map<String, dynamic>? calculationMetrics;
 
   const SortingSurvey({
     required this.id,
@@ -46,6 +47,8 @@ class SortingSurvey {
     required this.responses,
     this.maxPreferences,
     required this.askBiologicalSex,
+    this.calculationResults,
+    this.calculationMetrics,
   });
 
   factory SortingSurvey.fromMap(Map<String, dynamic> map, String docId) {
@@ -65,6 +68,8 @@ class SortingSurvey {
       responses: map['responses'] ?? {},
       maxPreferences: map['max_preferences'],
       askBiologicalSex: map['ask_biological_sex'] ?? true,
+      calculationResults: map['calculation_results'] ?? {},
+      calculationMetrics: map['calculation_metrics'] ?? {},
     );
   }
 
@@ -84,6 +89,8 @@ class SortingSurvey {
       'responses': responses,
       'max_preferences': maxPreferences,
       'ask_biological_sex': askBiologicalSex,
+      'calculation_results': calculationResults,
+      'calculation_metrics': calculationMetrics,
     };
   }
 
@@ -125,6 +132,8 @@ class SortingSurvey {
     Map<String, dynamic>? responses,
     int? maxPreferences,
     bool? askBiologicalSex,
+    Map<String, dynamic>? calculationResults,
+    Map<String, dynamic>? calculationMetrics,
   }) {
     return SortingSurvey(
       id: id,
@@ -142,6 +151,8 @@ class SortingSurvey {
       responses: responses ?? this.responses,
       maxPreferences: maxPreferences ?? this.maxPreferences,
       askBiologicalSex: askBiologicalSex ?? this.askBiologicalSex,
+      calculationResults: calculationResults ?? this.calculationResults,
+      calculationMetrics: calculationMetrics ?? this.calculationMetrics,
     );
   }
 }

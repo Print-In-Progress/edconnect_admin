@@ -1,13 +1,16 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module_pages/tabs/sorting_survey_calculate_tab.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module_pages/tabs/sorting_survey_overview_tab.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module_pages/tabs/sorting_survey_responses_tab.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module_pages/tabs/sorting_survey_results_tab.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
 import 'package:edconnect_admin/presentation/widgets/common/cards/base_card.dart';
 import 'package:edconnect_admin/presentation/widgets/common/dialogs/dialogs.dart';
+import 'package:edconnect_admin/presentation/widgets/common/loading_indicators/async_value_widget.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/tabs.dart';
 import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
@@ -23,51 +26,93 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(appThemeProvider);
+    final isInitialLoading = ref.watch(surveyLoadingStateProvider);
     final notifierState = ref.watch(sortingSurveyNotifierProvider);
-    final surveyAsync = ref.watch(selectedSortingSurveyProvider(surveyId));
+
+    // Only watch the survey data if not in initial loading state
+    final surveyAsync = isInitialLoading
+        ? const AsyncValue<SortingSurvey?>.loading()
+        : ref.watch(selectedSortingSurveyProvider(surveyId));
+
+    if (isInitialLoading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(surveyLoadingStateProvider.notifier).state = false;
+      });
+    }
 
     return Scaffold(
       backgroundColor: theme.isDarkMode
           ? Foundations.darkColors.background
           : Foundations.colors.background,
       appBar: BaseAppBar(
-        title: surveyAsync.when(
-          data: (survey) => survey?.title ?? 'Survey not found',
-          loading: () => 'Loading Survey...',
-          error: (_, __) => 'Error',
-        ),
+        title: isInitialLoading
+            ? 'Loading Survey...'
+            : surveyAsync.when(
+                data: (survey) => survey?.title ?? 'Survey not found',
+                loading: () => 'Loading Survey...',
+                error: (_, __) => 'Error',
+              ),
         showLeading: true,
         // Show skeleton buttons during loading
-        actions: surveyAsync.when(
-          data: (survey) => _buildActions(context, ref, survey, notifierState),
-          loading: () => [
-            Container(
-              width: 100,
-              height: 36,
-              margin: EdgeInsets.only(right: Foundations.spacing.md),
-              decoration: BoxDecoration(
-                color: theme.isDarkMode
-                    ? Foundations.darkColors.surfaceActive
-                    : Foundations.colors.surfaceActive,
-                borderRadius: Foundations.borders.md,
+        actions: isInitialLoading
+            ? [
+                Container(
+                  width: 100,
+                  height: 36,
+                  margin: EdgeInsets.only(right: Foundations.spacing.md),
+                  decoration: BoxDecoration(
+                    color: theme.isDarkMode
+                        ? Foundations.darkColors.surfaceActive
+                        : Foundations.colors.surfaceActive,
+                    borderRadius: Foundations.borders.md,
+                  ),
+                ),
+              ]
+            : surveyAsync.when(
+                data: (survey) =>
+                    _buildActions(context, ref, survey, notifierState),
+                loading: () => [
+                  Container(
+                    width: 100,
+                    height: 36,
+                    margin: EdgeInsets.only(right: Foundations.spacing.md),
+                    decoration: BoxDecoration(
+                      color: theme.isDarkMode
+                          ? Foundations.darkColors.surfaceActive
+                          : Foundations.colors.surfaceActive,
+                      borderRadius: Foundations.borders.md,
+                    ),
+                  ),
+                ],
+                error: (_, __) => [],
+              ),
+      ),
+      body: isInitialLoading
+          ? _buildSkeletonContent(context, ref)
+          : AsyncValueWidget(
+              value: surveyAsync,
+              skipLoadingOnRefresh: true,
+              loading: () => _buildSkeletonContent(context, ref),
+              data: (survey) {
+                if (survey == null) {
+                  return const Center(child: Text('Survey not found'));
+                }
+                return _buildContent(context, ref, survey);
+              },
+              error: (error, stackTrace) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Error: $error'),
+                    ElevatedButton(
+                      onPressed: () => ref
+                          .invalidate(selectedSortingSurveyProvider(surveyId)),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
-          error: (_, __) => [],
-        ),
-      ),
-      body: surveyAsync.when(
-        data: (survey) {
-          if (survey == null) {
-            return const Center(child: Text('Survey not found'));
-          }
-          return _buildContent(context, ref, survey);
-        },
-        loading: () => _buildSkeletonContent(context, ref),
-        error: (error, stack) => Center(
-          child: Text('Error: $error'),
-        ),
-      ),
     );
   }
 
@@ -109,30 +154,37 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
 
   Widget _buildContent(
       BuildContext context, WidgetRef ref, SortingSurvey survey) {
+    final tabIndex = ref.watch(surveyTabIndexProvider(survey.id));
+
     return Padding(
       padding: EdgeInsets.all(Foundations.spacing.lg),
-      child: Tabs(tabs: [
-        TabItem(
-          label: 'Overview',
-          icon: Icons.info_outline,
-          content: OverviewTab(survey: survey),
-        ),
-        TabItem(
-          label: 'Responses',
-          icon: Icons.list_alt_outlined,
-          content: ResponsesTab(survey: survey),
-        ),
-        TabItem(
-          label: 'Calculate',
-          icon: Icons.calculate_outlined,
-          content: _CalculateTab(survey: survey),
-        ),
-        TabItem(
-          label: 'Results',
-          icon: Icons.pie_chart_outline,
-          content: _ResultsTab(survey: survey),
-        ),
-      ]),
+      child: Tabs(
+          onChanged: (index) {
+            ref.read(surveyTabIndexProvider(survey.id).notifier).state = index;
+          },
+          currentValue: tabIndex,
+          tabs: [
+            TabItem(
+              label: 'Overview',
+              icon: Icons.info_outline,
+              content: OverviewTab(survey: survey),
+            ),
+            TabItem(
+              label: 'Responses',
+              icon: Icons.list_alt_outlined,
+              content: ResponsesTab(survey: survey),
+            ),
+            TabItem(
+              label: 'Calculate',
+              icon: Icons.calculate_outlined,
+              content: CalculateTab(survey: survey),
+            ),
+            TabItem(
+              label: 'Results',
+              icon: Icons.pie_chart_outline,
+              content: ResultsTab(survey: survey),
+            ),
+          ]),
     );
   }
 
@@ -141,10 +193,6 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
     await ref
         .read(sortingSurveyNotifierProvider.notifier)
         .publishSortingSurvey(id);
-
-    // Invalidate providers to force refresh
-    ref.invalidate(selectedSortingSurveyProvider(id));
-    ref.invalidate(getSortingSurveyByIdProvider);
 
     if (context.mounted) {
       Toaster.success(context, 'Survey published successfully');
@@ -156,10 +204,6 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
     await ref
         .read(sortingSurveyNotifierProvider.notifier)
         .closeSortingSurvey(id);
-
-    // Invalidate providers to force refresh
-    ref.invalidate(selectedSortingSurveyProvider(id));
-    ref.invalidate(getSortingSurveyByIdProvider);
 
     if (context.mounted) {
       Toaster.success(context, 'Survey closed successfully');
@@ -189,30 +233,6 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
         }
       });
     }
-  }
-}
-
-class _CalculateTab extends ConsumerWidget {
-  final SortingSurvey survey;
-
-  const _CalculateTab({required this.survey});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Implement parameters tab content
-    return const Center(child: Text('Parameters Content'));
-  }
-}
-
-class _ResultsTab extends ConsumerWidget {
-  final SortingSurvey survey;
-
-  const _ResultsTab({required this.survey});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Implement parameters tab content
-    return const Center(child: Text('Parameters Content'));
   }
 }
 
