@@ -2,7 +2,7 @@ import 'package:edconnect_admin/core/design_system/color_generator.dart';
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
-import 'package:edconnect_admin/presentation/pages/sorting_module_pages/dialogs/export_results_dialog.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module/dialogs/export_results_dialog.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';

@@ -3,8 +3,11 @@ import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
-import 'package:edconnect_admin/presentation/pages/sorting_module_pages/dialogs/export_responses_dialog.dart';
-import 'package:edconnect_admin/presentation/pages/sorting_module_pages/dialogs/import_responses_dialog.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module/components/section_header.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/responses/dialogs/export_responses_dialog.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/responses/dialogs/import_responses_dialog.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/responses/components/parameter_distribution/parameter_grid.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/responses/components/stats/stat_grid.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
@@ -53,24 +56,27 @@ class ResponsesTab extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Overview Statistics Section
-                _buildSectionHeader(context, 'Response Statistics',
-                    Icons.analytics_outlined, isDarkMode),
+                SectionHeader(
+                    title: 'Response Statistics',
+                    icon: Icons.analytics_outlined),
                 SizedBox(height: Foundations.spacing.md),
-                _buildStatisticsGrid(context, isDarkMode, latestSurvey),
+                StatGrid(survey: survey),
 
                 SizedBox(height: Foundations.spacing.xl),
 
                 // Parameter Statistics Section
-                _buildSectionHeader(context, 'Parameter Distribution',
-                    Icons.bar_chart, isDarkMode),
+                SectionHeader(
+                    title: 'Parameter Distribution', icon: Icons.bar_chart),
+
                 SizedBox(height: Foundations.spacing.md),
-                _buildParameterStats(context, isDarkMode, latestSurvey),
+                ParameterGrid(survey: survey),
 
                 SizedBox(height: Foundations.spacing.xl),
 
                 // Responses Table Section
-                _buildSectionHeader(context, 'Individual Responses',
-                    Icons.table_chart, isDarkMode),
+                SectionHeader(
+                    title: 'Individual Responses',
+                    icon: Icons.table_chart_outlined),
                 SizedBox(height: Foundations.spacing.md),
                 Wrap(
                   runSpacing: Foundations.spacing.xs,
@@ -206,396 +212,7 @@ class ResponsesTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionHeader(
-    BuildContext context,
-    String title,
-    IconData icon,
-    bool isDarkMode,
-  ) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 20,
-          color: isDarkMode
-              ? Foundations.darkColors.textMuted
-              : Foundations.colors.textMuted,
-        ),
-        SizedBox(width: Foundations.spacing.sm),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: Foundations.typography.lg,
-            fontWeight: Foundations.typography.semibold,
-            color: isDarkMode
-                ? Foundations.darkColors.textPrimary
-                : Foundations.colors.textPrimary,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatisticsGrid(
-      BuildContext context, bool isDarkMode, SortingSurvey survey) {
-    final totalResponses = survey.responses.length;
-    final totalPreferences = survey.responses.values
-        .map((r) => (r['prefs'] as List?)?.length ?? 0)
-        .fold(0, (sum, count) => sum + count);
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final cardWidth =
-            (constraints.maxWidth - Foundations.spacing.lg * 2) / 3;
-        return Row(
-          children: [
-            _buildStatCard(
-              context,
-              'Total Responses',
-              totalResponses.toString(),
-              Icons.people_outline,
-              isDarkMode,
-              cardWidth,
-            ),
-            SizedBox(width: Foundations.spacing.lg),
-            _buildStatCard(
-              context,
-              'Parameters',
-              survey.parameters.length.toString(),
-              Icons.tune,
-              isDarkMode,
-              cardWidth,
-            ),
-            SizedBox(width: Foundations.spacing.lg),
-            _buildStatCard(
-              context,
-              'Total Number of Preferences',
-              survey.maxPreferences != null
-                  ? '$totalPreferences (max ${survey.maxPreferences} per user)'
-                  : 'Disabled',
-              Icons.favorite_outline,
-              isDarkMode,
-              cardWidth,
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildStatCard(
-    BuildContext context,
-    String label,
-    String value,
-    IconData icon,
-    bool isDarkMode,
-    double width,
-  ) {
-    return SizedBox(
-      width: width,
-      child: BaseCard(
-        variant: CardVariant.outlined,
-        margin: EdgeInsets.zero,
-        padding: EdgeInsets.all(Foundations.spacing.md),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 24,
-              color: isDarkMode
-                  ? Foundations.darkColors.textMuted
-                  : Foundations.colors.textMuted,
-            ),
-            SizedBox(width: Foundations.spacing.md),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min, // Use minimum height
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: Foundations.typography.sm,
-                      color: isDarkMode
-                          ? Foundations.darkColors.textMuted
-                          : Foundations.colors.textMuted,
-                    ),
-                  ),
-                  SizedBox(height: Foundations.spacing.xs),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: Foundations.typography.lg,
-                      fontWeight: Foundations.typography.semibold,
-                      color: isDarkMode
-                          ? Foundations.darkColors.textPrimary
-                          : Foundations.colors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   // Replace existing _buildParameterStats with this:
-  Widget _buildParameterStats(
-      BuildContext context, bool isDarkMode, SortingSurvey survey) {
-    return Wrap(
-      spacing: Foundations.spacing.md,
-      runSpacing: Foundations.spacing.md,
-      children: [
-        // Biological Sex Card
-        if (survey.askBiologicalSex)
-          _buildParameterCard(
-              _buildBiologicalSexStats(context, isDarkMode), isDarkMode, 0),
-
-        // Parameter Cards
-        ...survey.parameters.asMap().entries.map(
-              (entry) => _buildParameterCard(
-                _buildParameterStat(context, entry.value, isDarkMode),
-                isDarkMode,
-                entry.key + (survey.askBiologicalSex ? 1 : 0),
-              ),
-            ),
-      ],
-    );
-  }
-
-  Widget _buildParameterCard(Widget content, bool isDarkMode, int colorIndex) {
-    return SizedBox(
-      width: 400,
-      height: 240, // Fixed height for all cards
-      child: BaseCard(
-        padding: EdgeInsets.all(Foundations.spacing.md),
-        margin: EdgeInsets.zero,
-        variant: CardVariant.outlined,
-        child: content,
-      ),
-    );
-  }
-
-  Widget _buildDistributionRow(
-    BuildContext context,
-    String paramName,
-    Map<String, int> distribution,
-    bool isDarkMode, {
-    bool limitEntries = false,
-    bool isSexParameter = false,
-  }) {
-    final total = distribution.values.fold(0, (sum, count) => sum + count);
-
-    var sortedEntries = distribution.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-
-    final originalLength = sortedEntries.length;
-
-    if (limitEntries && sortedEntries.length > 3) {
-      int othersCount =
-          sortedEntries.skip(3).fold(0, (sum, e) => sum + e.value);
-      sortedEntries = sortedEntries.take(2).toList();
-      if (othersCount > 0) {
-        sortedEntries.add(MapEntry('Other', othersCount));
-      }
-    }
-
-    return Padding(
-      padding: EdgeInsets.all(Foundations.spacing.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Tooltip(
-                  message: _formatParameterName(paramName),
-                  textStyle: TextStyle(
-                    color: isDarkMode
-                        ? Foundations.darkColors.textPrimary
-                        : Foundations.colors.textPrimary,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isDarkMode
-                        ? Foundations.darkColors.backgroundMuted
-                        : Foundations.colors.backgroundMuted,
-                    borderRadius: Foundations.borders.md,
-                  ),
-                  child: Text(
-                    _formatParameterName(paramName),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontSize: Foundations.typography.base,
-                      fontWeight: Foundations.typography.semibold,
-                      color: isDarkMode
-                          ? Foundations.darkColors.textPrimary
-                          : Foundations.colors.textPrimary,
-                    ),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              if (originalLength > 3)
-                BaseButton(
-                    label: 'View All',
-                    onPressed: () {
-                      _viewAllDialog(context, paramName, isDarkMode);
-                    },
-                    variant: ButtonVariant.text,
-                    size: ButtonSize.small),
-            ],
-          ),
-          SizedBox(height: Foundations.spacing.lg),
-          ...sortedEntries.map((entry) {
-            final percentage = total > 0 ? (entry.value / total * 100) : 0;
-            final isBinary = sortedEntries.length == 2 &&
-                sortedEntries.every((e) =>
-                    e.key.toLowerCase() == 'yes' ||
-                    e.key.toLowerCase() == 'no');
-
-            final displayValue =
-                isSexParameter ? _formatSex(entry.key) : entry.key;
-
-            final color = ColorGenerator.getColor(
-              paramName,
-              displayValue,
-              isDarkMode: isDarkMode,
-              isBinary: isBinary,
-            );
-
-            return Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Tooltip(
-                        message: _formatDisplayValue(displayValue),
-                        textStyle: TextStyle(
-                          color: isDarkMode
-                              ? Foundations.darkColors.textPrimary
-                              : Foundations.colors.textPrimary,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? Foundations.darkColors.backgroundMuted
-                              : Foundations.colors.backgroundMuted,
-                          borderRadius: Foundations.borders.md,
-                        ),
-                        child: Text(
-                          _formatDisplayValue(displayValue),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: TextStyle(
-                            fontSize: Foundations.typography.sm,
-                            color: color,
-                            fontWeight: Foundations.typography.medium,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '${entry.value} (${percentage.toStringAsFixed(1)}%)',
-                      style: TextStyle(
-                        fontSize: Foundations.typography.sm,
-                        color: color,
-                        fontWeight: Foundations.typography.medium,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: Foundations.spacing.xs),
-                LinearProgressIndicator(
-                  value: percentage / 100,
-                  backgroundColor: color.withValues(alpha: 0.1),
-                  valueColor: AlwaysStoppedAnimation<Color>(color),
-                  minHeight: 8,
-                  borderRadius: Foundations.borders.full,
-                ),
-                SizedBox(height: Foundations.spacing.md),
-              ],
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBiologicalSexStats(BuildContext context, bool isDarkMode) {
-    final responses = survey.responses;
-    int males = 0, females = 0, nonBinary = 0;
-
-    for (final response in responses.values) {
-      switch (response['sex']) {
-        case 'm':
-          males++;
-          break;
-        case 'f':
-          females++;
-          break;
-        case 'nb':
-          nonBinary++;
-          break;
-      }
-    }
-
-    return _buildDistributionRow(
-      context,
-      'Biological Sex',
-      {
-        'm': males, // Use raw values instead of formatted ones
-        'f': females,
-        'nb': nonBinary,
-      },
-      isDarkMode,
-      limitEntries: false,
-      isSexParameter: true, // Add this flag
-    );
-  }
-
-  Widget _buildParameterStat(
-      BuildContext context, Map<String, dynamic> param, bool isDarkMode) {
-    final responses = survey.responses;
-    final name = param['name'];
-    final type = param['type'];
-
-    if (type == 'binary') {
-      int yes = 0, no = 0;
-      for (final response in responses.values) {
-        if (response[name] == 'yes') {
-          yes++;
-        } else if (response[name] == 'no') {
-          no++;
-        }
-      }
-
-      return _buildDistributionRow(
-        context,
-        name,
-        {'Yes': yes, 'No': no},
-        isDarkMode,
-        limitEntries: false,
-      );
-    } else {
-      Map<String, int> distribution = {};
-      for (final response in responses.values) {
-        final value = response[name]?.toString() ?? 'Unknown';
-        distribution[value] = (distribution[value] ?? 0) + 1;
-      }
-
-      return _buildDistributionRow(
-        context,
-        name,
-        distribution,
-        isDarkMode,
-        limitEntries: true,
-      );
-    }
-  }
-
   Widget _buildResponsesTable(
       BuildContext context,
       WidgetRef ref,
@@ -1277,144 +894,6 @@ class ResponsesTab extends ConsumerWidget {
       default:
         return 'Unknown';
     }
-  }
-
-  void _viewAllDialog(BuildContext context, String paramName, bool isDarkMode) {
-    final responses = survey.responses;
-    final isBinary = survey.parameters
-        .any((p) => p['name'] == paramName && p['type'] == 'binary');
-    final isSexParameter = paramName == 'sex';
-
-    // Build distribution map
-    Map<String, int> distribution = {};
-    for (final response in responses.values) {
-      final rawValue = response[paramName]?.toString() ?? 'Unknown';
-
-      // Format value based on parameter type
-      final formattedValue = switch (true) {
-        _ when isSexParameter => _formatSex(rawValue),
-        _ when isBinary => rawValue.toLowerCase() == 'yes' ? 'Yes' : 'No',
-        _ => _formatDisplayValue(rawValue),
-      };
-
-      distribution[formattedValue] = (distribution[formattedValue] ?? 0) + 1;
-    }
-
-    // Sort entries by count
-    final sortedEntries = distribution.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-
-    final total = distribution.values.fold(0, (sum, count) => sum + count);
-    final uniqueCount = distribution.length;
-
-    Dialogs.show(
-      context: context,
-      title: _formatDisplayValue(paramName),
-      width: 400,
-      variant: DialogVariant.info,
-      scrollable: true,
-      content: Column(
-        children: [
-          // Header
-          Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Text(
-                  'Value',
-                  style: TextStyle(
-                    fontWeight: Foundations.typography.semibold,
-                    color: isDarkMode
-                        ? Foundations.darkColors.textPrimary
-                        : Foundations.colors.textPrimary,
-                  ),
-                ),
-              ),
-              Text(
-                'Count',
-                style: TextStyle(
-                  fontWeight: Foundations.typography.semibold,
-                  color: isDarkMode
-                      ? Foundations.darkColors.textPrimary
-                      : Foundations.colors.textPrimary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: Foundations.spacing.md),
-
-          // Distribution bars
-          ...sortedEntries.map((entry) {
-            final percentage = total > 0 ? (entry.value / total * 100) : 0;
-            final color = ColorGenerator.getColor(
-              paramName,
-              entry.key,
-              isDarkMode: isDarkMode,
-              isBinary: isBinary,
-            );
-
-            return Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Text(
-                        entry.key,
-                        style: TextStyle(
-                          fontSize: Foundations.typography.sm,
-                          color: color,
-                          fontWeight: Foundations.typography.medium,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '${entry.value} (${percentage.toStringAsFixed(1)}%)',
-                      style: TextStyle(
-                        fontSize: Foundations.typography.sm,
-                        color: color,
-                        fontWeight: Foundations.typography.medium,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: Foundations.spacing.xs),
-                LinearProgressIndicator(
-                  value: percentage / 100,
-                  backgroundColor: color.withValues(alpha: 0.1),
-                  valueColor: AlwaysStoppedAnimation<Color>(color),
-                  minHeight: 8,
-                  borderRadius: Foundations.borders.full,
-                ),
-                SizedBox(height: Foundations.spacing.md),
-              ],
-            );
-          }),
-
-          // Total count
-          Divider(
-            color: isDarkMode
-                ? Foundations.darkColors.border
-                : Foundations.colors.border,
-          ),
-          SizedBox(height: Foundations.spacing.sm),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                'Unique Values: $uniqueCount',
-                style: TextStyle(
-                  fontWeight: Foundations.typography.medium,
-                  color: isDarkMode
-                      ? Foundations.darkColors.textPrimary
-                      : Foundations.colors.textPrimary,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
   }
 
   Future<void> _deleteAllResponses(
@@ -2178,14 +1657,6 @@ String _formatCategoricalValue(String value) {
       .replaceAll(
           RegExp(r'_+'), '_') // Replace multiple underscores with single
       .replaceAll(RegExp(r'^_|_$'), ''); // Remove leading/trailing underscores
-}
-
-String _formatDisplayValue(String value) {
-  return value
-      .split('_')
-      .map((word) =>
-          word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '')
-      .join(' ');
 }
 
 // Add this helper widget for the toggle chips
