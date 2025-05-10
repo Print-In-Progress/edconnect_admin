@@ -14,7 +14,7 @@ class ParameterFormatter {
             RegExp(r'^_|_$'), ''); // Remove leading/trailing underscores
   }
 
-  static String foratParameterNameForDisplay(String name) {
+  static String formatParameterNameForDisplay(String name) {
     return name
         .replaceAll('_', ' ')
         .split(' ')

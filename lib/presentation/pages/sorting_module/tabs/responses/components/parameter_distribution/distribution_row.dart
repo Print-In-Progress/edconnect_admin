@@ -53,7 +53,7 @@ class DistributionRow extends ConsumerWidget {
             children: [
               Expanded(
                 child: Tooltip(
-                  message: ParameterFormatter.foratParameterNameForDisplay(
+                  message: ParameterFormatter.formatParameterNameForDisplay(
                       paramName),
                   textStyle: TextStyle(
                     color: theme.isDarkMode
@@ -67,7 +67,7 @@ class DistributionRow extends ConsumerWidget {
                     borderRadius: Foundations.borders.md,
                   ),
                   child: Text(
-                    ParameterFormatter.foratParameterNameForDisplay(paramName),
+                    ParameterFormatter.formatParameterNameForDisplay(paramName),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     style: TextStyle(
@@ -118,7 +118,7 @@ class DistributionRow extends ConsumerWidget {
                       flex: 3,
                       child: Tooltip(
                         message:
-                            ParameterFormatter.foratParameterNameForDisplay(
+                            ParameterFormatter.formatParameterNameForDisplay(
                                 displayValue),
                         textStyle: TextStyle(
                           color: theme.isDarkMode
@@ -132,7 +132,7 @@ class DistributionRow extends ConsumerWidget {
                           borderRadius: Foundations.borders.md,
                         ),
                         child: Text(
-                          ParameterFormatter.foratParameterNameForDisplay(
+                          ParameterFormatter.formatParameterNameForDisplay(
                               displayValue),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
@@ -177,7 +177,7 @@ class DistributionRow extends ConsumerWidget {
   ) {
     Dialogs.show(
       context: context,
-      title: ParameterFormatter.foratParameterNameForDisplay(paramName),
+      title: ParameterFormatter.formatParameterNameForDisplay(paramName),
       width: 400,
       variant: DialogVariant.info,
       scrollable: true,

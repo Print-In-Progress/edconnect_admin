@@ -34,7 +34,7 @@ class ViewAllDialog extends ConsumerWidget {
         _ when isSexParameter =>
           ParameterFormatter.formatSexForDisplay(rawValue),
         _ when isBinary => rawValue.toLowerCase() == 'yes' ? 'Yes' : 'No',
-        _ => ParameterFormatter.foratParameterNameForDisplay(rawValue),
+        _ => ParameterFormatter.formatParameterNameForDisplay(rawValue),
       };
 
       distribution[formattedValue] = (distribution[formattedValue] ?? 0) + 1;

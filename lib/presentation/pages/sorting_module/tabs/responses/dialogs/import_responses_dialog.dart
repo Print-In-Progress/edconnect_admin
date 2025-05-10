@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/presentation/pages/sorting_module/utils/parameter_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edconnect_admin/core/design_system/foundations.dart';
@@ -258,10 +259,13 @@ class ImportResponsesDialog extends ConsumerWidget {
                         DataCell(Text(
                             '${response['_first_name']} ${response['_last_name']}')),
                         if (survey.askBiologicalSex)
-                          DataCell(Text(_formatSex(response['sex']))),
+                          DataCell(Text(ParameterFormatter.formatSexForDisplay(
+                              response['sex']))),
                         ...survey.parameters.map(
                           (param) => DataCell(
-                            Text(_formatDisplayValue(response[param['name']])
+                            Text(ParameterFormatter
+                                    .formatParameterNameForDisplay(
+                                        response[param['name']])
                                 .toString()),
                           ),
                         ),
@@ -286,21 +290,4 @@ class ImportResponsesDialog extends ConsumerWidget {
       ),
     );
   }
-
-  String _formatSex(String? sex) {
-    return switch (sex) {
-      'm' => 'Male',
-      'f' => 'Female',
-      'nb' => 'Non-Binary',
-      _ => 'Unknown',
-    };
-  }
-}
-
-String _formatDisplayValue(String value) {
-  return value
-      .split('_')
-      .map((word) =>
-          word.isNotEmpty ? '${word[0].toUpperCase()}${word.substring(1)}' : '')
-      .join(' ');
 }
