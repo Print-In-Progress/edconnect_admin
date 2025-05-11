@@ -1,4 +1,5 @@
 import 'package:edconnect_admin/presentation/pages/sorting_module/pages/create/create_sorting_survey_page.dart';
+import 'package:edconnect_admin/presentation/pages/user_management/user_management_page.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/pages/list/sorting_surveys_page.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/pages/details/sorting_survey_details.dart';
@@ -11,6 +12,7 @@ class AppRoutes {
   static const String sortingSurveys = '/sorting-surveys';
   static const String createSortingSurvey = '/sorting-surveys/create';
   static const String sortingSurveyDetails = '/sorting-surveys/details';
+  static const String userManagement = '/user-management';
 
   // Route generator
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
@@ -34,6 +36,12 @@ class AppRoutes {
           pageBuilder: (context, animation, secondaryAnimation) {
             return SortingSurveyDetailsPage(surveyId: surveyId);
           },
+        );
+
+      case userManagement:
+        return MaterialPageRoute(
+          builder: (_) => const UserManagementPage(),
+          settings: settings,
         );
 
       default:

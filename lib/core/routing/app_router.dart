@@ -15,6 +15,10 @@ class AppRouter {
     Navigator.pushNamed(context, AppRoutes.createSortingSurvey);
   }
 
+  static void toUserManagement(BuildContext context) {
+    Navigator.pushNamed(context, AppRoutes.userManagement);
+  }
+
   static void toSortingSurveyDetails(BuildContext context,
       {required String surveyId}) {
     // Set survey ID before navigation
