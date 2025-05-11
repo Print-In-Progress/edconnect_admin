@@ -508,6 +508,22 @@ class SortingSurveyNotifier extends StateNotifier<AsyncValue<void>> {
     }
   }
 
+  Future<void> saveCalculationResults(
+      SortingSurvey survey, Map<String, List<String>> results) async {
+    state = const AsyncValue.loading();
+    try {
+      final updatedSurvey = survey.copyWith(
+        calculationResults: results,
+      );
+
+      await _useCase.updateSortingSurvey(updatedSurvey);
+      await _invalidateProviders(survey.id);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
   Future<void> publishSortingSurvey(String id) async {
     state = const AsyncValue.loading();
     try {
