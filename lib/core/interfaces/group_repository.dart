@@ -14,7 +14,8 @@ abstract class GroupRepository {
   Future<Group?> getGroup(String groupId);
 
   // Create a new group
-  Future<String> createGroup(String name, List<String> permissions);
+  Future<String> createGroup(
+      String name, List<String> permissions, List<String> memberIds);
 
   // Update a group
   Future<void> updateGroup(Group group);

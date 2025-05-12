@@ -1,9 +1,9 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/routing/app_router.dart';
 import 'package:edconnect_admin/domain/entities/group.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
-import 'package:edconnect_admin/presentation/widgets/common/buttons/base_icon_button.dart';
 import 'package:edconnect_admin/presentation/widgets/common/cards/base_card.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ class GroupsTab extends ConsumerStatefulWidget {
 
 class _GroupsTabState extends ConsumerState<GroupsTab> {
   late TextEditingController _searchController;
-
+  final ScrollController groupsTabScrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -71,38 +71,38 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
     final isDarkMode = theme.isDarkMode;
     final groupsAsync = ref.watch(filteredGroupsProvider);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return CustomScrollView(
+      controller: groupsTabScrollController,
+      physics: const BouncingScrollPhysics(),
+      slivers: [
         // Header with search and add button
-        Row(
-          children: [
-            Expanded(
-              child: BaseInput(
-                label: 'Search groups',
-                leadingIcon: Icons.search,
-                controller: _searchController,
-                onChanged: (value) {
-                  ref.read(groupSearchQueryProvider.notifier).state = value;
-                },
+        SliverToBoxAdapter(
+          child: Row(
+            children: [
+              Expanded(
+                child: BaseInput(
+                  hint: 'Search groups...',
+                  leadingIcon: Icons.search,
+                  controller: _searchController,
+                  onChanged: (value) {
+                    ref.read(groupSearchQueryProvider.notifier).state = value;
+                  },
+                ),
               ),
-            ),
-            SizedBox(width: Foundations.spacing.md),
-            BaseButton(
-              label: 'Create Group',
-              prefixIcon: Icons.add_circle_outline,
-              variant: ButtonVariant.filled,
-              onPressed: () {
-                // Create group functionality will be implemented elsewhere
-              },
-            ),
-          ],
+              SizedBox(width: Foundations.spacing.md),
+              BaseButton(
+                label: 'Create Group',
+                prefixIcon: Icons.add_circle_outline,
+                variant: ButtonVariant.filled,
+                onPressed: () => AppRouter.toCreateGroup(context),
+              ),
+            ],
+          ),
         ),
 
         // Groups list
-        SizedBox(height: Foundations.spacing.lg),
-        Expanded(
-          // This provides the bounded height constraint
+        SliverToBoxAdapter(child: SizedBox(height: Foundations.spacing.lg)),
+        SliverToBoxAdapter(
           child: groupsAsync.when(
             data: (groups) {
               if (groups.isEmpty) {
@@ -122,12 +122,14 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
               }
 
               return BaseCard(
+                margin: EdgeInsets.zero,
                 variant: CardVariant.outlined,
                 padding: EdgeInsets.zero,
                 child: ClipRRect(
                   borderRadius: Foundations.borders.md,
                   child: ListView.separated(
                     shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     padding: EdgeInsets.zero,
                     itemCount: groups.length,
                     separatorBuilder: (context, index) => Divider(
@@ -170,102 +172,99 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
     required Group group,
     required bool isDarkMode,
   }) {
-    return Padding(
-      padding: EdgeInsets.all(Foundations.spacing.md),
-      child: Row(
-        children: [
-          // Group icon
-          CircleAvatar(
-            backgroundColor: isDarkMode
-                ? Foundations.darkColors.backgroundMuted
-                : Foundations.colors.backgroundMuted,
-            radius: 24,
-            child: Icon(
-              Icons.group,
-              color: isDarkMode
-                  ? Foundations.darkColors.textMuted
-                  : Foundations.colors.textMuted,
-            ),
-          ),
-          SizedBox(width: Foundations.spacing.md),
-
-          // Group details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  group.name,
-                  style: TextStyle(
-                    fontSize: Foundations.typography.base,
-                    fontWeight: Foundations.typography.medium,
-                    color: isDarkMode
-                        ? Foundations.darkColors.textPrimary
-                        : Foundations.colors.textPrimary,
-                  ),
+    return Material(
+      child: InkWell(
+        onTap: () => AppRouter.toGroupDetails(context, group: group),
+        hoverColor: isDarkMode
+            ? Foundations.darkColors.surfaceHover
+            : Foundations.colors.surfaceHover,
+        splashColor: isDarkMode
+            ? Foundations.darkColors.surfaceActive
+            : Foundations.colors.surfaceActive,
+        highlightColor: isDarkMode
+            ? Foundations.darkColors.surfaceActive.withOpacity(0.3)
+            : Foundations.colors.surfaceActive.withOpacity(0.3),
+        child: Padding(
+          padding: EdgeInsets.all(Foundations.spacing.md),
+          child: Row(
+            children: [
+              // Group icon
+              CircleAvatar(
+                backgroundColor: isDarkMode
+                    ? Foundations.darkColors.backgroundMuted
+                    : Foundations.colors.backgroundMuted,
+                radius: 24,
+                child: Icon(
+                  Icons.group,
+                  color: isDarkMode
+                      ? Foundations.darkColors.textMuted
+                      : Foundations.colors.textMuted,
                 ),
-                SizedBox(height: Foundations.spacing.xs),
-                Row(
+              ),
+              SizedBox(width: Foundations.spacing.md),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.people_outline,
-                      size: 16,
-                      color: isDarkMode
-                          ? Foundations.darkColors.textMuted
-                          : Foundations.colors.textMuted,
-                    ),
-                    SizedBox(width: Foundations.spacing.xs),
                     Text(
-                      '${group.memberIds.length} members',
+                      group.name,
                       style: TextStyle(
-                        fontSize: Foundations.typography.sm,
+                        fontSize: Foundations.typography.base,
+                        fontWeight: Foundations.typography.medium,
                         color: isDarkMode
-                            ? Foundations.darkColors.textMuted
-                            : Foundations.colors.textMuted,
+                            ? Foundations.darkColors.textPrimary
+                            : Foundations.colors.textPrimary,
                       ),
                     ),
-                    SizedBox(width: Foundations.spacing.md),
-                    Icon(
-                      Icons.vpn_key_outlined,
-                      size: 16,
-                      color: isDarkMode
-                          ? Foundations.darkColors.textMuted
-                          : Foundations.colors.textMuted,
-                    ),
-                    SizedBox(width: Foundations.spacing.xs),
-                    Text(
-                      '${group.permissions.length} permissions',
-                      style: TextStyle(
-                        fontSize: Foundations.typography.sm,
-                        color: isDarkMode
-                            ? Foundations.darkColors.textMuted
-                            : Foundations.colors.textMuted,
-                      ),
+                    SizedBox(height: Foundations.spacing.xs),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.people_outline,
+                          size: 16,
+                          color: isDarkMode
+                              ? Foundations.darkColors.textMuted
+                              : Foundations.colors.textMuted,
+                        ),
+                        SizedBox(width: Foundations.spacing.xs),
+                        Text(
+                          '${group.memberIds.length} members',
+                          style: TextStyle(
+                            fontSize: Foundations.typography.sm,
+                            color: isDarkMode
+                                ? Foundations.darkColors.textMuted
+                                : Foundations.colors.textMuted,
+                          ),
+                        ),
+                        SizedBox(width: Foundations.spacing.md),
+                        Icon(
+                          Icons.vpn_key_outlined,
+                          size: 16,
+                          color: isDarkMode
+                              ? Foundations.darkColors.textMuted
+                              : Foundations.colors.textMuted,
+                        ),
+                        SizedBox(width: Foundations.spacing.xs),
+                        Text(
+                          '${group.permissions.length} permissions',
+                          style: TextStyle(
+                            fontSize: Foundations.typography.sm,
+                            color: isDarkMode
+                                ? Foundations.darkColors.textMuted
+                                : Foundations.colors.textMuted,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ),
 
-          // Action buttons
-          BaseIconButton(
-            icon: Icons.edit_outlined,
-            tooltip: 'Edit Group',
-            onPressed: () {
-              // Edit group functionality will be implemented elsewhere
-            },
+              SizedBox(width: Foundations.spacing.sm),
+            ],
           ),
-          SizedBox(width: Foundations.spacing.sm),
-          BaseIconButton(
-            icon: Icons.delete_outline,
-            tooltip: 'Delete Group',
-            color: Foundations.colors.error,
-            onPressed: () {
-              // Delete group functionality will be implemented elsewhere
-            },
-          ),
-        ],
+        ),
       ),
     );
   }

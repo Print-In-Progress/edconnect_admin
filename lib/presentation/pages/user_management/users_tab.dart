@@ -1,6 +1,8 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
+import 'package:edconnect_admin/core/routing/app_router.dart';
 import 'package:edconnect_admin/domain/entities/group.dart';
+import 'package:edconnect_admin/domain/entities/permissions.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/cards/base_card.dart';
@@ -62,7 +64,7 @@ class UsersTab extends ConsumerStatefulWidget {
 
 class _UsersTabState extends ConsumerState<UsersTab> {
   late TextEditingController _searchController;
-
+  final usersTabScrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -93,46 +95,102 @@ class _UsersTabState extends ConsumerState<UsersTab> {
     final groups = ref.watch(allGroupsStreamProvider).value ?? [];
 
     // Create a flattened list of all possible permissions from groups
-    final allPermissions = groups.fold<Set<String>>(
-      {},
-      (permissions, group) => permissions..addAll(group.permissions),
-    ).toList();
-
+    final permissions = Permissions.allPermissionIds;
     return LayoutBuilder(builder: (context, constraints) {
       final isWideScreen = constraints.maxWidth > 800;
-      return ListView(
-        shrinkWrap: true,
-        children: [
+      return CustomScrollView(
+        controller: usersTabScrollController,
+        physics: const BouncingScrollPhysics(),
+        slivers: [
           // Filters section
-          BaseCard(
-            variant: CardVariant.outlined,
-            padding: EdgeInsets.all(Foundations.spacing.lg),
-            margin: EdgeInsets.zero,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Filters',
-                  style: TextStyle(
-                    fontSize: Foundations.typography.lg,
-                    fontWeight: Foundations.typography.semibold,
-                    color: isDarkMode
-                        ? Foundations.darkColors.textPrimary
-                        : Foundations.colors.textPrimary,
+          SliverToBoxAdapter(
+            child: BaseCard(
+              variant: CardVariant.outlined,
+              padding: EdgeInsets.all(Foundations.spacing.lg),
+              margin: EdgeInsets.zero,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Filters',
+                    style: TextStyle(
+                      fontSize: Foundations.typography.lg,
+                      fontWeight: Foundations.typography.semibold,
+                      color: isDarkMode
+                          ? Foundations.darkColors.textPrimary
+                          : Foundations.colors.textPrimary,
+                    ),
                   ),
-                ),
-                SizedBox(height: Foundations.spacing.md),
+                  SizedBox(height: Foundations.spacing.md),
 
-                // Filters row
-                if (isWideScreen) ...[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Search field
-                      Expanded(
-                        flex: 2,
-                        child: BaseInput(
-                          label: 'Search users',
+                  // Filters row
+                  if (isWideScreen) ...[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Search field
+                        Expanded(
+                          flex: 2,
+                          child: BaseInput(
+                            hint: 'Search users...',
+                            leadingIcon: Icons.search,
+                            controller: _searchController,
+                            onChanged: (value) {
+                              ref.read(userSearchQueryProvider.notifier).state =
+                                  value;
+                            },
+                          ),
+                        ),
+                        SizedBox(width: Foundations.spacing.md),
+
+                        // Group filter
+                        Expanded(
+                          flex: 1,
+                          child: BaseMultiSelect<String>(
+                            hint: 'Filter by group',
+                            options: groups
+                                .map((group) => SelectOption(
+                                    value: group.id, label: group.name))
+                                .toList(),
+                            values: selectedGroups,
+                            onChanged: (values) {
+                              ref.read(userGroupFilterProvider.notifier).state =
+                                  values;
+                            },
+                          ),
+                        ),
+                        SizedBox(width: Foundations.spacing.md),
+
+                        // Permission filter
+                        Expanded(
+                          flex: 1,
+                          child: BaseMultiSelect<String>(
+                            hint: 'Filter by permission',
+                            options: permissions.map((permission) {
+                              final permissionObj =
+                                  Permissions.getById(permission);
+                              final label =
+                                  permissionObj?.displayName ?? permission;
+                              return SelectOption(
+                                  value: permission, label: label);
+                            }).toList(),
+                            values: selectedPermissions,
+                            onChanged: (values) {
+                              ref
+                                  .read(userPermissionFilterProvider.notifier)
+                                  .state = values;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ] else ...[
+                    // Stacked layout for smaller screens
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        BaseInput(
+                          hint: 'Search users...',
                           leadingIcon: Icons.search,
                           controller: _searchController,
                           onChanged: (value) {
@@ -140,14 +198,9 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                                 value;
                           },
                         ),
-                      ),
-                      SizedBox(width: Foundations.spacing.md),
-
-                      // Group filter
-                      Expanded(
-                        flex: 1,
-                        child: BaseMultiSelect<String>(
-                          label: 'Filter by group',
+                        SizedBox(height: Foundations.spacing.md),
+                        BaseMultiSelect<String>(
+                          hint: 'Filter by group',
                           options: groups
                               .map((group) => SelectOption(
                                   value: group.id, label: group.name))
@@ -158,18 +211,17 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                                 values;
                           },
                         ),
-                      ),
-                      SizedBox(width: Foundations.spacing.md),
-
-                      // Permission filter
-                      Expanded(
-                        flex: 1,
-                        child: BaseMultiSelect<String>(
-                          label: 'Filter by permission',
-                          options: allPermissions
-                              .map((permission) => SelectOption(
-                                  value: permission, label: permission))
-                              .toList(),
+                        SizedBox(height: Foundations.spacing.md),
+                        BaseMultiSelect<String>(
+                          hint: 'Filter by permission',
+                          options: permissions.map((permission) {
+                            final permissionObj =
+                                Permissions.getById(permission);
+                            final label =
+                                permissionObj?.displayName ?? permission;
+                            return SelectOption(
+                                value: permission, label: label);
+                          }).toList(),
                           values: selectedPermissions,
                           onChanged: (values) {
                             ref
@@ -177,108 +229,65 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                                 .state = values;
                           },
                         ),
-                      ),
-                    ],
-                  ),
-                ] else ...[
-                  // Stacked layout for smaller screens
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BaseInput(
-                        label: 'Search users',
-                        leadingIcon: Icons.search,
-                        controller: _searchController,
-                        onChanged: (value) {
-                          ref.read(userSearchQueryProvider.notifier).state =
-                              value;
-                        },
-                      ),
-                      SizedBox(height: Foundations.spacing.md),
-                      BaseMultiSelect<String>(
-                        label: 'Filter by group',
-                        options: groups
-                            .map((group) => SelectOption(
-                                value: group.id, label: group.name))
-                            .toList(),
-                        values: selectedGroups,
-                        onChanged: (values) {
-                          ref.read(userGroupFilterProvider.notifier).state =
-                              values;
-                        },
-                      ),
-                      SizedBox(height: Foundations.spacing.md),
-                      BaseMultiSelect<String>(
-                        label: 'Filter by permission',
-                        options: allPermissions
-                            .map((permission) => SelectOption(
-                                value: permission, label: permission))
-                            .toList(),
-                        values: selectedPermissions,
-                        onChanged: (values) {
-                          ref
-                              .read(userPermissionFilterProvider.notifier)
-                              .state = values;
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
 
-                // Applied filters indicator
-                if (selectedGroups.isNotEmpty ||
-                    selectedPermissions.isNotEmpty) ...[
-                  SizedBox(height: Foundations.spacing.md),
-                  Wrap(
-                    spacing: Foundations.spacing.sm,
-                    runSpacing: Foundations.spacing.sm,
-                    children: [
-                      ...selectedGroups.map((groupId) {
-                        final group = groups.firstWhere(
-                          (g) => g.id == groupId,
-                          orElse: () => Group(
-                              id: groupId,
-                              name: 'Unknown Group',
-                              permissions: [],
-                              memberIds: []),
-                        );
-                        return BaseChip(
-                          label: 'Group: ${group.name}',
-                          variant: ChipVariant.primary,
-                          onDismissed: () {
-                            ref.read(userGroupFilterProvider.notifier).state =
-                                selectedGroups
-                                    .where((id) => id != groupId)
-                                    .toList();
-                          },
-                        );
-                      }),
-                      ...selectedPermissions.map((permission) => BaseChip(
-                            label: 'Permission: $permission',
-                            variant: ChipVariant.secondary,
+                  // Applied filters indicator
+                  if (selectedGroups.isNotEmpty ||
+                      selectedPermissions.isNotEmpty) ...[
+                    SizedBox(height: Foundations.spacing.md),
+                    Wrap(
+                      spacing: Foundations.spacing.sm,
+                      runSpacing: Foundations.spacing.sm,
+                      children: [
+                        ...selectedGroups.map((groupId) {
+                          final group = groups.firstWhere(
+                            (g) => g.id == groupId,
+                            orElse: () => Group(
+                                id: groupId,
+                                name: 'Unknown Group',
+                                permissions: [],
+                                memberIds: []),
+                          );
+                          return BaseChip(
+                            label: 'Group: ${group.name}',
+                            variant: ChipVariant.primary,
                             onDismissed: () {
-                              ref
-                                      .read(userPermissionFilterProvider.notifier)
-                                      .state =
-                                  selectedPermissions
-                                      .where((p) => p != permission)
+                              ref.read(userGroupFilterProvider.notifier).state =
+                                  selectedGroups
+                                      .where((id) => id != groupId)
                                       .toList();
                             },
-                          )),
-                    ],
-                  ),
+                          );
+                        }),
+                        ...selectedPermissions.map((permission) => BaseChip(
+                              label: 'Permission: $permission',
+                              variant: ChipVariant.secondary,
+                              onDismissed: () {
+                                ref
+                                        .read(userPermissionFilterProvider.notifier)
+                                        .state =
+                                    selectedPermissions
+                                        .where((p) => p != permission)
+                                        .toList();
+                              },
+                            )),
+                      ],
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
 
           // Users list
-          SizedBox(height: Foundations.spacing.md),
-          Expanded(
-            child: usersAsync.when(
-              data: (users) {
-                if (users.isEmpty) {
-                  return Center(
+          SliverToBoxAdapter(child: SizedBox(height: Foundations.spacing.md)),
+          usersAsync.when(
+            data: (users) {
+              if (users.isEmpty) {
+                return SliverToBoxAdapter(
+                  child: Center(
                     child: Text(
                       'No users match the current filters',
                       style: TextStyle(
@@ -288,10 +297,12 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                             : Foundations.colors.textMuted,
                       ),
                     ),
-                  );
-                }
+                  ),
+                );
+              }
 
-                return BaseCard(
+              return SliverToBoxAdapter(
+                child: BaseCard(
                   variant: CardVariant.outlined,
                   padding: EdgeInsets.zero,
                   margin: EdgeInsets.zero,
@@ -299,6 +310,7 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                     borderRadius: Foundations.borders.md,
                     child: ListView.separated(
                       shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.zero,
                       itemCount: users.length,
                       separatorBuilder: (context, index) => Divider(
@@ -314,10 +326,13 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                       },
                     ),
                   ),
-                );
-              },
-              loading: () => Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) => Center(
+                ),
+              );
+            },
+            loading: () => SliverToBoxAdapter(
+                child: Center(child: CircularProgressIndicator())),
+            error: (error, stackTrace) => Center(
+              child: SliverToBoxAdapter(
                 child: Text(
                   'Error loading users: ${error.toString()}',
                   style: TextStyle(
@@ -338,66 +353,89 @@ class _UsersTabState extends ConsumerState<UsersTab> {
     AppUser user,
     bool isDarkMode,
   ) {
-    return Padding(
-      padding: EdgeInsets.all(Foundations.spacing.md),
-      child: Row(
-        children: [
-          // User avatar or initials
-          CircleAvatar(
-            backgroundColor: isDarkMode
-                ? Foundations.darkColors.backgroundMuted
-                : Foundations.colors.backgroundMuted,
-            radius: 24,
-            child: Text(
-              user.initials,
-              style: TextStyle(
-                fontWeight: Foundations.typography.semibold,
-                color: isDarkMode
-                    ? Foundations.darkColors.textPrimary
-                    : Foundations.colors.textPrimary,
-              ),
-            ),
-          ),
-          SizedBox(width: Foundations.spacing.md),
-
-          // User details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user.fullName,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => AppRouter.toUserDetails(
+          context,
+          user: user,
+        ),
+        hoverColor: isDarkMode
+            ? Foundations.darkColors.surfaceHover
+            : Foundations.colors.surfaceHover,
+        splashColor: isDarkMode
+            ? Foundations.darkColors.surfaceActive
+            : Foundations.colors.surfaceActive,
+        highlightColor: isDarkMode
+            ? Foundations.darkColors.surfaceActive.withOpacity(0.3)
+            : Foundations.colors.surfaceActive.withOpacity(0.3),
+        child: Padding(
+          padding: EdgeInsets.all(Foundations.spacing.md),
+          child: Row(
+            children: [
+              // User avatar or initials
+              CircleAvatar(
+                backgroundColor: isDarkMode
+                    ? Foundations.darkColors.backgroundMuted
+                    : Foundations.colors.backgroundMuted,
+                radius: 24,
+                child: Text(
+                  user.initials,
                   style: TextStyle(
-                    fontSize: Foundations.typography.base,
-                    fontWeight: Foundations.typography.medium,
+                    fontWeight: Foundations.typography.semibold,
                     color: isDarkMode
                         ? Foundations.darkColors.textPrimary
                         : Foundations.colors.textPrimary,
                   ),
                 ),
-                SizedBox(height: Foundations.spacing.xs),
-                Text(
-                  user.email,
-                  style: TextStyle(
-                    fontSize: Foundations.typography.sm,
-                    color: isDarkMode
-                        ? Foundations.darkColors.textMuted
-                        : Foundations.colors.textMuted,
-                  ),
+              ),
+              SizedBox(width: Foundations.spacing.md),
+
+              // User details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.fullName,
+                      style: TextStyle(
+                        fontSize: Foundations.typography.base,
+                        fontWeight: Foundations.typography.medium,
+                        color: isDarkMode
+                            ? Foundations.darkColors.textPrimary
+                            : Foundations.colors.textPrimary,
+                      ),
+                    ),
+                    SizedBox(height: Foundations.spacing.xs),
+                    Text(
+                      user.email,
+                      style: TextStyle(
+                        fontSize: Foundations.typography.sm,
+                        color: isDarkMode
+                            ? Foundations.darkColors.textMuted
+                            : Foundations.colors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Account type indicator
+              if (user.accountType.isNotEmpty) ...[
+                BaseChip(
+                  label: switch (user.accountType) {
+                    'faculty' => 'Faculty & Staff',
+                    'parent' => 'Parent',
+                    'student' => 'Student',
+                    _ => 'User',
+                  },
+                  variant: ChipVariant.outlined,
+                  size: ChipSize.small,
                 ),
               ],
-            ),
+            ],
           ),
-
-          // Account type indicator
-          if (user.accountType.isNotEmpty) ...[
-            BaseChip(
-              label: user.accountType,
-              variant: ChipVariant.outlined,
-              size: ChipSize.small,
-            ),
-          ],
-        ],
+        ),
       ),
     );
   }

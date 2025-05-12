@@ -342,4 +342,13 @@ class FirebaseUserDataSource implements UserDataSource {
       }).toList();
     });
   }
+
+  @override
+  Future<void> updateUserPermissions(
+      String uid, List<String> permissions) async {
+    await _firestore
+        .collection(customerSpecificCollectionUsers)
+        .doc(uid)
+        .set({'permissions': permissions}, SetOptions(merge: true));
+  }
 }
