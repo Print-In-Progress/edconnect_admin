@@ -25,8 +25,9 @@ class GroupManagementUseCase {
   }
 
   // Group CRUD operations
-  Future<String> createGroup(String name, List<String> permissions) {
-    return _groupRepository.createGroup(name, permissions);
+  Future<String> createGroup(
+      String name, List<String> permissions, List<String> memberIds) {
+    return _groupRepository.createGroup(name, permissions, memberIds);
   }
 
   Future<void> updateGroup(Group group) {

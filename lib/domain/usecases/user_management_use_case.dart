@@ -17,4 +17,9 @@ class UserManagementUseCase {
     await _storageRepository.deleteAllUserFiles(userId);
     await _userRepository.deleteUserDocument(userId);
   }
+
+  Future<void> updateUserPermissions(
+      String uid, List<String> permissions) async {
+    await _userRepository.updateUserPermissions(uid, permissions);
+  }
 }

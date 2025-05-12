@@ -27,4 +27,7 @@ abstract class UserRepository {
 
   /// Stream of all users
   Stream<List<AppUser>> getAllUsersStream();
+
+  /// Update a user's direct permissions
+  Future<void> updateUserPermissions(String uid, List<String> permissions);
 }

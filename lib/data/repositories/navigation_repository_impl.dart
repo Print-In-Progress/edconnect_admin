@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/presentation/pages/user_management/user_management_page.dart';
 import 'package:flutter/material.dart';
 import '../../core/interfaces/navigation_repository.dart';
 import '../../domain/entities/navigation_item.dart';
@@ -20,7 +21,7 @@ class NavigationRepositoryImpl implements NavigationRepository {
   // Private method for creating navigation items, only called once
   List<NavigationItem> _createNavigationItems() {
     return [
-      NavigationItem(
+      const NavigationItem(
         id: 'articles',
         titleKey: 'homePageManageArticlesAdminMenuButton',
         icon: Icons.article_outlined,
@@ -32,7 +33,7 @@ class NavigationRepositoryImpl implements NavigationRepository {
           Permissions.createArticles,
         ],
       ),
-      NavigationItem(
+      const NavigationItem(
         id: 'events',
         titleKey: 'homePageManageEventsAdminMenuButton',
         icon: Icons.event_outlined,
@@ -44,14 +45,14 @@ class NavigationRepositoryImpl implements NavigationRepository {
           Permissions.createEvents,
         ],
       ),
-      NavigationItem(
+      const NavigationItem(
         id: 'users',
         titleKey: 'homePageManageManageUsersAdminMenuButton',
         icon: Icons.supervisor_account_outlined,
         selectedIcon: Icons.supervisor_account,
         requiredPermissions: [Permissions.admin, Permissions.userManagement],
       ),
-      NavigationItem(
+      const NavigationItem(
         id: 'surveys',
         titleKey: 'surveysPagesNavbarButtonLabel',
         icon: Icons.checklist_outlined,
@@ -63,7 +64,7 @@ class NavigationRepositoryImpl implements NavigationRepository {
           Permissions.createSurveys,
         ],
       ),
-      NavigationItem(
+      const NavigationItem(
         id: 'survey_sorter',
         titleKey: 'homePageSorterButtonLabel',
         icon: Icons.sort_outlined,
@@ -74,14 +75,14 @@ class NavigationRepositoryImpl implements NavigationRepository {
           Permissions.editSurveys,
         ],
       ),
-      NavigationItem(
+      const NavigationItem(
         id: 'digital_library',
         titleKey: 'homePagedigitalLibraryButtonLabel',
         icon: Icons.my_library_books_outlined,
         selectedIcon: Icons.my_library_books,
         requiredPermissions: [Permissions.admin, Permissions.digitalLibrary],
       ),
-      NavigationItem(
+      const NavigationItem(
         id: 'media',
         titleKey: 'homePageSavedMediaAdminMenuButton',
         icon: Icons.perm_media_outlined,
@@ -92,7 +93,7 @@ class NavigationRepositoryImpl implements NavigationRepository {
           Permissions.fileManagement,
         ],
       ),
-      NavigationItem(
+      const NavigationItem(
         id: 'push_notifications',
         titleKey: 'homePageSendPushNotificationsAdminMenuButton',
         icon: Icons.notifications_active_outlined,
@@ -102,14 +103,14 @@ class NavigationRepositoryImpl implements NavigationRepository {
           Permissions.pushNotifications,
         ],
       ),
-      NavigationItem(
+      const NavigationItem(
         id: 'admin_settings',
         titleKey: 'homePageAdminSettingsButtonLabel',
         icon: Icons.admin_panel_settings_outlined,
         selectedIcon: Icons.admin_panel_settings,
         requiredPermissions: [Permissions.admin],
       ),
-      NavigationItem(
+      const NavigationItem(
         id: 'dashboard',
         titleKey: 'homePageDashboardAdminMenuButton',
         icon: Icons.dashboard_outlined,
@@ -166,7 +167,7 @@ class NavigationRepositoryImpl implements NavigationRepository {
       case 'events':
         return const SamplePage(title: 'Events');
       case 'users':
-        return const SamplePage(title: 'Users');
+        return const UserManagementPage();
       case 'surveys':
         return const SamplePage(title: 'Surveys');
       case 'survey_sorter':

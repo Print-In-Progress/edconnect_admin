@@ -1,7 +1,9 @@
 import 'package:edconnect_admin/core/errors/domain_exception.dart';
+import 'package:edconnect_admin/domain/entities/group.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/domain/entities/storage_file.dart';
 import 'package:edconnect_admin/domain/entities/storage_module.dart';
+import 'package:edconnect_admin/domain/services/group_service.dart';
 import 'package:edconnect_admin/domain/usecases/auth/delete_account_use_case.dart';
 import 'package:edconnect_admin/domain/usecases/auth/sign_in_usecase.dart';
 import 'package:edconnect_admin/domain/usecases/auth/sign_out_use_case.dart';
@@ -396,6 +398,60 @@ final moduleStorageFilesProvider =
   return filesLists.expand((files) => files).toList();
 });
 
+// ----------------- GROUP MANAGEMENT ACTIONS -----------------
+class GroupManagementNotifier extends StateNotifier<AsyncValue<void>> {
+  final GroupService _groupService;
+
+  GroupManagementNotifier(this._groupService)
+      : super(const AsyncValue.data(null));
+
+  Future<void> updateGroup(Group group) async {
+    state = const AsyncValue.loading();
+    try {
+      await _groupService.updateGroup(group);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
+  Future<void> updateUserGroups(String userId, List<String> groupIds) async {
+    state = const AsyncValue.loading();
+    try {
+      await _groupService.updateUserGroups(userId, groupIds);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
+  Future<void> deleteGroup(String groupId) async {
+    state = const AsyncValue.loading();
+    try {
+      await _groupService.deleteGroup(groupId);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+
+  Future<void> createGroup(
+      String name, List<String> permissions, List<String> memberIds) async {
+    state = const AsyncValue.loading();
+    try {
+      await _groupService.createGroup(name, permissions, memberIds);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+    }
+  }
+}
+
+final groupManagementProvider =
+    StateNotifierProvider<GroupManagementNotifier, AsyncValue<void>>((ref) {
+  return GroupManagementNotifier(ref.watch(groupServiceProvider));
+});
+
 // ---------------- USER MANAGEMENT ACTIONS -----------------
 class UserManagementNotifier extends StateNotifier<AsyncValue<void>> {
   final UserManagementUseCase _useCase;
@@ -406,6 +462,24 @@ class UserManagementNotifier extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _useCase.deleteUser(userId);
+      state = const AsyncValue.data(null);
+    } catch (e, stack) {
+      state = AsyncValue.error(
+        DomainException(
+          code: ErrorCode.unexpected,
+          type: ExceptionType.unexpected,
+          originalError: e,
+        ),
+        stack,
+      );
+    }
+  }
+
+  Future<void> updateUserPermissions(
+      String userId, List<String> permissions) async {
+    state = const AsyncValue.loading();
+    try {
+      await _useCase.updateUserPermissions(userId, permissions);
       state = const AsyncValue.data(null);
     } catch (e, stack) {
       state = AsyncValue.error(

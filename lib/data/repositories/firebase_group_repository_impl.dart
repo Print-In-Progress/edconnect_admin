@@ -59,12 +59,13 @@ class FirebaseGroupRepositoryImpl implements GroupRepository {
   }
 
   @override
-  Future<String> createGroup(String name, List<String> permissions) async {
+  Future<String> createGroup(
+      String name, List<String> permissions, List<String> memberIds) async {
     try {
       return await _dataSource.createGroup({
         'name': name,
         'permissions': permissions,
-        'member_ids': [],
+        'member_ids': memberIds,
       });
     } catch (e) {
       throw DomainException(

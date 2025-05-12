@@ -134,4 +134,14 @@ class FirebaseUserRepositoryImpl implements UserRepository {
       throw ErrorHandler.handle(e);
     }
   }
+
+  @override
+  Future<void> updateUserPermissions(
+      String uid, List<String> permissions) async {
+    try {
+      await _userDataSource.updateUserPermissions(uid, permissions);
+    } catch (e) {
+      throw ErrorHandler.handle(e);
+    }
+  }
 }
