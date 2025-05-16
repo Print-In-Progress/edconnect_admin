@@ -1,6 +1,7 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/routing/app_router.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/pages/list/components/survey_card.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/pages/list/components/survey_empty_state.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/pages/list/components/survey_error_state.dart';
@@ -20,6 +21,7 @@ class SortingSurveysPage extends ConsumerWidget {
     final filterState = ref.watch(surveyFilterProvider);
     final surveysAsync = ref.watch(filteredSortingSurveysProvider);
     final theme = ref.watch(appThemeProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.isDarkMode
@@ -28,10 +30,10 @@ class SortingSurveysPage extends ConsumerWidget {
       body: Column(
         children: [
           BaseAppBar(
-            title: 'Sorting Surveys',
+            title: l10n.sortingSurvey(1),
             actions: [
               BaseButton(
-                label: 'Create Survey',
+                label: l10n.globalCreateButtonLabel(l10n.sortingSurvey(0)),
                 prefixIcon: Icons.add,
                 variant: ButtonVariant.filled,
                 onPressed: () => AppRouter.toCreateSortingSurvey(context),

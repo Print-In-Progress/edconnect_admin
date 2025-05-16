@@ -1,4 +1,6 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
+import 'package:edconnect_admin/core/providers/interface_providers.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/components/build_info_row.dart';
@@ -16,29 +18,40 @@ class StatisticsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final LocalizationRepository localizations =
+        ref.watch(localizationRepositoryProvider);
+
     return Column(
       children: [
-        const SectionHeader(
-            title: 'Statistics', icon: Icons.bar_chart_outlined),
+        SectionHeader(
+            title: l10n.globalStatisticsLabel, icon: Icons.bar_chart_outlined),
         SizedBox(height: Foundations.spacing.md),
         InfoCard(children: [
           InfoRow(
-            label: 'Parameters',
+            label: l10n.sortingModuleParameters,
             value: survey.parameters.length.toString(),
-            onTap: () => _showParametersDialog(context, survey.parameters),
+            onTap: () => _showParametersDialog(
+                context, survey.parameters, l10n, localizations),
           ),
           InfoRow(
-              label: 'Responses', value: survey.responses.length.toString()),
+              label: l10n.sortingModuleResponses(survey.responses.length),
+              value: survey.responses.length.toString()),
         ])
       ],
     );
   }
 
-  void _showParametersDialog(BuildContext context, List<dynamic> parameters) {
+  void _showParametersDialog(
+    BuildContext context,
+    List<dynamic> parameters,
+    AppLocalizations l10n,
+    LocalizationRepository localizations,
+  ) {
     Dialogs.show(
       context: context,
       variant: DialogVariant.info,
-      title: 'Survey Parameters',
+      title: l10n.sortingModuleParameters,
       actions: [
         BaseButton(
           label: AppLocalizations.of(context)!.globalOk,
@@ -49,13 +62,11 @@ class StatisticsSection extends ConsumerWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: survey.parameters.isEmpty
-            ? [Text('No parameters defined')]
+            ? [Text(l10n.sortingModuleNoParamsDefined)]
             : survey.parameters.map((param) {
                 String displayName =
                     param['name']?.toString() ?? 'Unnamed Parameter';
-                // Convert snake_case to readable format
                 displayName = displayName.replaceAll('_', ' ');
-                // Capitalize first letter of each word
                 displayName = displayName
                     .split(' ')
                     .map((word) => word.isNotEmpty
@@ -69,10 +80,11 @@ class StatisticsSection extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                          'Type: ${ParameterFormatter.formatParameterType(param['type'])}'),
+                          '${l10n.globalTypeLabel}: ${ParameterFormatter.formatParameterType(param['type'], localizations)}'),
                       Text(
-                          'Strategy: ${ParameterFormatter.formatParameterStrategy(param['strategy'])}'),
-                      Text('Priority: ${param['priority']} '),
+                          '${l10n.sortingModuleStrategy}: ${ParameterFormatter.formatParameterStrategy(param['strategy'], localizations)}'),
+                      Text(
+                          '${l10n.sortingModulePriorityLabel}: ${param['priority']} '),
                     ],
                   ),
                   leading: Icon(

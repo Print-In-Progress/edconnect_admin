@@ -1,7 +1,9 @@
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/core/utils/crypto_utils.dart';
 import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module/utils/parameter_formatter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
@@ -15,7 +17,6 @@ enum PageSize {
   a3,
 }
 
-// Add this extension for page size formatting
 extension PageSizeExtension on PageSize {
   String get label {
     switch (this) {
@@ -24,7 +25,7 @@ extension PageSizeExtension on PageSize {
       case PageSize.usLetter:
         return 'US Letter';
       case PageSize.legal:
-        return 'Legal';
+        return 'US Legal';
       case PageSize.a3:
         return 'A3';
     }
@@ -40,6 +41,7 @@ class PdfService {
       String lastName,
       String firstName,
       String email,
+      Map<String, String> localizedStrings,
       {pc.RSAPublicKey? publicKey}) async {
     final pdf = pw.Document();
     pdf.addPage(
@@ -52,13 +54,14 @@ class PdfService {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(
-                    'edConnect Registration Form',
+                    localizedStrings['globalEdConnectRegistrationForm']!,
                   ),
                 ],
               ),
             ),
             pw.SizedBox(height: 20),
-            pw.Text('edConnect Registration Form', textScaleFactor: 2),
+            pw.Text(localizedStrings['globalEdConnectRegistrationForm']!,
+                textScaleFactor: 2),
             pw.SizedBox(height: 10),
             pw.Text(
               orgName,
@@ -71,17 +74,17 @@ class PdfService {
                 pw.TableRow(
                   children: [
                     pw.Text(
-                      'Last Name',
+                      localizedStrings['globalLastNameTextFieldHintText']!,
                       style: pw.TextStyle(
                           fontSize: 14, fontWeight: pw.FontWeight.bold),
                     ),
                     pw.Text(
-                      'First Name',
+                      localizedStrings['globalFirstNameTextFieldHintText']!,
                       style: pw.TextStyle(
                           fontSize: 14, fontWeight: pw.FontWeight.bold),
                     ),
                     pw.Text(
-                      'Email',
+                      localizedStrings['globalEmailLabel']!,
                       style: pw.TextStyle(
                           fontSize: 14, fontWeight: pw.FontWeight.bold),
                     ),
@@ -112,9 +115,8 @@ class PdfService {
             ),
             pw.SizedBox(height: 10),
             pw.Text('edConnect User ID: $uid',
-                style: pw.TextStyle(fontSize: 14)),
+                style: const pw.TextStyle(fontSize: 14)),
             pw.SizedBox(height: 30),
-            // free_response x, dropdown x, checkbox x, checkbox_assign_group x, signature, file_upload x, infobox, date x
             for (var field in flattenedRegistrationList)
               pw.Table(
                 columnWidths: {
@@ -122,7 +124,7 @@ class PdfService {
                   1: const pw.FlexColumnWidth(2),
                 },
                 border: const pw.TableBorder(
-                  bottom: pw.BorderSide(width: 0.5), // Define a thin border
+                  bottom: pw.BorderSide(width: 0.5),
                 ),
                 children: [
                   if (field.type == 'free_response')
@@ -206,14 +208,14 @@ class PdfService {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      'This form was cryptographically signed by the user with the edConnect System.',
-                      style: pw.TextStyle(
+                      localizedStrings['globalFormCryptographicallySigned']!,
+                      style: const pw.TextStyle(
                         fontSize: 10,
                       ),
                     ),
                     pw.Text(
-                      'The public key fingerprint is: ${generatePublicKeyFingerprint(publicKey!)}',
-                      style: pw.TextStyle(
+                      'Public Key Fingerprint: ${generatePublicKeyFingerprint(publicKey!)}',
+                      style: const pw.TextStyle(
                         fontSize: 10,
                       ),
                     ),
@@ -229,6 +231,9 @@ class PdfService {
 }
 
 class SortingResultsPdfService {
+  final LocalizationRepository _localizationRepository;
+  SortingResultsPdfService(this._localizationRepository);
+
   Future<Uint8List> generateClassDistributionPdf({
     required SortingSurvey survey,
     required Map<String, List<String>> currentResults,
@@ -242,8 +247,8 @@ class SortingResultsPdfService {
   }) async {
     final pdf = pw.Document();
     final pageFormat = _getPageFormat(pageSize);
-
-    // Add title page with summary statistics ONLY if requested
+    final localizedStrings =
+        _localizationRepository.getSortingModulePdfStrings();
     if (includeSummaryStatistics) {
       pdf.addPage(
         pw.Page(
@@ -254,11 +259,9 @@ class SortingResultsPdfService {
             children: [
               _buildHeader(survey.title),
               pw.SizedBox(height: 20),
-
-              // Title and description
               pw.Center(
                 child: pw.Text(
-                  'Class Distribution Results',
+                  localizedStrings['globalClassDistributionResults']!,
                   style: pw.TextStyle(
                     fontSize: 20,
                     fontWeight: pw.FontWeight.bold,
@@ -288,25 +291,21 @@ class SortingResultsPdfService {
                   ),
                 ),
               pw.SizedBox(height: 20),
-
-              // Summary statistics section
-              _buildSummaryStatistics(survey, currentResults, allUsers),
+              _buildSummaryStatistics(
+                  survey, currentResults, allUsers, localizedStrings),
             ],
           ),
         ),
       );
     }
 
-    // Get selected classes
     final selectedClassNames = currentResults.keys
         .where((className) => selectedClasses[className] == true)
         .toList();
 
-    // Create pages for each class
     for (final className in selectedClassNames) {
       final studentIds = currentResults[className]!;
 
-      // Only add class statistics page if requested
       if (showClassStatistics) {
         pdf.addPage(
           pw.Page(
@@ -317,8 +316,6 @@ class SortingResultsPdfService {
               children: [
                 _buildHeader(survey.title),
                 pw.SizedBox(height: 10),
-
-                // Class header
                 pw.Container(
                   padding: const pw.EdgeInsets.symmetric(vertical: 5),
                   decoration: pw.BoxDecoration(
@@ -340,7 +337,9 @@ class SortingResultsPdfService {
                           ),
                         ),
                         pw.Text(
-                          '${studentIds.length} students',
+                          _localizationRepository.formatParameterizedString(
+                              'sortingModuleNumOfStudents',
+                              {'count': studentIds.length.toString()}),
                           style: const pw.TextStyle(fontSize: 12),
                         ),
                       ],
@@ -348,36 +347,27 @@ class SortingResultsPdfService {
                   ),
                 ),
                 pw.SizedBox(height: 10),
-
-                // Class statistics
                 _buildClassStatistics(_calculateClassStats(studentIds, survey),
-                    survey, includeGender),
+                    survey, includeGender, localizedStrings),
               ],
             ),
           ),
         );
       }
 
-      // Calculate optimal number of students per page based on page size and number of columns
-      final int columnCount = 1 + // Name column
+      final int columnCount = 1 +
           (includeGender && survey.askBiologicalSex ? 1 : 0) +
           selectedParameters.values.where((selected) => selected).length;
 
-      // Adjust students per page based on page size and column count
       int studentsPerPage;
       if (columnCount <= 2) {
-        studentsPerPage = pageSize == PageSize.a3
-            ? 40
-            : 30; // More rows possible with fewer columns
+        studentsPerPage = pageSize == PageSize.a3 ? 40 : 30;
       } else if (columnCount <= 4) {
         studentsPerPage = pageSize == PageSize.a3 ? 35 : 25;
       } else {
-        studentsPerPage = pageSize == PageSize.a3
-            ? 30
-            : 20; // Fewer rows possible with many columns
+        studentsPerPage = pageSize == PageSize.a3 ? 30 : 20;
       }
 
-      // Split student list into chunks for the table
       for (int i = 0; i < studentIds.length; i += studentsPerPage) {
         final endIndex = (i + studentsPerPage < studentIds.length)
             ? i + studentsPerPage
@@ -388,17 +378,20 @@ class SortingResultsPdfService {
         pdf.addPage(
           pw.Page(
             pageFormat: pageFormat,
-            // Reduce margins to maximize table space
             margin: const pw.EdgeInsets.all(30),
             build: (context) => pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                // Compact header for student tables
                 pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
                     pw.Text(
-                      '$className - Students ${i + 1} to $endIndex of ${studentIds.length}',
+                      _localizationRepository.formatParameterizedString(
+                          'sortingModuleStudentXToYOfZ', {
+                        'currentPage': (i + 1).toString(),
+                        'totalPages': endIndex.toString(),
+                        'count': studentIds.length.toString(),
+                      }),
                       style: pw.TextStyle(
                         fontSize: 12,
                         fontWeight: pw.FontWeight.bold,
@@ -413,8 +406,6 @@ class SortingResultsPdfService {
                 pw.SizedBox(height: 5),
                 pw.Divider(),
                 pw.SizedBox(height: 5),
-
-                // Students table - expanded to fill maximum space
                 pw.Expanded(
                   child: _buildStudentsTable(
                     studentIds: pageStudents,
@@ -423,10 +414,9 @@ class SortingResultsPdfService {
                     includeGender: includeGender,
                     selectedParameters: selectedParameters,
                     currentResults: currentResults,
+                    localizedStrings: localizedStrings,
                   ),
                 ),
-
-                // Footer
                 pw.SizedBox(height: 5),
                 pw.Divider(),
                 _buildFooter(context.pageNumber, context.pagesCount),
@@ -442,7 +432,7 @@ class SortingResultsPdfService {
 
   pw.Widget _buildHeader(String surveyTitle) {
     return pw.Container(
-      decoration: pw.BoxDecoration(
+      decoration: const pw.BoxDecoration(
         border: pw.Border(
             bottom: pw.BorderSide(width: 1, color: PdfColors.grey300)),
       ),
@@ -468,7 +458,7 @@ class SortingResultsPdfService {
     return pw.Container(
       margin: const pw.EdgeInsets.only(top: 10),
       padding: const pw.EdgeInsets.only(top: 10),
-      decoration: pw.BoxDecoration(
+      decoration: const pw.BoxDecoration(
         border:
             pw.Border(top: pw.BorderSide(width: 1, color: PdfColors.grey300)),
       ),
@@ -480,7 +470,11 @@ class SortingResultsPdfService {
             style: const pw.TextStyle(fontSize: 10),
           ),
           pw.Text(
-            'Page $pageNumber of $pageCount',
+            _localizationRepository
+                .formatParameterizedString('sortingModulePageXofY', {
+              'currentPage': pageNumber.toString(),
+              'totalPages': pageCount.toString(),
+            }),
             style: const pw.TextStyle(fontSize: 10),
           ),
         ],
@@ -489,19 +483,16 @@ class SortingResultsPdfService {
   }
 
   pw.Widget _buildSummaryStatistics(
-    SortingSurvey survey,
-    Map<String, List<String>> currentResults,
-    List<AppUser> allUsers,
-  ) {
-    // Calculate overall statistics
+      SortingSurvey survey,
+      Map<String, List<String>> currentResults,
+      List<AppUser> allUsers,
+      Map<String, String> localizedStrings) {
     final totalClasses = currentResults.length;
     final totalStudents =
         currentResults.values.fold(0, (sum, students) => sum + students.length);
     final averagePerClass = totalClasses > 0
         ? (totalStudents / totalClasses).toStringAsFixed(1)
         : '0';
-
-    // Calculate preference satisfaction statistics
     final satisfactionStats =
         _calculatePreferenceSatisfaction(survey, currentResults);
     final satisfiedPrefs = satisfactionStats['satisfiedPreferences'] as int;
@@ -511,21 +502,18 @@ class SortingResultsPdfService {
     final studentsWithPreferences =
         satisfactionStats['studentsWithPreferences'] as int;
 
-    // Calculate satisfaction rates
     final satisfactionRate = totalPrefs > 0
-        ? (satisfiedPrefs / totalPrefs * 100).toStringAsFixed(1) + '%'
+        ? '${(satisfiedPrefs / totalPrefs * 100).toStringAsFixed(1)}%'
         : '0%';
     final studentSatisfactionRate = studentsWithPreferences > 0
-        ? (studentsWithSatisfiedPrefs / studentsWithPreferences * 100)
-                .toStringAsFixed(1) +
-            '%'
+        ? '${(studentsWithSatisfiedPrefs / studentsWithPreferences * 100).toStringAsFixed(1)}%'
         : '0%';
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Text(
-          'Summary Statistics',
+          localizedStrings['sortingModuleSummaryStatisticsLabel']!,
           style: pw.TextStyle(
             fontSize: 14,
             fontWeight: pw.FontWeight.bold,
@@ -539,14 +527,14 @@ class SortingResultsPdfService {
             1: const pw.FlexColumnWidth(1),
           },
           children: [
-            // Class distribution
             pw.TableRow(
               decoration: const pw.BoxDecoration(color: PdfColors.grey200),
               children: [
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(5),
                   child: pw.Text(
-                    'Class Distribution',
+                    localizedStrings[
+                        'sortingModuleClassDistributionResultsLabel']!,
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                   ),
                 ),
@@ -560,7 +548,8 @@ class SortingResultsPdfService {
               children: [
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(5),
-                  child: pw.Text('Total Classes'),
+                  child: pw.Text(
+                      localizedStrings['sortingModuleTotalClassesLabel']!),
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(5),
@@ -572,7 +561,8 @@ class SortingResultsPdfService {
               children: [
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(5),
-                  child: pw.Text('Total Students'),
+                  child: pw.Text(
+                      localizedStrings['sortingModuleTotalStudentsLabel']!),
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(5),
@@ -584,7 +574,8 @@ class SortingResultsPdfService {
               children: [
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(5),
-                  child: pw.Text('Average Students per Class'),
+                  child: pw.Text(localizedStrings[
+                      'sortingModuleAverageStudentsPerClassLabel']!),
                 ),
                 pw.Padding(
                   padding: const pw.EdgeInsets.all(5),
@@ -592,8 +583,6 @@ class SortingResultsPdfService {
                 ),
               ],
             ),
-
-            // Preference satisfaction
             if (survey.maxPreferences != null) ...[
               pw.TableRow(
                 decoration: const pw.BoxDecoration(color: PdfColors.grey200),
@@ -601,7 +590,8 @@ class SortingResultsPdfService {
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(5),
                     child: pw.Text(
-                      'Preference Satisfaction',
+                      localizedStrings[
+                          'sortingModulePreferencesStatisticsLabel']!,
                       style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                     ),
                   ),
@@ -615,7 +605,8 @@ class SortingResultsPdfService {
                 children: [
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(5),
-                    child: pw.Text('Preferences Satisfied'),
+                    child: pw.Text(localizedStrings[
+                        'sortingModulePreferencesSatisfiedLabel']!),
                   ),
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(5),
@@ -629,7 +620,9 @@ class SortingResultsPdfService {
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(5),
                     child: pw.Text(
-                        'Students with at least one preference satisfied'),
+                      localizedStrings[
+                          'sortingModuleStudentsWithAtLeastOnePreferenceSatisfiedLabel']!,
+                    ),
                   ),
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(5),
@@ -649,10 +642,10 @@ class SortingResultsPdfService {
     Map<String, dynamic> stats,
     SortingSurvey survey,
     bool includeGender,
+    Map<String, String> localizedStrings,
   ) {
     final columns = <pw.TableRow>[];
 
-    // Add header row
     columns.add(
       pw.TableRow(
         decoration: const pw.BoxDecoration(color: PdfColors.grey200),
@@ -660,14 +653,14 @@ class SortingResultsPdfService {
           pw.Padding(
             padding: const pw.EdgeInsets.all(5),
             child: pw.Text(
-              'Parameter',
+              localizedStrings['sortingModuleParametersLabel']!,
               style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
             ),
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(5),
             child: pw.Text(
-              'Distribution',
+              localizedStrings['sortingModuleParameterDistributionLabel']!,
               style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
             ),
           ),
@@ -675,7 +668,6 @@ class SortingResultsPdfService {
       ),
     );
 
-    // Add gender distribution if enabled
     if (includeGender && survey.askBiologicalSex) {
       final genderStats = stats['gender'] as Map<String, int>;
       final total = genderStats.values.fold(0, (sum, count) => sum + count);
@@ -683,27 +675,27 @@ class SortingResultsPdfService {
       if (total > 0) {
         final genderText = StringBuffer();
 
-        // Format male count
         if (genderStats['m'] != null && genderStats['m']! > 0) {
           final percentage =
               (genderStats['m']! / total * 100).toStringAsFixed(1);
-          genderText.write('Male: ${genderStats['m']} ($percentage%)');
+          genderText.write(
+              '${localizedStrings['globalMaleLabel']}: ${genderStats['m']} ($percentage%)');
         }
 
-        // Format female count
         if (genderStats['f'] != null && genderStats['f']! > 0) {
           if (genderText.isNotEmpty) genderText.write(', ');
           final percentage =
               (genderStats['f']! / total * 100).toStringAsFixed(1);
-          genderText.write('Female: ${genderStats['f']} ($percentage%)');
+          genderText.write(
+              '${localizedStrings['globalFemaleLabel']}: ${genderStats['f']} ($percentage%)');
         }
 
-        // Format non-binary count
         if (genderStats['nb'] != null && genderStats['nb']! > 0) {
           if (genderText.isNotEmpty) genderText.write(', ');
           final percentage =
               (genderStats['nb']! / total * 100).toStringAsFixed(1);
-          genderText.write('Non-Binary: ${genderStats['nb']} ($percentage%)');
+          genderText.write(
+              '${localizedStrings['globalNonBinaryLabel']}: ${genderStats['nb']} ($percentage%)');
         }
 
         columns.add(
@@ -711,7 +703,7 @@ class SortingResultsPdfService {
             children: [
               pw.Padding(
                 padding: const pw.EdgeInsets.all(5),
-                child: pw.Text('Gender'),
+                child: pw.Text(localizedStrings['globalBiologicalSexLabel']!),
               ),
               pw.Padding(
                 padding: const pw.EdgeInsets.all(5),
@@ -723,11 +715,11 @@ class SortingResultsPdfService {
       }
     }
 
-    // Add binary parameters
     final binaryParams =
         stats['binary_params'] as Map<String, Map<String, int>>;
     for (final entry in binaryParams.entries) {
-      final paramName = _formatParamName(entry.key);
+      final paramName =
+          ParameterFormatter.formatParameterNameForDisplay(entry.key);
       final counts = entry.value;
       final total = counts.values.fold(0, (sum, count) => sum + count);
 
@@ -738,7 +730,7 @@ class SortingResultsPdfService {
         final noPercentage = (noCount / total * 100).toStringAsFixed(1);
 
         final distributionText =
-            'Yes: $yesCount ($yesPercentage%), No: $noCount ($noPercentage%)';
+            '${localizedStrings['globalYes']}: $yesCount ($yesPercentage%), ${localizedStrings['globalNo']}: $noCount ($noPercentage%)';
 
         columns.add(
           pw.TableRow(
@@ -757,7 +749,6 @@ class SortingResultsPdfService {
       }
     }
 
-    // Build the table if we have any data rows
     if (columns.length > 1) {
       return pw.Table(
         border: pw.TableBorder.all(color: PdfColors.grey300),
@@ -768,7 +759,7 @@ class SortingResultsPdfService {
         children: columns,
       );
     } else {
-      return pw.Container(); // Empty container if no statistics
+      return pw.Container();
     }
   }
 
@@ -779,34 +770,32 @@ class SortingResultsPdfService {
     required bool includeGender,
     required Map<String, bool> selectedParameters,
     required Map<String, List<String>> currentResults,
+    required Map<String, String> localizedStrings,
   }) {
-    // Create a more space-efficient table
     final headerRow = [
       pw.Container(
         padding: const pw.EdgeInsets.symmetric(vertical: 3, horizontal: 2),
         color: PdfColors.grey200,
         child: pw.Text(
-          'Student Name',
+          localizedStrings['globalName']!,
           style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 14),
         ),
       ),
     ];
 
-    // Add gender header if included
     if (includeGender && survey.askBiologicalSex) {
       headerRow.add(
         pw.Container(
           padding: const pw.EdgeInsets.symmetric(vertical: 3, horizontal: 2),
           color: PdfColors.grey200,
           child: pw.Text(
-            'Gender',
+            localizedStrings['globalBiologicalSexLabel']!,
             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
           ),
         ),
       );
     }
 
-    // Add parameter headers if included
     for (final param in survey.parameters) {
       final paramName = param['name'] as String;
       if (paramName != 'sex' && selectedParameters[paramName] == true) {
@@ -815,7 +804,7 @@ class SortingResultsPdfService {
             padding: const pw.EdgeInsets.symmetric(vertical: 3, horizontal: 2),
             color: PdfColors.grey200,
             child: pw.Text(
-              _formatParamName(paramName),
+              ParameterFormatter.formatParameterNameForDisplay(paramName),
               style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
             ),
           ),
@@ -823,18 +812,14 @@ class SortingResultsPdfService {
       }
     }
 
-    // Create data rows
     final List<List<pw.Widget>> rows = [headerRow];
 
-    // Add student rows
     for (final studentId in studentIds) {
       final row = <pw.Widget>[];
 
-      // Get student name
       final user = allUsers.firstWhere(
         (u) => u.id == studentId,
         orElse: () {
-          // Check if it's a manual entry
           final response = survey.responses[studentId];
           if (response != null && response['_manual_entry'] == true) {
             return AppUser(
@@ -863,25 +848,21 @@ class SortingResultsPdfService {
         },
       );
 
-      // Add name
       row.add(
         pw.Container(
           padding: const pw.EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-          child: pw.Text(user.fullName,
-              style: const pw.TextStyle(
-                  fontSize: 12) // fontWeight: pw.FontWeight.bold,
-              ),
+          child:
+              pw.Text(user.fullName, style: const pw.TextStyle(fontSize: 12)),
         ),
       );
 
-      // Get student response
       final response = survey.responses[studentId];
 
-      // Add gender if included
       if (includeGender && survey.askBiologicalSex) {
         String sexValue = 'Unknown';
         if (response != null && response.containsKey('sex')) {
-          sexValue = _formatSex(response['sex'] as String? ?? 'unknown');
+          sexValue = ParameterFormatter.formatSexForDisplay(
+              response['sex'] as String? ?? 'unknown', _localizationRepository);
         }
 
         row.add(
@@ -892,7 +873,6 @@ class SortingResultsPdfService {
         );
       }
 
-      // Add parameters if included
       for (final param in survey.parameters) {
         final paramName = param['name'] as String;
         if (paramName != 'sex' && selectedParameters[paramName] == true) {
@@ -902,7 +882,6 @@ class SortingResultsPdfService {
             final paramValue = response[paramName];
 
             if (param['type'] == 'binary') {
-              // Format binary value
               if (paramValue.toString().toLowerCase() == 'yes' ||
                   paramValue.toString().toLowerCase() == 'true' ||
                   paramValue.toString() == '1') {
@@ -915,8 +894,8 @@ class SortingResultsPdfService {
                 value = paramValue.toString();
               }
             } else {
-              // Categorical parameter
-              value = _formatParamName(paramValue.toString());
+              value = ParameterFormatter.formatParameterNameForDisplay(
+                  paramValue.toString());
             }
           }
 
@@ -924,9 +903,7 @@ class SortingResultsPdfService {
             pw.Container(
               padding:
                   const pw.EdgeInsets.symmetric(vertical: 2, horizontal: 2),
-              child: pw.Text(value, style: const pw.TextStyle(fontSize: 9)
-                  // fontWeight: pw.FontWeight.bold,
-                  ),
+              child: pw.Text(value, style: const pw.TextStyle(fontSize: 9)),
             ),
           );
         }
@@ -935,21 +912,16 @@ class SortingResultsPdfService {
       rows.add(row);
     }
 
-    // Calculate column widths - more efficient space usage
     final Map<int, pw.TableColumnWidth> columnWidths = {};
 
-    // Name column gets proportionally more space
     columnWidths[0] = const pw.FlexColumnWidth(2.5);
 
-    // Other columns get equal remaining space
     for (int i = 1; i < headerRow.length; i++) {
       columnWidths[i] = const pw.FlexColumnWidth(1);
     }
 
-    // Build the table with optimized column widths
     return pw.Expanded(
       child: pw.Container(
-        // Set alignment to top to prevent centering the table vertically
         alignment: pw.Alignment.topCenter,
         child: pw.Table(
           border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
@@ -964,13 +936,10 @@ class SortingResultsPdfService {
 
   Map<String, dynamic> _calculateClassStats(
       List<String> studentIds, SortingSurvey survey) {
-    // Gender distribution
     Map<String, int> genderCounts = {'m': 0, 'f': 0, 'nb': 0, 'unknown': 0};
 
-    // Binary parameters (yes/no questions)
     Map<String, Map<String, int>> binaryParams = {};
 
-    // Initialize binary parameter counters from survey parameters
     for (var param in survey.parameters) {
       if (param['type'] == 'binary') {
         String paramName = param['name'];
@@ -978,12 +947,10 @@ class SortingResultsPdfService {
       }
     }
 
-    // Count responses for each student
     for (String studentId in studentIds) {
       final response = survey.responses[studentId];
 
       if (response != null) {
-        // Count gender
         String sex = response['sex'] as String? ?? 'unknown';
         if (genderCounts.containsKey(sex)) {
           genderCounts[sex] = genderCounts[sex]! + 1;
@@ -991,7 +958,6 @@ class SortingResultsPdfService {
           genderCounts['unknown'] = genderCounts['unknown']! + 1;
         }
 
-        // Count binary parameters
         for (String paramName in binaryParams.keys) {
           String value =
               (response[paramName] ?? 'unknown').toString().toLowerCase();
@@ -1022,11 +988,9 @@ class SortingResultsPdfService {
     Set<String> studentsWithSatisfiedPrefs = {};
     Set<String> studentsWithPreferences = {};
 
-    // Loop through each class and its students
     for (final entry in currentResults.entries) {
       final studentsInClass = Set<String>.from(entry.value);
 
-      // Check each student's preferences
       for (final studentId in entry.value) {
         final response = survey.responses[studentId];
         if (response == null) continue;
@@ -1034,30 +998,25 @@ class SortingResultsPdfService {
         final prefs = response['prefs'] as List?;
         if (prefs == null || prefs.isEmpty) continue;
 
-        // Count how many preferences are satisfied for this student
         int studentSatisfiedPrefs = 0;
         int studentTotalPrefs = 0;
 
         for (final pref in prefs) {
           if (pref is String) {
             studentTotalPrefs++;
-            // Check if preferred student is in the same class
             if (studentsInClass.contains(pref)) {
               studentSatisfiedPrefs++;
             }
           }
         }
 
-        // Track students who have preferences
         if (studentTotalPrefs > 0) {
           studentsWithPreferences.add(studentId);
         }
 
-        // Update counters
         totalPreferences += studentTotalPrefs;
         satisfiedPreferences += studentSatisfiedPrefs;
 
-        // Track students with at least one preference satisfied
         if (studentSatisfiedPrefs > 0) {
           studentsWithSatisfiedPrefs.add(studentId);
         }
@@ -1082,28 +1041,6 @@ class SortingResultsPdfService {
         return PdfPageFormat.legal;
       case PageSize.a3:
         return PdfPageFormat.a3;
-    }
-  }
-
-  String _formatParamName(String name) {
-    return name
-        .split('_')
-        .map((word) => word.isNotEmpty
-            ? '${word[0].toUpperCase()}${word.substring(1)}'
-            : '')
-        .join(' ');
-  }
-
-  String _formatSex(String sex) {
-    switch (sex) {
-      case 'm':
-        return 'Male';
-      case 'f':
-        return 'Female';
-      case 'nb':
-        return 'Non-Binary';
-      default:
-        return 'Unknown';
     }
   }
 }

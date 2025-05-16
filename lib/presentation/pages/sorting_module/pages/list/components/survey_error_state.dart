@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/errors/domain_exception.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
@@ -13,6 +14,8 @@ class SurveyErrorState extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(appThemeProvider);
+    final l10n = AppLocalizations.of(context)!;
+
     return Center(
       child: Center(
         child: Column(
@@ -49,7 +52,7 @@ class SurveyErrorState extends ConsumerWidget {
               ],
             ] else ...[
               Text(
-                'An unexpected error occurred',
+                l10n.errorUnexpected,
                 style: TextStyle(
                   fontSize: Foundations.typography.lg,
                   fontWeight: Foundations.typography.semibold,
@@ -71,11 +74,10 @@ class SurveyErrorState extends ConsumerWidget {
             ],
             SizedBox(height: Foundations.spacing.lg),
             BaseButton(
-              label: 'Retry',
+              label: l10n.globalRetry,
               prefixIcon: Icons.refresh,
               variant: ButtonVariant.outlined,
               onPressed: () {
-                // Invalidate the provider to trigger a refresh
                 ref.invalidate(sortingSurveysProvider);
               },
             ),

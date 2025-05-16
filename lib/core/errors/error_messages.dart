@@ -32,7 +32,8 @@ extension ErrorMessages on DomainException {
       ErrorCode.groupNotFound => l10n.errorGroupNotFound,
       ErrorCode.groupUpdateFailed => l10n.errorGroupUpdateFailed,
       ErrorCode.groupDeleteFailed => l10n.errorGroupDeleteFailed,
-      ErrorCode.groupCreateFailed => l10n.errorGroupCreateFailed,
+      ErrorCode.groupCreateFailed =>
+        l10n.errorCreateFailed(l10n.globalGroupLabel(1)),
       ErrorCode.invalidGroupOperation => l10n.errorInvalidGroupOperation,
       ErrorCode.userGroupUpdateFailed => l10n.errorUserGroupUpdateFailed,
 

@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/core/errors/domain_exception.dart';
 import 'package:edconnect_admin/domain/entities/group.dart';
+import 'package:edconnect_admin/domain/entities/permissions.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/domain/entities/storage_file.dart';
 import 'package:edconnect_admin/domain/entities/storage_module.dart';
@@ -450,6 +451,23 @@ class GroupManagementNotifier extends StateNotifier<AsyncValue<void>> {
 final groupManagementProvider =
     StateNotifierProvider<GroupManagementNotifier, AsyncValue<void>>((ref) {
   return GroupManagementNotifier(ref.watch(groupServiceProvider));
+});
+
+final createGroupNameProvider = StateProvider.autoDispose<String>((ref) => '');
+final createGroupMembersProvider =
+    StateProvider.autoDispose<List<String>>((ref) => []);
+final createGroupPermissionsProvider =
+    StateProvider.autoDispose<List<String>>((ref) => []);
+
+final createPermissionCategoriesProvider =
+    Provider.autoDispose<Map<PermissionCategory, List<Permission>>>((ref) {
+  final categories = <PermissionCategory, List<Permission>>{};
+
+  for (final category in PermissionCategory.values) {
+    categories[category] = Permissions.getByCategory(category);
+  }
+
+  return categories;
 });
 
 // ---------------- USER MANAGEMENT ACTIONS -----------------

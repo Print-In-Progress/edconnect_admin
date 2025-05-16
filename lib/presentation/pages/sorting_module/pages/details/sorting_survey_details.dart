@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edconnect_admin/core/design_system/foundations.dart';
@@ -24,8 +25,8 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
     final theme = ref.watch(appThemeProvider);
     final isInitialLoading = ref.watch(surveyLoadingStateProvider);
     final notifierState = ref.watch(sortingSurveyNotifierProvider);
+    final l10n = AppLocalizations.of(context)!;
 
-    // Only watch the survey data if not in initial loading state
     final surveyAsync = isInitialLoading
         ? const AsyncValue<SortingSurvey?>.loading()
         : ref.watch(selectedSortingSurveyProvider(surveyId));
@@ -42,18 +43,21 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
           : Foundations.colors.background,
       appBar: BaseAppBar(
         title: isInitialLoading
-            ? 'Loading Survey...'
+            ? l10n.globalLoadingWithName(l10n.sortingSurvey(1))
             : surveyAsync.when(
-                data: (survey) => survey?.title ?? 'Survey not found',
-                loading: () => 'Loading Survey...',
-                error: (_, __) => 'Error',
+                data: (survey) =>
+                    survey?.title ??
+                    l10n.globalLoadingWithName(l10n.sortingSurvey(1)),
+                loading: () =>
+                    l10n.globalLoadingWithName(l10n.sortingSurvey(1)),
+                error: (_, __) => l10n.errorUnexpected,
               ),
         showLeading: true,
         actions: isInitialLoading
             ? [_buildSkeletonButton(theme.isDarkMode)]
             : surveyAsync.when(
                 data: (survey) => SurveyActions.buildActions(
-                    context, ref, survey, notifierState),
+                    context, ref, survey, notifierState, l10n),
                 loading: () => [_buildSkeletonButton(theme.isDarkMode)],
                 error: (_, __) => [],
               ),
@@ -66,12 +70,14 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
               loading: () => SurveySkeletonLoader(isDarkMode: theme.isDarkMode),
               data: (survey) {
                 if (survey == null) {
-                  return const Center(child: Text('Survey not found'));
+                  return Center(
+                      child: Text(
+                          l10n.globalNotFoundWithName(l10n.sortingSurvey(1))));
                 }
-                return _buildContent(context, ref, survey);
+                return _buildContent(context, ref, survey, l10n);
               },
               error: (error, stackTrace) =>
-                  _buildErrorState(context, ref, error),
+                  _buildErrorState(context, ref, error, l10n),
             ),
     );
   }
@@ -90,8 +96,8 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildContent(
-      BuildContext context, WidgetRef ref, SortingSurvey survey) {
+  Widget _buildContent(BuildContext context, WidgetRef ref,
+      SortingSurvey survey, AppLocalizations l10n) {
     final tabIndex = ref.watch(surveyTabIndexProvider(survey.id));
 
     return Padding(
@@ -103,22 +109,22 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
         currentValue: tabIndex,
         tabs: [
           TabItem(
-            label: 'Overview',
+            label: l10n.sortingModuleOverview,
             icon: Icons.info_outline,
             content: OverviewTab(survey: survey),
           ),
           TabItem(
-            label: 'Responses',
+            label: l10n.sortingModuleResponses(survey.responses.length),
             icon: Icons.list_alt_outlined,
             content: ResponsesTab(survey: survey),
           ),
           TabItem(
-            label: 'Calculate',
+            label: l10n.sortingModuleCalculate,
             icon: Icons.calculate_outlined,
             content: CalculateTab(survey: survey),
           ),
           TabItem(
-            label: 'Results',
+            label: l10n.sortingModuleResults,
             icon: Icons.pie_chart_outline,
             content: ResultsTab(survey: survey),
           ),
@@ -127,16 +133,17 @@ class SortingSurveyDetailsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(BuildContext context, WidgetRef ref, Object error) {
+  Widget _buildErrorState(BuildContext context, WidgetRef ref, Object error,
+      AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Error: $error'),
+          Text(l10n.errorUnexpectedWithError(error.toString())),
           ElevatedButton(
             onPressed: () =>
                 ref.invalidate(selectedSortingSurveyProvider(surveyId)),
-            child: const Text('Retry'),
+            child: Text(l10n.globalRetry),
           ),
         ],
       ),

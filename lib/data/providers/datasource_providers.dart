@@ -37,6 +37,7 @@ final userDataSourceProvider = Provider<UserDataSource>((ref) {
     storageDataSource: ref.watch(storageDataSourceProvider),
     groupRepository: ref.watch(groupRepositoryProvider),
     firestore: ref.watch(firestoreProvider),
+    localizationRepository: ref.watch(localizationRepositoryProvider),
   );
 });
 

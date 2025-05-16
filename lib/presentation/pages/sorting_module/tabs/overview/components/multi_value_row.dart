@@ -1,6 +1,7 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/domain/entities/group.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/chips.dart';
@@ -35,9 +36,12 @@ class _MultiValueRowState extends ConsumerState<MultiValueRow> {
     final groups = ref.watch(allGroupsStreamProvider).value ?? [];
     final users = ref.watch(allUsersStreamProvider).value ?? [];
     final theme = ref.watch(appThemeProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     final List<NamedItem> items = widget.ids.map((id) {
-      if (widget.ids.isEmpty || widget.ids[0].startsWith('No ')) {
+      if (widget.ids.isEmpty ||
+          widget.ids[0].startsWith(l10n.globalNoGroupsSelected) ||
+          widget.ids[0].startsWith(l10n.globalNoUsersSelected)) {
         return NamedItem(id: id, name: id);
       }
 

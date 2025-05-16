@@ -1,6 +1,7 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/routing/app_router.dart';
 import 'package:edconnect_admin/domain/entities/group.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
@@ -9,10 +10,8 @@ import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// State provider for group search query
 final groupSearchQueryProvider = StateProvider<String>((ref) => '');
 
-// Filtered groups provider
 final filteredGroupsProvider = Provider<AsyncValue<List<Group>>>((ref) {
   final groupsAsync = ref.watch(allGroupsStreamProvider);
   final searchQuery = ref.watch(groupSearchQueryProvider);
@@ -50,7 +49,6 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
     super.initState();
     _searchController = TextEditingController();
 
-    // Initialize with any existing search query
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentQuery = ref.read(groupSearchQueryProvider);
       if (currentQuery.isNotEmpty) {
@@ -70,18 +68,18 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
     final theme = ref.watch(appThemeProvider);
     final isDarkMode = theme.isDarkMode;
     final groupsAsync = ref.watch(filteredGroupsProvider);
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
 
     return CustomScrollView(
       controller: groupsTabScrollController,
       physics: const BouncingScrollPhysics(),
       slivers: [
-        // Header with search and add button
         SliverToBoxAdapter(
           child: Row(
             children: [
               Expanded(
                 child: BaseInput(
-                  hint: 'Search groups...',
+                  hint: l10n.globalSearchWithName(l10n.globalGroupLabel(1)),
                   leadingIcon: Icons.search,
                   controller: _searchController,
                   onChanged: (value) {
@@ -91,7 +89,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
               ),
               SizedBox(width: Foundations.spacing.md),
               BaseButton(
-                label: 'Create Group',
+                label: l10n.globalCreateButtonLabel(l10n.globalGroupLabel(1)),
                 prefixIcon: Icons.add_circle_outline,
                 variant: ButtonVariant.filled,
                 onPressed: () => AppRouter.toCreateGroup(context),
@@ -99,8 +97,6 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
             ],
           ),
         ),
-
-        // Groups list
         SliverToBoxAdapter(child: SizedBox(height: Foundations.spacing.lg)),
         SliverToBoxAdapter(
           child: groupsAsync.when(
@@ -109,8 +105,8 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
                 return Center(
                   child: Text(
                     _searchController.text.isEmpty
-                        ? 'No groups created yet'
-                        : 'No groups match your search',
+                        ? l10n.userManagementNoGroupsCreatedYet
+                        : l10n.globalNoResults,
                     style: TextStyle(
                       fontSize: Foundations.typography.base,
                       color: isDarkMode
@@ -145,16 +141,17 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
                         context: context,
                         group: group,
                         isDarkMode: isDarkMode,
+                        l10n: l10n,
                       );
                     },
                   ),
                 ),
               );
             },
-            loading: () => Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stackTrace) => Center(
               child: Text(
-                'Error loading groups: ${error.toString()}',
+                l10n.errorLoadingX(l10n.globalGroupLabel(0)),
                 style: TextStyle(
                   color: Foundations.colors.error,
                   fontSize: Foundations.typography.base,
@@ -171,6 +168,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
     required BuildContext context,
     required Group group,
     required bool isDarkMode,
+    required AppLocalizations l10n,
   }) {
     return Material(
       child: InkWell(
@@ -229,7 +227,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
                         ),
                         SizedBox(width: Foundations.spacing.xs),
                         Text(
-                          '${group.memberIds.length} members',
+                          '${group.memberIds.length} ${l10n.userManagementMembersLabel}',
                           style: TextStyle(
                             fontSize: Foundations.typography.sm,
                             color: isDarkMode
@@ -247,7 +245,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab> {
                         ),
                         SizedBox(width: Foundations.spacing.xs),
                         Text(
-                          '${group.permissions.length} permissions',
+                          '${group.permissions.length} ${l10n.userManagementPermissionsLabel(group.permissions.length)}',
                           style: TextStyle(
                             fontSize: Foundations.typography.sm,
                             color: isDarkMode

@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/components/section_header.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/overview/components/access_control_section.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/overview/components/basic_info_section.dart';
@@ -16,6 +17,7 @@ class OverviewTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isWideScreen = screenWidth > 1100;
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       padding: EdgeInsets.zero,
@@ -24,8 +26,8 @@ class OverviewTab extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SectionHeader(
-                title: 'Basic Information', icon: Icons.info_outline),
+            SectionHeader(
+                title: l10n.globalBasicInfo, icon: Icons.info_outline),
             SizedBox(height: Foundations.spacing.md),
             if (isWideScreen)
               Row(
@@ -50,12 +52,8 @@ class OverviewTab extends ConsumerWidget {
               Column(children: [
                 BasicInfoSection(survey: survey),
                 SizedBox(height: Foundations.spacing.xl),
-
-                // Statistics Section
                 StatisticsSection(survey: survey),
                 SizedBox(height: Foundations.spacing.xl),
-
-                // Access Control Section - Editable
                 AccessControlSection(survey: survey),
               ])
           ],

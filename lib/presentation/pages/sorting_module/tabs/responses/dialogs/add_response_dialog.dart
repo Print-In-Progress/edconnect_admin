@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/components/toggle_chip_group.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/utils/parameter_formatter.dart';
 import 'package:edconnect_admin/presentation/widgets/common/dropdown/single_select_dropdown.dart';
@@ -28,10 +29,11 @@ class AddResponseDialogContent extends ConsumerStatefulWidget {
   static void show(BuildContext context, SortingSurvey survey,
       Function(Map<String, dynamic> response, String respondentId) onSubmit) {
     final contentKey = GlobalKey<_AddResponseDialogContentState>();
+    final l10n = AppLocalizations.of(context)!;
 
     Dialogs.form(
       context: context,
-      title: 'Add Response Manually',
+      title: l10n.sortingModuleAddManuallyLabel,
       width: 600,
       variant: DialogVariant.default_,
       form: AddResponseDialogContent(
@@ -45,10 +47,10 @@ class AddResponseDialogContent extends ConsumerStatefulWidget {
       ),
       actions: [
         BaseButton(
-            label: 'Add Response',
+            label: l10n.globalAddX(l10n.sortingModuleResponses(1)),
             onPressed: () {
               final state = contentKey.currentState;
-              if (state != null && state.validate()) {
+              if (state != null && state.validate(l10n)) {
                 Navigator.of(context).pop();
               }
             })
@@ -75,7 +77,6 @@ class _AddResponseDialogContentState
   @override
   void initState() {
     super.initState();
-    // Initialize controllers for categorical parameters
     parameterControllers = {
       for (var param in widget.survey.parameters)
         if (param['type'] != 'binary') param['name']: TextEditingController()
@@ -99,25 +100,26 @@ class _AddResponseDialogContentState
     final accentColor = theme.accentLight;
     final users = ref.watch(allUsersStreamProvider).value ?? [];
     final responses = ref.watch(filteredResponsesProvider(widget.survey.id));
+    final l10n = AppLocalizations.of(context)!;
 
     return responses.when(
       data: (responseData) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildEntryTypeSelector(isDarkMode, accentColor),
+            _buildEntryTypeSelector(isDarkMode, accentColor, l10n),
             SizedBox(height: Foundations.spacing.lg),
-            _buildUserSelection(isDarkMode, users, responseData),
+            _buildUserSelection(isDarkMode, users, responseData, l10n),
             if (widget.survey.askBiologicalSex) ...[
               SizedBox(height: Foundations.spacing.lg),
-              _buildSexSelection(isDarkMode),
+              _buildSexSelection(isDarkMode, l10n),
             ],
             if (widget.survey.maxPreferences != null) ...[
               SizedBox(height: Foundations.spacing.lg),
-              _buildPreferencesSelection(responseData),
+              _buildPreferencesSelection(responseData, l10n),
             ],
             SizedBox(height: Foundations.spacing.lg),
-            _buildParametersSection(isDarkMode),
+            _buildParametersSection(isDarkMode, l10n),
           ],
         );
       },
@@ -125,17 +127,18 @@ class _AddResponseDialogContentState
         child: CircularProgressIndicator(),
       ),
       error: (error, stackTrace) => Center(
-        child: Text('Error: $error'),
+        child: Text(l10n.errorUnexpectedWithError(error.toString())),
       ),
     );
   }
 
-  Widget _buildEntryTypeSelector(bool isDarkMode, Color accentColor) {
+  Widget _buildEntryTypeSelector(
+      bool isDarkMode, Color accentColor, AppLocalizations l10n) {
     return Wrap(
       spacing: Foundations.spacing.xs,
       children: [
         FilterChip(
-          label: const Text('Manual Entry'),
+          label: Text(l10n.sortingModuleAddManuallyLabel),
           selected: isManualEntry,
           onSelected: (_) => setState(() {
             isManualEntry = true;
@@ -160,7 +163,7 @@ class _AddResponseDialogContentState
           ),
         ),
         FilterChip(
-          label: const Text('Select User'),
+          label: Text(l10n.globalSelectUser),
           selected: !isManualEntry,
           onSelected: (_) => setState(() {
             isManualEntry = false;
@@ -188,13 +191,13 @@ class _AddResponseDialogContentState
   }
 
   Widget _buildUserSelection(bool isDarkMode, List<AppUser> users,
-      Map<String, Map<String, dynamic>> responses) {
+      Map<String, Map<String, dynamic>> responses, AppLocalizations l10n) {
     if (isManualEntry) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Name',
+            l10n.globalName,
             style: TextStyle(
               fontSize: Foundations.typography.base,
               fontWeight: Foundations.typography.medium,
@@ -208,14 +211,14 @@ class _AddResponseDialogContentState
             children: [
               Expanded(
                 child: BaseInput(
-                  label: 'First Name',
+                  label: l10n.globalFirstNameTextFieldHintText,
                   controller: manualFirstNameController,
                 ),
               ),
               SizedBox(width: Foundations.spacing.md),
               Expanded(
                 child: BaseInput(
-                  label: 'Last Name',
+                  label: l10n.globalLastNameTextFieldHintText,
                   controller: manualLastNameController,
                 ),
               ),
@@ -225,7 +228,7 @@ class _AddResponseDialogContentState
       );
     } else {
       return BaseSelect<String>(
-        label: 'Select User',
+        label: l10n.globalSelectUser,
         value: selectedUserId,
         searchable: true,
         options: users
@@ -249,23 +252,23 @@ class _AddResponseDialogContentState
     }
   }
 
-  Widget _buildSexSelection(bool isDarkMode) {
+  Widget _buildSexSelection(bool isDarkMode, AppLocalizations l10n) {
     return ToggleChipGroup<String>(
-      label: 'Biological Sex',
+      label: l10n.globalBiologicalSexLabel,
       options: [
         (
           'm',
-          'Male',
+          l10n.globalMaleLabel,
           ColorGenerator.getColor('sex', 'm', isDarkMode: isDarkMode)
         ),
         (
           'f',
-          'Female',
+          l10n.globalFemaleLabel,
           ColorGenerator.getColor('sex', 'f', isDarkMode: isDarkMode)
         ),
         (
           'nb',
-          'Non-Binary',
+          l10n.globalNonBinaryLabel,
           ColorGenerator.getColor('sex', 'nb', isDarkMode: isDarkMode)
         ),
       ],
@@ -275,23 +278,21 @@ class _AddResponseDialogContentState
   }
 
   Widget _buildPreferencesSelection(
-      Map<String, Map<String, dynamic>> responses) {
+      Map<String, Map<String, dynamic>> responses, AppLocalizations l10n) {
     return BaseMultiSelect<String>(
-      label: 'Preferences',
-      hint: 'Select preferences',
-      description:
-          'Select up to ${widget.survey.maxPreferences} preferred users',
+      label: l10n.sortingModulePreferences(0),
+      hint: l10n.globalSelectX(l10n.sortingModulePreferences(0)),
+      description: l10n.sortingModuleSelectUpToXPreferencesLabel(
+          widget.survey.maxPreferences!),
       searchable: true,
       values: selectedPreferences,
       options: widget.survey.responses.entries.map((e) {
-        // Get name either from manual entry or users stream
         if (e.value['_manual_entry'] == true) {
           return SelectOption(
             value: e.key,
             label: '${e.value['_first_name']} ${e.value['_last_name']}',
           );
         } else {
-          // Find user from stream
           final allUsers = ref.watch(allUsersStreamProvider).value ?? [];
           final user = allUsers.firstWhere(
             (u) => u.id == e.key,
@@ -322,12 +323,12 @@ class _AddResponseDialogContentState
     );
   }
 
-  Widget _buildParametersSection(bool isDarkMode) {
+  Widget _buildParametersSection(bool isDarkMode, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Parameters',
+          l10n.sortingModuleParameters,
           style: TextStyle(
             fontSize: Foundations.typography.base,
             fontWeight: Foundations.typography.medium,
@@ -347,8 +348,8 @@ class _AddResponseDialogContentState
               child: ToggleChipGroup<String>(
                 label: ParameterFormatter.formatParameterNameForDisplay(name),
                 options: [
-                  ('yes', 'Yes', ColorGenerator.yesColor),
-                  ('no', 'No', ColorGenerator.noColor),
+                  ('yes', l10n.globalYes, ColorGenerator.yesColor),
+                  ('no', l10n.globalNo, ColorGenerator.noColor),
                 ],
                 selectedValue: parameterResponses[name],
                 onChanged: (value) =>
@@ -357,7 +358,6 @@ class _AddResponseDialogContentState
             );
           }
 
-          // Regular input for categorical parameters
           return Padding(
             padding: EdgeInsets.only(bottom: Foundations.spacing.md),
             child: Column(
@@ -374,7 +374,6 @@ class _AddResponseDialogContentState
                 ),
                 SizedBox(height: Foundations.spacing.xs),
                 BaseInput(
-                  hint: 'Enter answer',
                   controller: parameterControllers[name],
                   onChanged: (value) {
                     setState(() => parameterResponses[name] = value);
@@ -388,15 +387,14 @@ class _AddResponseDialogContentState
     );
   }
 
-  bool validate() {
-    // Validate form
+  bool validate(AppLocalizations l10n) {
     if (selectedUserId == null &&
         (manualFirstNameController.text.isEmpty ||
             manualLastNameController.text.isEmpty)) {
       Dialogs.alert(
         context: context,
-        title: 'Validation Error',
-        message: 'Please enter first and last name',
+        title: l10n.validationError,
+        message: l10n.validationRequiredSnackbar,
         variant: DialogVariant.danger,
       );
       return false;
@@ -405,8 +403,8 @@ class _AddResponseDialogContentState
     if (widget.survey.askBiologicalSex && selectedSex == null) {
       Dialogs.alert(
         context: context,
-        title: 'Validation Error',
-        message: 'Please select biological sex',
+        title: l10n.validationError,
+        message: l10n.validationRequiredSnackbar,
         variant: DialogVariant.danger,
       );
       return false;
@@ -415,14 +413,13 @@ class _AddResponseDialogContentState
     if (parameterResponses.length != widget.survey.parameters.length) {
       Dialogs.alert(
         context: context,
-        title: 'Validation Error',
-        message: 'Please answer all parameters',
+        title: l10n.validationError,
+        message: l10n.validationRequiredSnackbar,
         variant: DialogVariant.danger,
       );
       return false;
     }
 
-    // Format values
     final formattedResponses = Map<String, dynamic>.from(parameterResponses);
     for (var param in widget.survey.parameters) {
       if (param['type'] != 'binary') {
@@ -432,21 +429,18 @@ class _AddResponseDialogContentState
       }
     }
 
-    // Create response data
     final response = {
       ...formattedResponses,
       if (widget.survey.askBiologicalSex) 'sex': selectedSex,
       'prefs': selectedPreferences,
     };
 
-    // Add metadata for manual entries
     if (selectedUserId == null) {
       response['_manual_entry'] = true;
       response['_first_name'] = manualFirstNameController.text;
       response['_last_name'] = manualLastNameController.text;
     }
 
-    // Generate response ID
     final responseId =
         selectedUserId ?? 'manual_${DateTime.now().millisecondsSinceEpoch}';
     widget.onValidate({

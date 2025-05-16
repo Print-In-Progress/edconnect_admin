@@ -1,7 +1,10 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
+import 'package:edconnect_admin/core/providers/interface_providers.dart';
 import 'package:edconnect_admin/domain/entities/group.dart';
 import 'package:edconnect_admin/domain/entities/permissions.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
@@ -17,20 +20,16 @@ import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// Separate editing state providers for groups and permissions
 final groupsEditingProvider = StateProvider.autoDispose<bool>((ref) => false);
 final permissionsEditingProvider =
     StateProvider.autoDispose<bool>((ref) => false);
 
-// Provider to track current group selections
 final selectedGroupsProvider =
     StateProvider.autoDispose<List<String>>((ref) => []);
 
-// Provider to track current permission selections
 final selectedPermissionsProvider =
     StateProvider.autoDispose<List<String>>((ref) => []);
 
-// Provider to get permission categories
 final permissionCategoriesProvider =
     Provider.autoDispose<Map<PermissionCategory, List<Permission>>>((ref) {
   final categories = <PermissionCategory, List<Permission>>{};
@@ -55,7 +54,6 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
   void initState() {
     super.initState();
 
-    // Initialize the state with the user's current groups and permissions
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(selectedGroupsProvider.notifier).state =
           List.from(widget.user.groupIds);
@@ -64,40 +62,37 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
     });
   }
 
-  // Save group changes
-  Future<void> _saveGroupChanges() async {
+  Future<void> _saveGroupChanges(AppLocalizations l10n) async {
     final selectedGroups = ref.read(selectedGroupsProvider);
 
     try {
-      Toaster.info(context, 'Saving group changes...');
-
       await ref.read(groupManagementProvider.notifier).updateUserGroups(
             widget.user.id,
             selectedGroups,
           );
-      Toaster.success(context, 'User groups updated successfully');
+      if (!mounted) return;
+      Toaster.success(context, l10n.successProfileUpdated);
 
       ref.read(groupsEditingProvider.notifier).state = false;
     } catch (e) {
-      Toaster.error(context, 'Error saving group changes: ${e.toString()}');
+      Toaster.error(context, l10n.errorUserGroupUpdateFailed);
     }
   }
 
-  // Save permission changes
-  Future<void> _savePermissionChanges() async {
+  Future<void> _savePermissionChanges(AppLocalizations l10n) async {
     final selectedPermissions = ref.read(selectedPermissionsProvider);
 
     try {
-      Toaster.info(context, 'Saving permission changes...');
       await ref.read(userManagementProvider.notifier).updateUserPermissions(
             widget.user.id,
             selectedPermissions,
           );
-      Toaster.success(context, 'User permissions updated successfully');
+      if (!mounted) return;
+      Toaster.success(context,
+          l10n.successXUpdated(l10n.userManagementPermissionsLabel(0)));
       ref.read(permissionsEditingProvider.notifier).state = false;
     } catch (e) {
-      Toaster.error(
-          context, 'Error saving permission changes: ${e.toString()}');
+      Toaster.error(context, l10n.errorUnexpectedWithError(e.toString()));
     }
   }
 
@@ -106,32 +101,35 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
     final theme = ref.watch(appThemeProvider);
     final isDarkMode = theme.isDarkMode;
     final allGroups = ref.watch(allGroupsStreamProvider).value ?? [];
-
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
+    final LocalizationRepository localizations =
+        ref.read(localizationRepositoryProvider);
     return Scaffold(
       backgroundColor: isDarkMode
           ? Foundations.darkColors.background
           : Foundations.colors.background,
       appBar: BaseAppBar(
-        title: 'User Details',
+        title: l10n.globalDetailsLabel,
         showLeading: true,
         actions: [
           BaseButton(
-            label: 'Delete User',
+            label: l10n.globalDeleteWithName(l10n.globalUserLabel(1)),
             variant: ButtonVariant.filled,
             onPressed: () async {
               final bool? confirm = await Dialogs.confirm(
                 context: context,
-                title: 'Confirm User Deletion',
-                message:
-                    'Are you sure you want to delete this user? This action cannot be undone.',
-                confirmText: 'Delete',
+                title: l10n.globalConfirm,
+                message: l10n.globalDeleteConfirmationDialogWithName(
+                    l10n.globalUserLabel(1)),
+                confirmText: l10n.globalDelete,
                 dangerous: true,
               );
               if (confirm == true) {
-                _deleteUser();
+                _deleteUser(l10n);
                 if (!context.mounted) return;
                 Navigator.pop(context);
-                Toaster.success(context, 'User deleted successfully');
+                Toaster.success(context,
+                    l10n.successDeletedWithName(l10n.globalUserLabel(1)));
               }
             },
             backgroundColor: Foundations.colors.error,
@@ -143,31 +141,29 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // User info card
-            _buildUserInfoCard(isDarkMode),
+            _buildUserInfoCard(isDarkMode, l10n),
             SizedBox(height: Foundations.spacing.lg),
-
-            // Groups section with its own edit button
-            _buildSectionHeader('Groups', ref.watch(groupsEditingProvider),
+            _buildSectionHeader(
+                l10n.globalGroupLabel(0), ref.watch(groupsEditingProvider),
                 onEditPressed: () =>
                     ref.read(groupsEditingProvider.notifier).state = true,
-                onSavePressed: _saveGroupChanges,
-                isDarkMode: isDarkMode),
+                onSavePressed: () => _saveGroupChanges(l10n),
+                isDarkMode: isDarkMode,
+                l10n: l10n),
             SizedBox(height: Foundations.spacing.md),
-            _buildGroupsCard(
-                allGroups, isDarkMode, ref.watch(groupsEditingProvider)),
+            _buildGroupsCard(allGroups, isDarkMode,
+                ref.watch(groupsEditingProvider), l10n, localizations),
             SizedBox(height: Foundations.spacing.lg),
-
-            // Permissions section with its own edit button
-            _buildSectionHeader(
-                'Permissions', ref.watch(permissionsEditingProvider),
+            _buildSectionHeader(l10n.userManagementPermissionsLabel(0),
+                ref.watch(permissionsEditingProvider),
                 onEditPressed: () =>
                     ref.read(permissionsEditingProvider.notifier).state = true,
-                onSavePressed: _savePermissionChanges,
-                isDarkMode: isDarkMode),
+                onSavePressed: () => _savePermissionChanges(l10n),
+                isDarkMode: isDarkMode,
+                l10n: l10n),
             SizedBox(height: Foundations.spacing.md),
-            _buildPermissionsCard(
-                isDarkMode, ref.watch(permissionsEditingProvider)),
+            _buildPermissionsCard(isDarkMode,
+                ref.watch(permissionsEditingProvider), l10n, localizations),
           ],
         ),
       ),
@@ -177,11 +173,12 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
   Widget _buildSectionHeader(
     String title,
     bool isEditing, {
+    required AppLocalizations l10n,
     required Function() onEditPressed,
     required Function() onSavePressed,
     required bool isDarkMode,
   }) {
-    bool isLoading = (title == 'Groups'
+    bool isLoading = (title == l10n.globalGroupLabel(0)
         ? ref.watch(groupManagementProvider).isLoading
         : ref.watch(userManagementProvider).isLoading);
     return Row(
@@ -201,16 +198,16 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
           Row(
             children: [
               BaseButton(
-                label: 'Cancel',
+                label: l10n.globalCancel,
                 variant: ButtonVariant.outlined,
                 size: ButtonSize.medium,
                 prefixIcon: Icons.close,
                 onPressed: () {
-                  if (title == 'Groups') {
+                  if (title == l10n.globalGroupLabel(0)) {
                     ref.read(selectedGroupsProvider.notifier).state =
                         List.from(widget.user.groupIds);
                     ref.read(groupsEditingProvider.notifier).state = false;
-                  } else if (title == 'Permissions') {
+                  } else if (title == l10n.userManagementPermissionsLabel(0)) {
                     ref.read(selectedPermissionsProvider.notifier).state =
                         List.from(widget.user.permissions);
                     ref.read(permissionsEditingProvider.notifier).state = false;
@@ -219,7 +216,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
               ),
               SizedBox(width: Foundations.spacing.sm),
               BaseButton(
-                label: 'Save Changes',
+                label: l10n.globalSave,
                 variant: ButtonVariant.filled,
                 size: ButtonSize.medium,
                 isLoading: isLoading,
@@ -229,7 +226,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
           )
         else
           BaseButton(
-            label: 'Edit $title',
+            label: l10n.globalEditWithName(title),
             variant: ButtonVariant.outlined,
             size: ButtonSize.medium,
             isLoading: isLoading,
@@ -240,7 +237,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
     );
   }
 
-  Widget _buildUserInfoCard(bool isDarkMode) {
+  Widget _buildUserInfoCard(bool isDarkMode, AppLocalizations l10n) {
     return BaseCard(
       variant: CardVariant.elevated,
       padding: EdgeInsets.all(Foundations.spacing.lg),
@@ -248,7 +245,6 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // User avatar
           CircleAvatar(
             radius: 40,
             backgroundColor: isDarkMode
@@ -266,8 +262,6 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
             ),
           ),
           SizedBox(width: Foundations.spacing.lg),
-
-          // User details
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,9 +290,10 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                 if (widget.user.accountType.isNotEmpty) ...[
                   BaseChip(
                     label: switch (widget.user.accountType) {
-                      'faculty' => 'Faculty & Staff',
-                      'parent' => 'Parent',
-                      'student' => 'Student',
+                      'faculty' =>
+                        l10n.userManagementAccountTypeLabelFacultyAndStaff,
+                      'parent' => l10n.userManagementAccountTypeLabelParent,
+                      'student' => l10n.userManagementAccountTypeLabelStudent,
                       _ => 'User',
                     },
                     variant: ChipVariant.outlined,
@@ -314,7 +309,11 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
   }
 
   Widget _buildGroupsCard(
-      List<Group> allGroups, bool isDarkMode, bool isEditing) {
+      List<Group> allGroups,
+      bool isDarkMode,
+      bool isEditing,
+      AppLocalizations l10n,
+      LocalizationRepository localizations) {
     final selectedGroups = ref.watch(selectedGroupsProvider);
 
     return BaseCard(
@@ -326,8 +325,8 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
         children: [
           if (isEditing) ...[
             BaseMultiSelect<String>(
-              label: 'Assign Groups',
-              hint: 'Select groups to assign to this user',
+              label: l10n.userManagementAssignGroupsLabel,
+              hint: l10n.userManagementSelectGroupsToAssign,
               searchable: true,
               options: allGroups
                   .map((group) => SelectOption(
@@ -342,14 +341,12 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
               },
             ),
             SizedBox(height: Foundations.spacing.md),
-            Divider(),
+            const Divider(),
             SizedBox(height: Foundations.spacing.md),
           ],
-
-          // Group list
           if (selectedGroups.isEmpty)
             Text(
-              'No groups assigned',
+              l10n.userManagementNoGroupsAssignedToUser,
               style: TextStyle(
                 fontSize: Foundations.typography.base,
                 color: isDarkMode
@@ -361,7 +358,6 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Show group chips
                 Wrap(
                   spacing: Foundations.spacing.sm,
                   runSpacing: Foundations.spacing.sm,
@@ -392,8 +388,6 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                     );
                   }).toList(),
                 ),
-
-                // Group information with collapsible details
                 if (!isEditing) ...[
                   SizedBox(height: Foundations.spacing.md),
                   ...selectedGroups.map((groupId) {
@@ -407,7 +401,12 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                       ),
                     );
 
-                    return _buildGroupDetailItem(group, isDarkMode);
+                    return _buildGroupDetailItem(
+                      group,
+                      isDarkMode,
+                      l10n,
+                      localizations,
+                    );
                   }),
                 ],
               ],
@@ -417,8 +416,8 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
     );
   }
 
-  // New widget to show collapsible group details
-  Widget _buildGroupDetailItem(Group group, bool isDarkMode) {
+  Widget _buildGroupDetailItem(Group group, bool isDarkMode,
+      AppLocalizations l10n, LocalizationRepository localizations) {
     return Theme(
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
       child: ExpansionTile(
@@ -434,7 +433,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
           ),
         ),
         subtitle: Text(
-          '${group.memberIds.length} members • ${group.permissions.length} permissions',
+          '${group.memberIds.length} ${l10n.userManagementMembersLabel} • ${group.permissions.length} ${l10n.userManagementPermissionsLabel(group.permissions.length)}',
           style: TextStyle(
             fontSize: Foundations.typography.sm,
             color: isDarkMode
@@ -453,7 +452,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Permissions in this group:',
+                  '${l10n.userManagementPermissionsLabel(0)}:',
                   style: TextStyle(
                     fontSize: Foundations.typography.sm,
                     fontWeight: Foundations.typography.semibold,
@@ -468,11 +467,12 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                   runSpacing: Foundations.spacing.xs,
                   children: group.permissions.map((permissionId) {
                     final permission = Permissions.getById(permissionId);
-                    final label = permission?.displayName ?? permissionId;
+                    final label = permission?.getDisplayName(localizations) ??
+                        permissionId;
 
                     return Tooltip(
-                      message: permission?.description ??
-                          'Permission: $permissionId',
+                      message: permission?.getDescription(localizations) ??
+                          '${l10n.userManagementPermissionsLabel(1)}: $permissionId',
                       child: BaseChip(
                         label: label,
                         variant: ChipVariant.outlined,
@@ -489,7 +489,8 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
     );
   }
 
-  Widget _buildPermissionsCard(bool isDarkMode, bool isEditing) {
+  Widget _buildPermissionsCard(bool isDarkMode, bool isEditing,
+      AppLocalizations l10n, LocalizationRepository localizations) {
     final selectedPermissions = ref.watch(selectedPermissionsProvider);
     final permissionCategories = ref.watch(permissionCategoriesProvider);
 
@@ -507,16 +508,17 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                     category,
                     permissionCategories[category]!,
                     selectedPermissions,
-                    isDarkMode),
+                    isDarkMode,
+                    localizations,
+                    l10n),
                 SizedBox(height: Foundations.spacing.md),
               ],
             ],
             const Divider(),
             SizedBox(height: Foundations.spacing.md),
           ],
-
           Text(
-            'Assigned Permissions',
+            l10n.userManagementAssignedPermissions,
             style: TextStyle(
               fontSize: Foundations.typography.base,
               fontWeight: Foundations.typography.semibold,
@@ -528,7 +530,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
           SizedBox(height: Foundations.spacing.sm),
           if (selectedPermissions.isEmpty)
             Text(
-              'No direct permissions assigned',
+              l10n.userManagementNoDirectPermissionsAssigned,
               style: TextStyle(
                 fontSize: Foundations.typography.base,
                 color: isDarkMode
@@ -545,7 +547,8 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                   runSpacing: Foundations.spacing.sm,
                   children: selectedPermissions.map((permissionId) {
                     final permission = Permissions.getById(permissionId);
-                    final label = permission?.displayName ?? permissionId;
+                    final label = permission?.getDisplayName(localizations) ??
+                        permissionId;
 
                     return BaseChip(
                       label: label,
@@ -574,7 +577,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                             EdgeInsets.only(bottom: Foundations.spacing.sm),
                         child: ListTile(
                           title: Text(
-                            permission.displayName,
+                            permission.getDisplayName(localizations),
                             style: TextStyle(
                               fontSize: Foundations.typography.base,
                               fontWeight: Foundations.typography.medium,
@@ -584,7 +587,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                             ),
                           ),
                           subtitle: Text(
-                            permission.description,
+                            permission.getDescription(localizations),
                             style: TextStyle(
                               fontSize: Foundations.typography.sm,
                               color: isDarkMode
@@ -602,12 +605,9 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                 ],
               ],
             ),
-
           SizedBox(height: Foundations.spacing.lg),
-
-          // Permissions from Groups section
           Text(
-            'Permissions from Groups',
+            l10n.userManagementPermissionsFromGroups,
             style: TextStyle(
               fontSize: Foundations.typography.base,
               fontWeight: Foundations.typography.semibold,
@@ -617,7 +617,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
             ),
           ),
           SizedBox(height: Foundations.spacing.sm),
-          _buildGroupPermissions(isDarkMode),
+          _buildGroupPermissions(isDarkMode, l10n, localizations),
         ],
       ),
     );
@@ -628,12 +628,14 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
     List<Permission> permissions,
     List<String> selectedPermissions,
     bool isDarkMode,
+    LocalizationRepository localizations,
+    AppLocalizations l10n,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          _getCategoryDisplayName(category),
+          _getCategoryDisplayName(category, l10n),
           style: TextStyle(
             fontSize: Foundations.typography.base,
             fontWeight: Foundations.typography.semibold,
@@ -646,8 +648,8 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
         ...permissions.map((permission) {
           final isSelected = selectedPermissions.contains(permission.id);
           return BaseCheckbox(
-            label: permission.displayName,
-            description: permission.description,
+            label: permission.getDisplayName(localizations),
+            description: permission.getDescription(localizations),
             value: isSelected,
             onChanged: (value) {
               final updatedPermissions = List<String>.from(selectedPermissions);
@@ -667,12 +669,12 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
     );
   }
 
-  Widget _buildGroupPermissions(bool isDarkMode) {
+  Widget _buildGroupPermissions(bool isDarkMode, AppLocalizations l10n,
+      LocalizationRepository localizations) {
     final selectedGroups = ref.watch(selectedGroupsProvider);
     final allGroups = ref.watch(allGroupsStreamProvider).value ?? [];
     final directPermissions = ref.watch(selectedPermissionsProvider);
 
-    // Get all permissions from the selected groups
     final groupPermissionsMap = <String, Set<String>>{};
     for (final groupId in selectedGroups) {
       final group = allGroups.firstWhere(
@@ -693,7 +695,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
 
     if (groupPermissionsMap.isEmpty) {
       return Text(
-        'No additional permissions from groups',
+        l10n.userManagementNoPermissionsFromGroups,
         style: TextStyle(
           fontSize: Foundations.typography.base,
           color: isDarkMode
@@ -711,11 +713,12 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
           runSpacing: Foundations.spacing.sm,
           children: groupPermissionsMap.keys.map((permissionId) {
             final permission = Permissions.getById(permissionId);
-            final label = permission?.displayName ?? permissionId;
+            final label =
+                permission?.getDisplayName(localizations) ?? permissionId;
             final sourceGroups = groupPermissionsMap[permissionId]!.join(', ');
 
             return Tooltip(
-              message: 'From: $sourceGroups',
+              message: l10n.globalFromX(sourceGroups),
               child: BaseChip(
                 label: label,
                 variant: ChipVariant.outlined,
@@ -724,8 +727,6 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
             );
           }).toList(),
         ),
-
-        // List of permissions with their descriptions and source groups
         SizedBox(height: Foundations.spacing.md),
         ...groupPermissionsMap.entries.map((entry) {
           final permissionId = entry.key;
@@ -737,7 +738,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
               padding: EdgeInsets.only(bottom: Foundations.spacing.sm),
               child: ListTile(
                 title: Text(
-                  permission.displayName,
+                  permission.getDisplayName(localizations),
                   style: TextStyle(
                     fontSize: Foundations.typography.base,
                     fontWeight: Foundations.typography.medium,
@@ -750,7 +751,7 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      permission.description,
+                      permission.getDescription(localizations),
                       style: TextStyle(
                         fontSize: Foundations.typography.sm,
                         color: isDarkMode
@@ -760,7 +761,8 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
                     ),
                     SizedBox(height: Foundations.spacing.xs),
                     Text(
-                      'From group(s): $sourceGroups',
+                      l10n.globalFromX(
+                          '${l10n.globalGroupLabel(0)}: $sourceGroups'),
                       style: TextStyle(
                         fontSize: Foundations.typography.sm,
                         fontStyle: FontStyle.italic,
@@ -776,42 +778,41 @@ class _UserDetailsState extends ConsumerState<UserDetails> {
               ),
             );
           }
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         }),
       ],
     );
   }
 
-  String _getCategoryDisplayName(PermissionCategory category) {
+  String _getCategoryDisplayName(
+      PermissionCategory category, AppLocalizations l10n) {
     switch (category) {
       case PermissionCategory.role:
-        return 'Roles';
+        return l10n.userManagementRolesLabel;
       case PermissionCategory.content:
-        return 'Content Management';
+        return l10n.userManagementContentManagementLabel;
       case PermissionCategory.user:
-        return 'User Management';
+        return l10n.userManagementUserManagementLabel;
       case PermissionCategory.media:
-        return 'Media';
+        return l10n.userManagementMediaLabel;
       case PermissionCategory.notification:
-        return 'Notifications';
+        return l10n.userManagementNotificationsLabel;
       case PermissionCategory.settings:
-        return 'Settings';
+        return l10n.navSettings;
       case PermissionCategory.survey:
-        return 'Surveys';
+        return l10n.navSurveys;
     }
   }
 
-  void _deleteUser() async {
+  void _deleteUser(AppLocalizations l10n) async {
     try {
       await ref
           .read(userManagementProvider.notifier)
           .deleteUser(widget.user.id);
-      Navigator.pop(context); // Go back to user list
+      if (!mounted) return;
+      Navigator.pop(context);
     } catch (e) {
-      // Show error
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error deleting user: ${e.toString()}')),
-      );
+      Toaster.error(context, l10n.errorUnexpectedWithError(e.toString()));
     }
   }
 }

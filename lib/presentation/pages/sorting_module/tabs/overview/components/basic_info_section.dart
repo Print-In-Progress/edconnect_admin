@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/components/build_info_row.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/components/status_chip.dart';
 import 'package:flutter/material.dart';
@@ -16,46 +17,48 @@ class BasicInfoSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     return InfoCard(
       children: [
         InfoRow(
-          label: 'Title',
+          label: l10n.globalTitle,
           value: survey.title,
         ),
         if (survey.description.isNotEmpty)
           InfoRow(
-            label: 'Description',
+            label: l10n.globalDescription,
             value: survey.description,
           ),
         InfoRow(
-          label: 'Status',
-          value: _getStatusText(survey.status),
+          label: l10n.globalStatusLabel,
+          value: _getStatusText(survey.status, l10n),
           trailing: StatusChip(status: survey.status),
         ),
         InfoRow(
-          label: 'Created',
+          label: l10n.globalCreatedAtLabel,
           value: _formatDate(survey.createdAt),
         ),
         InfoRow(
-          label: 'Created By',
+          label: l10n.globalCreatedByLabel,
           value: survey.creatorName,
         ),
         InfoRow(
-          label: 'Ask Biological Sex',
-          value: survey.askBiologicalSex ? 'Yes' : 'No',
+          label: l10n.sortingModuleAskForBiologicalSex,
+          value: survey.askBiologicalSex ? l10n.globalYes : l10n.globalNo,
         ),
       ],
     );
   }
 
-  String _getStatusText(SortingSurveyStatus status) {
+  String _getStatusText(SortingSurveyStatus status, AppLocalizations l10n) {
     switch (status) {
       case SortingSurveyStatus.draft:
-        return 'Draft';
+        return l10n.globalDraft;
       case SortingSurveyStatus.published:
-        return 'Published';
+        return l10n.globalPublished;
       case SortingSurveyStatus.closed:
-        return 'Closed';
+        return l10n.globalClosed;
     }
   }
 

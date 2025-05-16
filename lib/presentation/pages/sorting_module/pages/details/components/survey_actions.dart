@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
@@ -9,69 +10,72 @@ import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 
 class SurveyActions {
   static List<Widget> buildActions(BuildContext context, WidgetRef ref,
-      SortingSurvey? survey, dynamic notifierState) {
+      SortingSurvey? survey, dynamic notifierState, AppLocalizations l10n) {
     if (survey == null) return [];
 
     return [
       if (survey.status == SortingSurveyStatus.draft) ...[
         BaseButton(
-          label: 'Publish',
+          label: l10n.globalPublish,
           prefixIcon: Icons.publish_outlined,
           variant: ButtonVariant.filled,
           isLoading: notifierState.isLoading,
-          onPressed: () => publishSurvey(context, ref, survey.id),
+          onPressed: () => publishSurvey(context, ref, survey.id, l10n),
         ),
         SizedBox(width: Foundations.spacing.md),
       ],
       if (survey.status == SortingSurveyStatus.published) ...[
         BaseButton(
-          label: 'Close',
+          label: l10n.globalClose,
           prefixIcon: Icons.close,
           variant: ButtonVariant.outlined,
           isLoading: notifierState.isLoading,
-          onPressed: () => closeSortingSurvey(context, ref, survey.id),
+          onPressed: () => closeSortingSurvey(context, ref, survey.id, l10n),
         ),
         SizedBox(width: Foundations.spacing.md),
       ],
       BaseButton(
-        label: 'Delete',
+        label: l10n.globalDelete,
         prefixIcon: Icons.delete_outline,
         backgroundColor: Foundations.colors.error,
         variant: ButtonVariant.filled,
         isLoading: notifierState.isLoading,
-        onPressed: () => deleteSurvey(context, ref, survey.id),
+        onPressed: () => deleteSurvey(context, ref, survey.id, l10n),
       ),
     ];
   }
 
-  static Future<void> publishSurvey(
-      BuildContext context, WidgetRef ref, String id) async {
+  static Future<void> publishSurvey(BuildContext context, WidgetRef ref,
+      String id, AppLocalizations l10n) async {
     await ref
         .read(sortingSurveyNotifierProvider.notifier)
         .publishSortingSurvey(id);
 
     if (context.mounted) {
-      Toaster.success(context, 'Survey published successfully');
+      Toaster.success(context,
+          l10n.successPublishedSuccessfullyWithName(l10n.sortingSurvey(1)));
     }
   }
 
-  static Future<void> closeSortingSurvey(
-      BuildContext context, WidgetRef ref, String id) async {
+  static Future<void> closeSortingSurvey(BuildContext context, WidgetRef ref,
+      String id, AppLocalizations l10n) async {
     await ref
         .read(sortingSurveyNotifierProvider.notifier)
         .closeSortingSurvey(id);
 
     if (context.mounted) {
-      Toaster.success(context, 'Survey closed successfully');
+      Toaster.success(context,
+          l10n.successClosedSuccessfullyWithName(l10n.sortingSurvey(1)));
     }
   }
 
-  static Future<void> deleteSurvey(
-      BuildContext context, WidgetRef ref, String id) async {
+  static Future<void> deleteSurvey(BuildContext context, WidgetRef ref,
+      String id, AppLocalizations l10n) async {
     final bool? confirmed = await Dialogs.confirm(
         context: context,
-        title: 'Delete Survey',
-        message: 'Are you sure you want to delete this survey?',
+        title: l10n.globalDeleteWithName(l10n.sortingSurvey(1)),
+        message:
+            l10n.globalDeleteConfirmationDialogWithName(l10n.sortingSurvey(1)),
         dangerous: true);
 
     if (confirmed != true) return;
@@ -84,7 +88,8 @@ class SurveyActions {
         .deleteSortingSurvey(id);
 
     if (context.mounted) {
-      Toaster.success(context, 'Survey deleted successfully');
+      Toaster.success(
+          context, l10n.successDeletedWithName(l10n.sortingSurvey(1)));
     }
   }
 }

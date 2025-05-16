@@ -1,3 +1,5 @@
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
+import 'package:edconnect_admin/core/providers/interface_providers.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/utils/parameter_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,6 +34,8 @@ class ResponsesTable extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode = ref.watch(appThemeProvider).isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
+    final localizations = ref.watch(localizationRepositoryProvider);
 
     return filteredResponses.when(
       data: (responses) {
@@ -40,7 +44,6 @@ class ResponsesTable extends ConsumerWidget {
         final allEntries = responses.entries.toList();
         final hasAnyResponses = survey.responses.isNotEmpty;
 
-        // Set pagination after build
         WidgetsBinding.instance.addPostFrameCallback((_) {
           ref
               .read(paginationStateProvider('responses_${survey.id}').notifier)
@@ -61,22 +64,20 @@ class ResponsesTable extends ConsumerWidget {
           margin: EdgeInsets.zero,
           child: Column(
             children: [
-              // Always show filters
               ResponseTableFilter(survey: survey),
-
-              // Conditional content based on responses
               if (responses.isEmpty)
                 EmptyResponsesTableState(
                     survey: survey, hasAnyResponses: hasAnyResponses)
               else
-                _buildResponsesTableContent(
-                    context, ref, isDarkMode, paginatedResponses)
+                _buildResponsesTableContent(context, ref, isDarkMode,
+                    paginatedResponses, l10n, localizations),
             ],
           ),
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      error: (error, stack) =>
+          Center(child: Text(l10n.errorUnexpectedWithError(error.toString()))),
     );
   }
 
@@ -84,7 +85,9 @@ class ResponsesTable extends ConsumerWidget {
       BuildContext context,
       WidgetRef ref,
       bool isDarkMode,
-      List<MapEntry<String, Map<String, dynamic>>> paginatedResponses) {
+      List<MapEntry<String, Map<String, dynamic>>> paginatedResponses,
+      AppLocalizations l10n,
+      LocalizationRepository localizations) {
     final accentColor = ref.watch(appThemeProvider).accentLight;
     final horizontalScrollController = ScrollController();
 
@@ -103,8 +106,9 @@ class ResponsesTable extends ConsumerWidget {
               controller: horizontalScrollController,
               child: DataTable(
                 columns: [
-                  DataColumn(label: Text('Name')),
-                  if (survey.askBiologicalSex) DataColumn(label: Text('Sex')),
+                  DataColumn(label: Text(l10n.globalName)),
+                  if (survey.askBiologicalSex)
+                    DataColumn(label: Text(l10n.globalBiologicalSexLabel)),
                   ...survey.parameters.map(
                     (param) => DataColumn(
                       label: Text(
@@ -113,8 +117,8 @@ class ResponsesTable extends ConsumerWidget {
                     ),
                   ),
                   if (survey.maxPreferences != null)
-                    DataColumn(label: Text('Preferences')),
-                  DataColumn(label: Text('Actions')), // Add actions column
+                    DataColumn(label: Text(l10n.sortingModulePreferences(0))),
+                  DataColumn(label: Text(l10n.globalActionsLabel)),
                 ],
                 rows: paginatedResponses.map((entry) {
                   final response = entry.value;
@@ -124,12 +128,13 @@ class ResponsesTable extends ConsumerWidget {
                           '${response['_first_name']} ${response['_last_name']}')),
                       if (survey.askBiologicalSex)
                         _buildColoredDataCell(
-                            'sex', response['sex'], isDarkMode),
+                            'sex', response['sex'], isDarkMode, localizations),
                       ...survey.parameters.map(
                         (param) => _buildColoredDataCell(
                           param['name'],
                           response[param['name']]?.toString() ?? '',
                           isDarkMode,
+                          localizations,
                         ),
                       ),
                       if (survey.maxPreferences != null)
@@ -138,9 +143,10 @@ class ResponsesTable extends ConsumerWidget {
                           (response['prefs'] as List?)?.cast<String>() ?? [],
                           isDarkMode,
                           accentColor,
+                          l10n,
                         ),
                       DataCell(_buildActionButtons(
-                          context, ref, entry.key, response)),
+                          context, ref, entry.key, response, l10n)),
                     ],
                   );
                 }).toList(),
@@ -161,7 +167,7 @@ class ResponsesTable extends ConsumerWidget {
   }
 
   Widget _buildActionButtons(BuildContext context, WidgetRef ref,
-      String responseId, Map<String, dynamic> response) {
+      String responseId, Map<String, dynamic> response, AppLocalizations l10n) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -177,13 +183,14 @@ class ResponsesTable extends ConsumerWidget {
                 ref
                     .read(sortingSurveyNotifierProvider.notifier)
                     .updateResponse(survey.id, responseId, updatedResponse);
-                Toaster.success(context, 'Response updated successfully');
+                Toaster.success(context,
+                    l10n.successXUpdated(l10n.sortingModuleResponses(1)));
               },
             );
           },
           variant: IconButtonVariant.ghost,
           size: IconButtonSize.small,
-          tooltip: 'Edit response',
+          tooltip: l10n.globalEditWithName(l10n.sortingModuleResponses(1)),
         ),
         SizedBox(width: Foundations.spacing.xs),
         BaseIconButton(
@@ -191,8 +198,9 @@ class ResponsesTable extends ConsumerWidget {
           onPressed: () async {
             final bool? confirmed = await Dialogs.confirm(
               context: context,
-              title: 'Delete Response',
-              message: 'Are you sure you want to delete this response?',
+              title: l10n.globalDeleteWithName(l10n.sortingModuleResponses(1)),
+              message: l10n.globalDeleteConfirmationDialogWithName(
+                  l10n.sortingModuleResponses(1).toLowerCase()),
               variant: DialogVariant.danger,
               dangerous: true,
               confirmText: AppLocalizations.of(context)!.globalDelete,
@@ -205,31 +213,29 @@ class ResponsesTable extends ConsumerWidget {
           },
           variant: IconButtonVariant.ghost,
           size: IconButtonSize.small,
-          tooltip: 'Delete response',
+          tooltip: l10n.globalDeleteWithName(l10n.sortingModuleResponses(1)),
           color: Foundations.colors.error,
         ),
       ],
     );
   }
 
-  DataCell _buildColoredDataCell(
-      String paramName, String value, bool isDarkMode) {
+  DataCell _buildColoredDataCell(String paramName, String value,
+      bool isDarkMode, LocalizationRepository localizations) {
     final isSexParameter = paramName == 'sex';
     final isBinary = !isSexParameter &&
         (survey.parameters.firstWhere((p) => p['name'] == paramName)['type'] ==
             'binary');
 
-    // Get color using raw value
     final color = ColorGenerator.getColor(
       paramName,
-      value, // Use raw value for color
+      value,
       isDarkMode: isDarkMode,
       isBinary: isBinary,
     );
 
-    // Format display value
     final displayValue = isSexParameter
-        ? ParameterFormatter.formatSexForDisplay(value)
+        ? ParameterFormatter.formatSexForDisplay(value, localizations)
         : ParameterFormatter.formatParameterNameForDisplay(value);
 
     return DataCell(
@@ -255,7 +261,7 @@ class ResponsesTable extends ConsumerWidget {
   }
 
   DataCell _buildPreferencesCell(BuildContext context, List<String> prefs,
-      bool isDarkMode, Color accentColor) {
+      bool isDarkMode, Color accentColor, AppLocalizations l10n) {
     if (prefs.isEmpty) {
       return const DataCell(Text('-'));
     }
@@ -264,7 +270,7 @@ class ResponsesTable extends ConsumerWidget {
       Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('${prefs.length} selected'),
+          Text(l10n.globalXSelected(prefs.length)),
           SizedBox(width: Foundations.spacing.xs),
           Consumer(builder: (context, ref, _) {
             final allUsers = ref.watch(allUsersStreamProvider).value ?? [];
@@ -273,11 +279,11 @@ class ResponsesTable extends ConsumerWidget {
               icon: Icons.visibility_outlined,
               variant: IconButtonVariant.ghost,
               size: IconButtonSize.small,
-              tooltip: 'View preferences',
+              tooltip: l10n.sortingModulePreferences(0),
               onPressed: () {
                 Dialogs.show(
                   context: context,
-                  title: 'Preferences',
+                  title: l10n.sortingModulePreferences(0),
                   width: 400,
                   variant: DialogVariant.info,
                   content: Column(
@@ -286,10 +292,8 @@ class ResponsesTable extends ConsumerWidget {
                       ...prefs.asMap().entries.map((entry) {
                         final index = entry.key + 1;
                         final prefId = entry.value;
-                        // Get user name from response or users list
                         final prefResponse = survey.responses[prefId];
 
-                        // Get name either from manual entry or users stream
                         String userName;
                         if (prefResponse?['_manual_entry'] == true) {
                           userName =

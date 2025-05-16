@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edconnect_admin/core/design_system/foundations.dart';
@@ -18,6 +19,7 @@ class BasicInfoCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(appThemeProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return BaseCard(
       variant: CardVariant.elevated,
@@ -27,7 +29,7 @@ class BasicInfoCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Basic Information',
+              l10n.globalBasicInfo,
               style: TextStyle(
                 fontSize: Foundations.typography.lg,
                 fontWeight: Foundations.typography.semibold,
@@ -39,15 +41,15 @@ class BasicInfoCard extends ConsumerWidget {
             SizedBox(height: Foundations.spacing.lg),
             BaseInput(
               controller: titleController,
-              label: 'Title',
-              hint: 'Enter survey title',
+              label: l10n.globalTitle,
+              hint: l10n.globalTitleWithPrefix(l10n.sortingSurvey(1)),
               isRequired: true,
             ),
             SizedBox(height: Foundations.spacing.md),
             BaseInput(
               controller: descriptionController,
-              label: 'Description',
-              hint: 'Enter survey description',
+              label: l10n.globalDescription,
+              hint: l10n.globalDescriptionWithPrefix(l10n.sortingSurvey(1)),
               maxLines: 3,
             ),
           ],

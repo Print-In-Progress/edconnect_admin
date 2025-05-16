@@ -39,7 +39,7 @@ class StatCard extends ConsumerWidget {
             SizedBox(width: Foundations.spacing.md),
             Expanded(
               child: Column(
-                mainAxisSize: MainAxisSize.min, // Use minimum height
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(

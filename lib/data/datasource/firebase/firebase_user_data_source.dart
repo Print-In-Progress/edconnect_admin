@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edconnect_admin/core/interfaces/group_repository.dart';
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/core/utils/crypto_utils.dart';
 import 'package:edconnect_admin/core/validation/validators/registration_field_validator.dart';
@@ -17,14 +18,17 @@ class FirebaseUserDataSource implements UserDataSource {
   final FirebaseFirestore _firestore;
   final StorageDataSource _storageDataSource;
   final GroupRepository _groupRepository;
+  final LocalizationRepository _localizationRepository;
 
   FirebaseUserDataSource({
     FirebaseFirestore? firestore,
     required StorageDataSource storageDataSource,
     required GroupRepository groupRepository,
+    required LocalizationRepository localizationRepository,
   })  : _firestore = firestore ?? FirebaseFirestore.instance,
         _storageDataSource = storageDataSource,
-        _groupRepository = groupRepository;
+        _groupRepository = groupRepository,
+        _localizationRepository = localizationRepository;
 
   @override
   Future<void> saveUserDetails(
@@ -99,7 +103,8 @@ class FirebaseUserDataSource implements UserDataSource {
     List<BaseRegistrationField> flattenedFields,
     AppUser user,
   ) async {
-    // Generate key pair and PDF
+    final localizedStrings =
+        _localizationRepository.getRegistrationPdfStrings();
     final keyPair = generateRSAKeyPair();
     final pdfBytes = await PdfService.generateRegistrationPdf(
       flattenedFields,
@@ -109,10 +114,10 @@ class FirebaseUserDataSource implements UserDataSource {
       user.lastName,
       user.firstName,
       user.email,
+      localizedStrings,
       publicKey: keyPair.publicKey,
     );
 
-    // Sign PDF
     final pdfHash = hashBytes(pdfBytes);
     final signatureBytes = signHash(pdfHash, keyPair.privateKey);
     final publicKeyPem = convertPublicKeyToPem(keyPair.publicKey);
@@ -141,7 +146,9 @@ class FirebaseUserDataSource implements UserDataSource {
     List<BaseRegistrationField> flattenedFields,
     AppUser user,
   ) async {
-    // Generate PDF without signature
+    final localizedStrings =
+        _localizationRepository.getRegistrationPdfStrings();
+
     final pdfBytes = await PdfService.generateRegistrationPdf(
       flattenedFields,
       false,
@@ -150,16 +157,15 @@ class FirebaseUserDataSource implements UserDataSource {
       user.lastName,
       user.firstName,
       user.email,
+      localizedStrings,
     );
 
-    // Upload unsigned PDF
     await _storageDataSource.uploadPdf(
       pdfBytes,
       '${user.id}_registration_form_unsigned.pdf',
       user.id,
     );
 
-    // Handle additional data (groups and files)
     await _handleAdditionalData(flattenedFields, user);
   }
 
@@ -167,7 +173,6 @@ class FirebaseUserDataSource implements UserDataSource {
     List<BaseRegistrationField> flattenedFields,
     AppUser user,
   ) async {
-    // Handle file uploads
     final fileFields = flattenedFields
         .where((field) => field.type == 'file_upload' && field.file != null);
 
@@ -191,7 +196,6 @@ class FirebaseUserDataSource implements UserDataSource {
       }
     }
 
-    // Handle groups
     final groups = flattenedFields
         .where((field) =>
             field.type == 'checkbox_assign_group' && field.checked == true)

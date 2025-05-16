@@ -68,6 +68,19 @@ final authStatusProvider =
   );
 });
 
+// ---------------- APP LOCALE STATE  -----------------
+class LocaleNotifier extends StateNotifier<Locale> {
+  LocaleNotifier() : super(const Locale('en'));
+
+  void updateLocale(Locale locale) {
+    state = locale;
+  }
+}
+
+// Create a StateNotifierProvider for the locale
+final appLocaleProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {
+  return LocaleNotifier();
+});
 // ----------------- USER STATE -----------------
 
 // Cache for users to improve performance.
@@ -675,7 +688,6 @@ class CalculationNotifier extends StateNotifier<CalculationState> {
         surveyId: surveyId,
       );
 
-      // Save results to Firestore
       await _surveyUseCase.saveCalculationResults(surveyId, result);
 
       state = CalculationState(result: result);

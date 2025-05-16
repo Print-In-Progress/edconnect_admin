@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/dropdown/single_select_dropdown.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
@@ -13,21 +14,23 @@ class SurveyFilterBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Row(
       children: [
-        Expanded(child: _buildSearchInput(ref)),
+        Expanded(child: _buildSearchInput(ref, l10n)),
         SizedBox(width: Foundations.spacing.md),
-        SizedBox(width: 160, child: _buildStatusFilter(ref)),
+        SizedBox(width: 160, child: _buildStatusFilter(ref, l10n)),
         SizedBox(width: Foundations.spacing.md),
-        SizedBox(width: 160, child: _buildSortOrder(ref)),
+        SizedBox(width: 160, child: _buildSortOrder(ref, l10n)),
       ],
     );
   }
 
-  Widget _buildSearchInput(WidgetRef ref) {
+  Widget _buildSearchInput(WidgetRef ref, AppLocalizations l10n) {
     return BaseInput(
       leadingIcon: Icons.search,
-      hint: 'Search surveys...',
+      hint: l10n.globalSearchWithName(l10n.sortingSurvey(2)),
       onChanged: (value) {
         ref.read(surveyFilterProvider.notifier).state =
             filterState.copyWith(searchQuery: value);
@@ -35,11 +38,11 @@ class SurveyFilterBar extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusFilter(WidgetRef ref) {
+  Widget _buildStatusFilter(WidgetRef ref, AppLocalizations l10n) {
     return BaseSelect<SortingSurveyStatus?>(
       value: filterState.statusFilter,
-      options: _buildStatusOptions(),
-      hint: 'Filter Status',
+      options: _buildStatusOptions(l10n),
+      hint: l10n.globalFilterStatus,
       leadingIcon: Icons.filter_list,
       size: SelectSize.medium,
       variant: SelectVariant.outlined,
@@ -50,11 +53,11 @@ class SurveyFilterBar extends ConsumerWidget {
     );
   }
 
-  Widget _buildSortOrder(WidgetRef ref) {
+  Widget _buildSortOrder(WidgetRef ref, AppLocalizations l10n) {
     return BaseSelect<SurveySortOrder>(
       value: filterState.sortOrder,
-      options: _buildSortOptions(),
-      hint: 'Sort By',
+      options: _buildSortOptions(l10n),
+      hint: l10n.globalSortBy,
       leadingIcon: Icons.sort,
       size: SelectSize.medium,
       variant: SelectVariant.outlined,
@@ -67,11 +70,12 @@ class SurveyFilterBar extends ConsumerWidget {
     );
   }
 
-  List<SelectOption<SortingSurveyStatus?>> _buildStatusOptions() {
+  List<SelectOption<SortingSurveyStatus?>> _buildStatusOptions(
+      AppLocalizations l10n) {
     return [
-      const SelectOption(
+      SelectOption(
         value: null,
-        label: 'All',
+        label: l10n.globalAllLabel,
         icon: Icons.filter_list_off,
       ),
       ...SortingSurveyStatus.values.map((status) {
@@ -96,22 +100,22 @@ class SurveyFilterBar extends ConsumerWidget {
     ];
   }
 
-  List<SelectOption<SurveySortOrder>> _buildSortOptions() {
+  List<SelectOption<SurveySortOrder>> _buildSortOptions(AppLocalizations l10n) {
     return SurveySortOrder.values.map((order) {
       IconData icon;
       String label;
       switch (order) {
         case SurveySortOrder.newest:
           icon = Icons.arrow_downward;
-          label = 'Newest First';
+          label = l10n.globalFilterByNewestFirst;
           break;
         case SurveySortOrder.oldest:
           icon = Icons.arrow_upward;
-          label = 'Oldest First';
+          label = l10n.globalFilterByOldestFirst;
           break;
         case SurveySortOrder.alphabetical:
           icon = Icons.sort_by_alpha;
-          label = 'Alphabetical';
+          label = l10n.globalFilterByAlphabetical;
           break;
       }
       return SelectOption(

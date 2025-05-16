@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edconnect_admin/core/errors/domain_exception.dart';
 import 'package:edconnect_admin/core/errors/error_handler.dart';
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
 import 'package:edconnect_admin/core/utils/crypto_utils.dart';
 import 'package:edconnect_admin/core/validation/validators/registration_validator.dart';
 import 'package:edconnect_admin/data/datasource/auth_data_source.dart';
@@ -21,17 +22,18 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   final UserDataSource _userDataSource;
   final StorageDataSource _storageDataSource;
   final FirebaseFirestore _firestore;
+  final LocalizationRepository _localizationRepository;
 
   FirebaseAuthRepositoryImpl(
     this._authDataSource,
     this._userDataSource,
-    this._storageDataSource, {
+    this._storageDataSource,
+    this._localizationRepository, {
     FirebaseFirestore? firestore,
   }) : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Future<void> signUp(RegistrationRequest request) async {
-    // Validate password match
     try {
       final validator = RegistrationValidator();
       validator.validate(request);
@@ -71,10 +73,8 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   Future<void> signUpWithExistingAuthAccount(
       RegistrationRequest request) async {
     try {
-      // Validate request
       final validator = RegistrationValidator();
       validator.validate(request);
-      // Sign in with existing account
       final uid = await _authDataSource.signUpWithExistingAuthAccount(
         request.email.trim(),
         request.password.trim(),
@@ -83,7 +83,6 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         throw const DomainException(
             code: ErrorCode.unexpected, type: ExceptionType.auth);
       }
-      // Process registration
       await _processRegistration(uid, request);
     } catch (e) {
       throw ErrorHandler.handle(e);
@@ -95,21 +94,18 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     RegistrationRequest request,
   ) async {
     try {
-      // Filter and flatten fields
       final filteredFields = request.registrationFields
           .where((field) =>
               !(field.type == 'checkbox_section' && field.checked != true))
           .toList();
       final flattenedFields = flattenRegistrationFields(filteredFields);
 
-      // Get checked groups to be assigned to user
       final checkedGroups = flattenedFields
           .where((field) =>
               field.type == 'checkbox_assign_group' && (field.checked ?? false))
           .map((field) => field.group!)
           .toList();
 
-      // Check if user provided a signature
       final hasSignature = flattenedFields.any(
           (field) => field.type == 'signature' && (field.checked ?? false));
 
@@ -129,7 +125,6 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         );
       }
 
-      // Process file uploads if any
       await _processFileUploads(uid, flattenedFields);
     } catch (e) {
       throw ErrorHandler.handle(e);
@@ -142,8 +137,10 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     List<BaseRegistrationField> fields,
     List<String> groups,
   ) async {
+    final localizedStrings =
+        _localizationRepository.getRegistrationPdfStrings();
+
     try {
-      // Generate key pair and PDF
       final keyPair = generateRSAKeyPair();
       final pdfBytes = await PdfService.generateRegistrationPdf(
         fields,
@@ -153,14 +150,13 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         capitalize(request.firstName),
         capitalize(request.lastName),
         request.email.trim(),
+        localizedStrings,
         publicKey: keyPair.publicKey,
       );
 
-      // Sign the PDF
       final pdfHash = hashBytes(pdfBytes);
       final signatureBytes = signHash(pdfHash, keyPair.privateKey);
 
-      // Verify signature
       final isVerified =
           verifySignature(pdfHash, signatureBytes, keyPair.publicKey);
       if (!isVerified) {
@@ -171,7 +167,6 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
       }
 
       final publicKeyPem = convertPublicKeyToPem(keyPair.publicKey);
-      // Save user details
       await _userDataSource.saveUserDetails(
         uid,
         capitalize(request.firstName),
@@ -183,8 +178,6 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         publicKeyPem: publicKeyPem,
         signatureBytes: signatureBytes,
       );
-      print('Saved to firestore');
-      // Upload signed PDF
       await _storageDataSource.uploadPdf(
         pdfBytes,
         '${uid}_registration_form_signed.pdf',
@@ -201,8 +194,10 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     List<BaseRegistrationField> fields,
     List<String> groups,
   ) async {
+    final localizedStrings =
+        _localizationRepository.getRegistrationPdfStrings();
+
     try {
-      // Generate unsigned PDF
       final pdfBytes = await PdfService.generateRegistrationPdf(
         fields,
         false,
@@ -211,9 +206,8 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         capitalize(request.firstName),
         capitalize(request.lastName),
         request.email.trim(),
+        localizedStrings,
       );
-      print('generated pdf');
-      // Save user details
       await _userDataSource.saveUserDetails(
         uid,
         capitalize(request.firstName),
@@ -223,7 +217,6 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
         request.accountType,
         false,
       );
-      // Upload unsigned PDF
       await _storageDataSource.uploadPdf(
         pdfBytes,
         '${uid}_registration_form_unsigned.pdf',
@@ -292,22 +285,18 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
   @override
   Stream<AppUser?> get currentUserStream {
     return _authDataSource.authStateChanges.asyncMap((uid) async {
-      // If no user is logged in, return null immediately
       if (uid == null) {
         return null;
       }
 
       try {
-        // Check email verification first since it's part of Firebase Auth
         await _authDataSource.reloadUser();
         final isVerified = _authDataSource.isEmailVerified;
 
         if (!isVerified) {
-          // Return special unverified user state
           return AppUser.unverified(uid);
         }
 
-        // Fetch the user document
         final doc = await _firestore
             .collection(customerSpecificCollectionUsers)
             .doc(uid)
@@ -322,7 +311,6 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
 
         return AppUser.fromMap(doc.data()!, doc.id);
       } catch (e) {
-        // Create an error state user
         return AppUser.error(uid, e.toString());
       }
     });

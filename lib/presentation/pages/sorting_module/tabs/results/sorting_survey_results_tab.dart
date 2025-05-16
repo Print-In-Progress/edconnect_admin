@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/results/components/class_column.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/results/components/results_header.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/results/components/student_card.dart';
@@ -37,7 +38,6 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
   @override
   void initState() {
     super.initState();
-    // Convert the calculation results to a usable format
     if (widget.survey.calculationResults != null &&
         widget.survey.calculationResults!.isNotEmpty) {
       _currentResults = widget.survey.calculationResults!.map(
@@ -52,17 +52,16 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
     final isDarkMode = theme.isDarkMode;
     final hasResults = _currentResults.isNotEmpty;
     final allUsers = ref.watch(allUsersStreamProvider).value ?? [];
+    final l10n = AppLocalizations.of(context)!;
 
     if (!hasResults) {
-      return _buildNoResultsState(isDarkMode);
+      return _buildNoResultsState(isDarkMode, l10n);
     }
 
-    // Create a list of columns for the sortable widget
     final columns = _currentResults.entries.map((entry) {
       final className = entry.key;
       final studentIds = entry.value;
 
-      // Create sortable items from student IDs
       final items = studentIds.map((studentId) {
         return SortableItem<String>(
           id: studentId,
@@ -72,10 +71,8 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
 
       return SortableColumn<String>(
         id: className,
-        title: className, // Still need this for internal purposes
-        description:
-            '${items.length} students', // Still need this for internal purposes
-        // Add custom header widget with statistics
+        title: className,
+        description: l10n.sortingModuleNumOfStudents(studentIds.length),
         headerWidget: ClassColumnHeader(
             className: className,
             studentIds: studentIds,
@@ -97,14 +94,14 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
               Row(
                 children: [
                   BaseButton(
-                    label: 'Save Changes',
+                    label: l10n.globalSave,
                     prefixIcon: Icons.save_outlined,
                     variant: ButtonVariant.filled,
-                    onPressed: _saveChanges,
+                    onPressed: () => _saveChanges(l10n),
                   ),
                   SizedBox(width: Foundations.spacing.md),
                   BaseButton(
-                    label: 'Discard Changes',
+                    label: l10n.globaDiscard,
                     prefixIcon: Icons.close,
                     variant: ButtonVariant.outlined,
                     onPressed: _discardChanges,
@@ -113,7 +110,7 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
               ),
               SizedBox(height: Foundations.spacing.sm),
               Text(
-                'You have unsaved changes to the class assignments',
+                l10n.globalYouHaveUnsavedChanges,
                 style: TextStyle(
                   color: Foundations.colors.warning,
                   fontSize: Foundations.typography.sm,
@@ -143,7 +140,7 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
                       child: Padding(
                         padding: EdgeInsets.all(Foundations.spacing.lg),
                         child: Text(
-                          'Drag students here',
+                          l10n.sortingModuleDragStudentsHerePlaceholder,
                           style: TextStyle(
                             color: isDarkMode
                                 ? Foundations.darkColors.textMuted
@@ -163,7 +160,7 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
     );
   }
 
-  Widget _buildNoResultsState(bool isDarkMode) {
+  Widget _buildNoResultsState(bool isDarkMode, AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -177,7 +174,7 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
           ),
           SizedBox(height: Foundations.spacing.lg),
           Text(
-            'No calculation results available',
+            l10n.sortingModuleNoCalcResults,
             style: TextStyle(
               fontSize: Foundations.typography.xl,
               fontWeight: Foundations.typography.semibold,
@@ -187,22 +184,12 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
             ),
           ),
           SizedBox(height: Foundations.spacing.md),
-          Text(
-            'Use the Calculate tab to generate class distributions',
-            style: TextStyle(
-              fontSize: Foundations.typography.base,
-              color: isDarkMode
-                  ? Foundations.darkColors.textSecondary
-                  : Foundations.colors.textSecondary,
-            ),
-          ),
           SizedBox(height: Foundations.spacing.xl),
           BaseButton(
-            label: 'Go to Calculate',
+            label: l10n.sortingModuleGoToCalculate,
             prefixIcon: Icons.calculate_outlined,
             variant: ButtonVariant.filled,
             onPressed: () {
-              // Navigate to calculate tab
               ref
                   .read(surveyTabIndexProvider(widget.survey.id).notifier)
                   .state = 2;
@@ -219,22 +206,16 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
     String targetColumnId,
     String itemId,
   ) {
-    // Update the results based on the reordering
     final Map<String, List<String>> newResults = {};
 
-    // Create updated columns with fresh headers
     final newColumns = <SortableColumn<String>>[];
 
     for (final column in updatedColumns) {
-      // Extract student IDs from items
       final studentIds = column.items.map((item) => item.data).toList();
 
-      // Add to results map
       newResults[column.id] = studentIds;
 
-      // Create updated column with fresh header
       newColumns.add(column.copyWith(
-        // Update header with new statistics
         headerWidget: ClassColumnHeader(
           className: column.id,
           studentIds: studentIds,
@@ -249,14 +230,12 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
     });
   }
 
-  Future<void> _saveChanges() async {
+  Future<void> _saveChanges(AppLocalizations l10n) async {
     try {
-      // Show confirmation dialog
       final confirmed = await Dialogs.confirm(
         context: context,
-        title: 'Save Changes',
-        message:
-            'Are you sure you want to save your changes to the class assignments?',
+        title: l10n.globalSave,
+        message: l10n.globalSaveChangesConfirmationDialog,
       );
 
       if (confirmed != true) return;
@@ -269,20 +248,18 @@ class _ResultsTabState extends ConsumerState<ResultsTab> {
         _hasChanges = false;
       });
 
-      if (context.mounted) {
-        Toaster.success(context, 'Class assignments saved successfully');
+      if (mounted) {
+        Toaster.success(context, l10n.successDataSaved);
       }
     } catch (e) {
-      if (context.mounted) {
-        Toaster.error(context, 'Failed to save changes',
-            description: e.toString());
+      if (mounted) {
+        Toaster.error(context, l10n.errorSaveFailed, description: e.toString());
       }
     }
   }
 
   void _discardChanges() {
     setState(() {
-      // Revert to original results
       if (widget.survey.calculationResults != null) {
         _currentResults = widget.survey.calculationResults!.map(
             (className, students) =>

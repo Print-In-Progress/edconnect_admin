@@ -2,9 +2,11 @@ import 'dart:typed_data';
 
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
+import 'package:edconnect_admin/core/providers/interface_providers.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
 import 'package:edconnect_admin/domain/services/file_export_service.dart';
 import 'package:edconnect_admin/domain/services/pdf_service.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/checkbox.dart';
@@ -48,19 +50,15 @@ class ExportResultsDialog extends ConsumerStatefulWidget {
       ExportResultsDialogState();
 }
 
-// Make the state class public by removing underscore
 class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
-  // Track which classes to export
-  Map<String, bool> _selectedClasses = {};
+  final Map<String, bool> _selectedClasses = {};
   PageSize _selectedPageSize = PageSize.a4;
   bool _selectAllClasses = true;
 
-  // Track which parameters to export
-  Map<String, bool> _selectedParameters = {};
+  final Map<String, bool> _selectedParameters = {};
   bool _selectAllParameters = false;
   bool _includeGender = false;
 
-  // Export options
   bool _includeSummaryStatistics = false;
   bool _showClassStatistics = false;
 
@@ -68,16 +66,13 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
   void initState() {
     super.initState();
 
-    // Initialize classes selection (all selected by default)
     for (final className in widget.currentResults.keys) {
       _selectedClasses[className] = true;
     }
 
-    // Initialize parameters selection (all selected by default)
     for (final param in widget.survey.parameters) {
       final paramName = param['name'] as String;
       if (paramName != 'sex') {
-        // Skip sex as it's handled separately
         _selectedParameters[paramName] = false;
       }
     }
@@ -101,7 +96,6 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
     });
   }
 
-  // Handle class selection status
   void _updateClassSelectAllStatus() {
     final allSelected = _selectedClasses.values.every((selected) => selected);
 
@@ -110,7 +104,6 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
     });
   }
 
-  // Handle parameter selection status
   void _updateParameterSelectAllStatus() {
     final allSelected =
         _selectedParameters.values.every((selected) => selected);
@@ -120,11 +113,11 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
     });
   }
 
-  // Public method to trigger PDF export from parent
   Future<void> exportPdf() async {
-    // Validate that at least one class is selected
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedClasses.values.every((selected) => !selected)) {
-      Toaster.warning(context, 'Please select at least one class to export');
+      Toaster.warning(
+          context, l10n.sortingModuleSelectAtLeastOneClassForExport);
       return;
     }
 
@@ -133,19 +126,18 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
     try {
       final allUsers = ref.read(allUsersStreamProvider).value ?? [];
 
-      // Generate PDF
       final pdfBytes = await _generatePdf(allUsers);
 
-      // Download the file
       await _downloadPdf(pdfBytes);
 
       if (mounted) {
-        Toaster.success(context, 'Results exported successfully');
+        Toaster.success(context, l10n.successExport);
         Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
-        Toaster.error(context, 'Export failed', description: e.toString());
+        Toaster.error(context, l10n.errorExportFailed,
+            description: e.toString());
       }
     } finally {
       widget.onExportStatusChanged?.call(false);
@@ -153,10 +145,10 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
   }
 
   Future<Uint8List> _generatePdf(List<AppUser> allUsers) async {
-    // Create a PDF exporter service extension
-    final exportService = SortingResultsPdfService();
+    final localizationRepository = ref.watch(localizationRepositoryProvider);
 
-    // Generate the PDF with the selected options
+    // Create PDF service with the repository
+    final exportService = SortingResultsPdfService(localizationRepository);
     return exportService.generateClassDistributionPdf(
       survey: widget.survey,
       currentResults: widget.currentResults,
@@ -171,17 +163,14 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
   }
 
   Future<void> _downloadPdf(Uint8List pdfBytes) async {
-    // Format timestamp
     final now = DateTime.now();
+    final l10n = AppLocalizations.of(context)!;
     final formattedDate =
         '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-
-    // Create file name
     final fileName =
         'class_distribution_${widget.survey.title.replaceAll(' ', '_')}_$formattedDate.pdf';
 
     try {
-      // Use the simplified file export service
       final fileExportService = FileExportService();
       await fileExportService.exportFile(
         bytes: pdfBytes,
@@ -190,7 +179,7 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
       );
     } catch (e) {
       if (mounted) {
-        Toaster.error(context, 'File download failed',
+        Toaster.error(context, l10n.errorFileDownloadFailed,
             description: e.toString());
       }
     }
@@ -200,13 +189,13 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
   Widget build(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
     final isDarkMode = theme.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Classes section
         Text(
-          'Select Classes to Export',
+          l10n.sortingModuleSelectClassesToExportLabel,
           style: TextStyle(
             fontSize: Foundations.typography.base,
             fontWeight: Foundations.typography.semibold,
@@ -216,19 +205,14 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
           ),
         ),
         SizedBox(height: Foundations.spacing.xs),
-
-        // Select all classes checkbox
         BaseCheckbox(
           value: _selectAllClasses,
           onChanged: (value) {
             _toggleSelectAllClasses(value!);
           },
-          label: 'Select all classes',
+          label: l10n.sortingModuleSelectAllClasses,
         ),
-
         SizedBox(height: Foundations.spacing.xs),
-
-        // Class checkboxes
         Wrap(
           spacing: Foundations.spacing.lg,
           runSpacing: Foundations.spacing.xs,
@@ -243,18 +227,16 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
                     _updateClassSelectAllStatus();
                   });
                 },
-                label:
-                    '$className (${widget.currentResults[className]?.length ?? 0} students)',
+                label: '$className ${l10n.sortingModuleNumOfStudents(
+                  widget.currentResults[className]?.length ?? 0,
+                )}',
               ),
             );
           }).toList(),
         ),
-
         SizedBox(height: Foundations.spacing.lg),
-
-        // Student information section
         Text(
-          'Select Information to Include',
+          l10n.sortingModuleSelectInfoToIncludeLabel,
           style: TextStyle(
             fontSize: Foundations.typography.base,
             fontWeight: Foundations.typography.semibold,
@@ -264,8 +246,6 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
           ),
         ),
         SizedBox(height: Foundations.spacing.xs),
-
-        // Include gender checkbox
         if (widget.survey.askBiologicalSex)
           BaseCheckbox(
             value: _includeGender,
@@ -274,16 +254,13 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
                 _includeGender = value!;
               });
             },
-            label: 'Include gender information',
+            label: l10n.sortingModuleIncludeGender,
           ),
-
         SizedBox(height: Foundations.spacing.sm),
-
-        // Parameters section
         if (widget.survey.parameters.isNotEmpty &&
             widget.survey.parameters.any((p) => p['name'] != 'sex')) ...[
           Text(
-            'Additional Parameters',
+            l10n.sortingModuleAdditionalParametersLabel,
             style: TextStyle(
               fontSize: Foundations.typography.base,
               fontWeight: Foundations.typography.semibold,
@@ -293,25 +270,19 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
             ),
           ),
           SizedBox(height: Foundations.spacing.xs),
-
-          // Select all parameters checkbox
           BaseCheckbox(
             value: _selectAllParameters,
             onChanged: (value) {
               _toggleSelectAllParameters(value!);
             },
-            label: 'Select all parameters',
+            label: l10n.sortingModuleSelectAllParameters,
           ),
-
           SizedBox(height: Foundations.spacing.xs),
-
-          // Parameter checkboxes
           Wrap(
             spacing: Foundations.spacing.lg,
             runSpacing: Foundations.spacing.xs,
             children: widget.survey.parameters
-                .where((p) =>
-                    p['name'] != 'sex') // Skip sex as it's handled separately
+                .where((p) => p['name'] != 'sex')
                 .map((param) {
               final paramName = param['name'] as String;
               return SizedBox(
@@ -330,12 +301,9 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
             }).toList(),
           ),
         ],
-
         SizedBox(height: Foundations.spacing.lg),
-
-        // Export options
         Text(
-          'Export Options',
+          l10n.globalExportOptions,
           style: TextStyle(
             fontSize: Foundations.typography.base,
             fontWeight: Foundations.typography.semibold,
@@ -345,7 +313,6 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
           ),
         ),
         SizedBox(height: Foundations.spacing.xs),
-
         BaseCheckbox(
           value: _includeSummaryStatistics,
           onChanged: (value) {
@@ -353,9 +320,8 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
               _includeSummaryStatistics = value!;
             });
           },
-          label: 'Include summary statistics',
+          label: l10n.sortingModuleExportIncludeSummaryStatistics,
         ),
-
         BaseCheckbox(
           value: _showClassStatistics,
           onChanged: (value) {
@@ -363,13 +329,11 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
               _showClassStatistics = value!;
             });
           },
-          label: 'Include class statistics',
+          label: l10n.sortingModuleIncludeClassStatistics,
         ),
-
         SizedBox(height: Foundations.spacing.sm),
-
         Text(
-          'Page Size',
+          l10n.globalPageSize,
           style: TextStyle(
             fontSize: Foundations.typography.sm,
             fontWeight: Foundations.typography.medium,
@@ -378,9 +342,7 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
                 : Foundations.colors.textSecondary,
           ),
         ),
-
         SizedBox(height: Foundations.spacing.xs),
-
         BaseSelect<PageSize>(
           value: _selectedPageSize,
           options: PageSize.values
@@ -399,7 +361,7 @@ class ExportResultsDialogState extends ConsumerState<ExportResultsDialog> {
           },
           width: 200,
           fullWidth: false,
-          hint: 'Select page size',
+          hint: l10n.globalSelectPageSize,
           size: SelectSize.medium,
           variant: SelectVariant.outlined,
         ),

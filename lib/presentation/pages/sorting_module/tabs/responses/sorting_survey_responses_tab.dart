@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/components/section_header.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/responses/components/responses_table/responses_table.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/responses/dialogs/add_response_dialog.dart';
@@ -24,8 +25,7 @@ class ResponsesTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final surveyAsync = ref.watch(selectedSortingSurveyProvider(survey.id));
-
-    // Watch the filtered responses provider directly - it reacts to survey changes automatically
+    final l10n = AppLocalizations.of(context)!;
 
     return AsyncValueWidget(
       value: surveyAsync,
@@ -43,34 +43,27 @@ class ResponsesTab extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Overview Statistics Section
                 SectionHeader(
-                    title: 'Response Statistics',
+                    title: l10n.sortingModuleResponseStatisticsLabel,
                     icon: Icons.analytics_outlined),
                 SizedBox(height: Foundations.spacing.md),
                 StatGrid(survey: survey),
-
                 SizedBox(height: Foundations.spacing.xl),
-
-                // Parameter Statistics Section
                 SectionHeader(
-                    title: 'Parameter Distribution', icon: Icons.bar_chart),
-
+                    title: l10n.sortingModuleParameterDistributionLabel,
+                    icon: Icons.bar_chart),
                 SizedBox(height: Foundations.spacing.md),
                 ParameterGrid(survey: survey),
-
                 SizedBox(height: Foundations.spacing.xl),
-
-                // Responses Table Section
                 SectionHeader(
-                    title: 'Individual Responses',
+                    title: l10n.sortingModuleParameterDistributionLabel,
                     icon: Icons.table_chart_outlined),
                 SizedBox(height: Foundations.spacing.md),
                 Wrap(
                   runSpacing: Foundations.spacing.xs,
                   children: [
                     BaseButton(
-                      label: 'Add Manually',
+                      label: l10n.globalAddX(l10n.sortingModuleResponses(1)),
                       prefixIcon: Icons.person_add_outlined,
                       variant: ButtonVariant.outlined,
                       size: ButtonSize.medium,
@@ -83,30 +76,36 @@ class ResponsesTab extends ConsumerWidget {
                                 .read(sortingSurveyNotifierProvider.notifier)
                                 .addResponse(survey.id, respondentId, response);
                             Toaster.success(
-                                context, 'Response added successfully');
+                                context,
+                                l10n.successXAdded(
+                                    l10n.sortingModuleResponses(1)));
                           },
                         );
                       },
                     ),
                     SizedBox(width: Foundations.spacing.md),
                     BaseButton(
-                      label: 'Import Responses',
+                      label: l10n.globalImportX(
+                        l10n.sortingModuleResponses(0),
+                      ),
                       prefixIcon: Icons.upload_file_outlined,
                       variant: ButtonVariant.outlined,
                       size: ButtonSize.medium,
                       onPressed: () =>
-                          _showImportDialog(context, ref, latestSurvey),
+                          _showImportDialog(context, ref, latestSurvey, l10n),
                     ),
                     SizedBox(width: Foundations.spacing.md),
                     BaseButton(
-                      label: 'Export',
+                      label: l10n.globalExportX(''),
                       prefixIcon: Icons.download_outlined,
                       variant: ButtonVariant.outlined,
                       size: ButtonSize.medium,
                       onPressed: () {
                         Dialogs.show(
                           context: context,
-                          title: 'Export Responses',
+                          title: l10n.globalExportX(
+                            l10n.sortingModuleResponses(0),
+                          ),
                           content: const ExportResponsesDialog(),
                           showCancelButton: true,
                         );
@@ -114,13 +113,13 @@ class ResponsesTab extends ConsumerWidget {
                     ),
                     SizedBox(width: Foundations.spacing.md),
                     BaseButton(
-                      label: 'Delete All',
+                      label: l10n.globalDeleteAllX(''),
                       prefixIcon: Icons.delete_sweep_outlined,
                       variant: ButtonVariant.filled,
                       size: ButtonSize.medium,
                       backgroundColor: Foundations.colors.error,
                       onPressed: () =>
-                          _deleteAllResponses(context, ref, latestSurvey),
+                          _deleteAllResponses(context, ref, latestSurvey, l10n),
                     ),
                   ],
                 ),
@@ -140,10 +139,10 @@ class ResponsesTab extends ConsumerWidget {
             Icon(Icons.error_outline,
                 size: 48, color: Foundations.colors.error),
             SizedBox(height: Foundations.spacing.md),
-            Text('Error loading survey: $error'),
+            Text(l10n.errorLoadingX(l10n.sortingSurvey(1))),
             SizedBox(height: Foundations.spacing.md),
             BaseButton(
-              label: 'Retry',
+              label: l10n.globalRetry,
               variant: ButtonVariant.outlined,
               onPressed: () =>
                   ref.invalidate(selectedSortingSurveyProvider(survey.id)),
@@ -160,7 +159,6 @@ class ResponsesTab extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Statistics section skeleton
           Container(
               height: 24, width: 200, color: Foundations.colors.surfaceActive),
           SizedBox(height: Foundations.spacing.md),
@@ -175,10 +173,7 @@ class ResponsesTab extends ConsumerWidget {
                       ),
                     )),
           ),
-
           SizedBox(height: Foundations.spacing.xl),
-
-          // Parameter section skeleton
           Container(
               height: 24, width: 200, color: Foundations.colors.surfaceActive),
           SizedBox(height: Foundations.spacing.md),
@@ -193,10 +188,7 @@ class ResponsesTab extends ConsumerWidget {
                       color: Foundations.colors.surfaceActive,
                     )),
           ),
-
           SizedBox(height: Foundations.spacing.xl),
-
-          // Responses table skeleton
           Container(
               height: 24, width: 200, color: Foundations.colors.surfaceActive),
           SizedBox(height: Foundations.spacing.md),
@@ -209,49 +201,40 @@ class ResponsesTab extends ConsumerWidget {
     );
   }
 
-  Future<void> _deleteAllResponses(
-      BuildContext context, WidgetRef ref, SortingSurvey survey) async {
-    // Show confirmation dialog
+  Future<void> _deleteAllResponses(BuildContext context, WidgetRef ref,
+      SortingSurvey survey, AppLocalizations l10n) async {
     final bool? confirmed = await Dialogs.confirm(
       context: context,
-      title: 'Delete All Responses',
-      message:
-          'Are you sure you want to delete all responses? This action cannot be undone.',
+      title: l10n.globalDeleteAllX(l10n.sortingModuleResponses(0)),
+      message: l10n.globalDeleteConfirmationDialogAllWithName(
+          l10n.sortingModuleResponses(0)),
       variant: DialogVariant.danger,
       dangerous: true,
-      confirmText: 'Delete All',
+      confirmText: l10n.globalDeleteAllX(''),
     );
 
     if (confirmed == true) {
-      // Update survey with empty responses
       await ref
           .read(sortingSurveyNotifierProvider.notifier)
           .deleteAllResponses(survey.id);
       if (context.mounted) {
-        Toaster.success(context, 'All responses deleted successfully');
+        Toaster.success(context,
+            l10n.successDeletedWithName(l10n.sortingModuleResponses(0)));
       }
     }
   }
 
-  void _showImportDialog(
-      BuildContext context, WidgetRef ref, SortingSurvey survey) {
+  void _showImportDialog(BuildContext context, WidgetRef ref,
+      SortingSurvey survey, AppLocalizations l10n) {
     Dialogs.show(
       context: context,
-      title: 'Import Responses',
+      title: l10n.globalImportX(l10n.sortingModuleResponses(0)),
       scrollable: true,
       width: 800,
       variant: DialogVariant.default_,
       content: ImportResponsesDialog(survey: survey),
+      showCancelButton: true,
       actions: [
-        Consumer(builder: (context, ref, _) {
-          return BaseButton(
-            label: 'Cancel',
-            variant: ButtonVariant.text,
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          );
-        }),
         Consumer(
           builder: (context, ref, _) {
             final importState = ref.watch(responseImportProvider);

@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class ExportResponsesDialog extends StatelessWidget {
@@ -5,13 +6,14 @@ class ExportResponsesDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    final l10n = AppLocalizations.of(context)!;
+
+    return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // TODO: Implement export responses dialog
         Text(
-          'Feature not available yet',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          l10n.globalFeatureNotImplementedYet,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ],
     );

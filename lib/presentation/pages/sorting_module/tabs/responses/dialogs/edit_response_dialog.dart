@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/components/toggle_chip_group.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/utils/parameter_formatter.dart';
 import 'package:edconnect_admin/presentation/widgets/common/dropdown/single_select_dropdown.dart';
@@ -36,10 +37,11 @@ class EditResponseDialogContent extends ConsumerStatefulWidget {
     Function(Map<String, dynamic> updatedResponse, String responseId) onSubmit,
   ) {
     final contentKey = GlobalKey<_EditResponseDialogContentState>();
+    final l10n = AppLocalizations.of(context)!;
 
     Dialogs.form(
       context: context,
-      title: 'Edit Response',
+      title: l10n.globalEditWithName(l10n.sortingModuleResponses(1)),
       width: 600,
       variant: DialogVariant.default_,
       form: EditResponseDialogContent(
@@ -54,11 +56,11 @@ class EditResponseDialogContent extends ConsumerStatefulWidget {
       ),
       actions: [
         BaseButton(
-          label: 'Save Changes',
+          label: l10n.globalSave,
           variant: ButtonVariant.filled,
           onPressed: () {
             final state = contentKey.currentState;
-            if (state != null && state.validate()) {
+            if (state != null && state.validate(l10n)) {
               Navigator.of(context).pop();
             }
           },
@@ -87,7 +89,6 @@ class _EditResponseDialogContentState
   void initState() {
     super.initState();
 
-    // Initialize state from existing response
     isManualEntry = widget.response['_manual_entry'] == true;
     selectedUserId = isManualEntry ? null : widget.responseId;
     manualFirstNameController = TextEditingController(
@@ -100,7 +101,6 @@ class _EditResponseDialogContentState
     selectedPreferences =
         (widget.response['prefs'] as List?)?.cast<String>() ?? [];
 
-    // Initialize parameter responses and controllers
     parameterResponses = {
       for (var param in widget.survey.parameters)
         param['name']: param['type'] == 'binary'
@@ -133,14 +133,13 @@ class _EditResponseDialogContentState
     final theme = ref.watch(appThemeProvider);
     final isDarkMode = theme.isDarkMode;
     final allUsers = ref.watch(allUsersStreamProvider).value ?? [];
-
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Name fields for manual entry
         if (isManualEntry) ...[
           Text(
-            'Name',
+            l10n.globalName,
             style: TextStyle(
               fontSize: Foundations.typography.base,
               fontWeight: Foundations.typography.medium,
@@ -154,14 +153,14 @@ class _EditResponseDialogContentState
             children: [
               Expanded(
                 child: BaseInput(
-                  label: 'First Name',
+                  label: l10n.globalFirstNameTextFieldHintText,
                   controller: manualFirstNameController,
                 ),
               ),
               SizedBox(width: Foundations.spacing.md),
               Expanded(
                 child: BaseInput(
-                  label: 'Last Name',
+                  label: l10n.globalLastNameTextFieldHintText,
                   controller: manualLastNameController,
                 ),
               ),
@@ -173,21 +172,21 @@ class _EditResponseDialogContentState
         if (widget.survey.askBiologicalSex) ...[
           SizedBox(height: Foundations.spacing.lg),
           ToggleChipGroup<String>(
-            label: 'Biological Sex',
+            label: l10n.globalBiologicalSexLabel,
             options: [
               (
                 'm',
-                'Male',
+                l10n.globalMaleLabel,
                 ColorGenerator.getColor('sex', 'm', isDarkMode: isDarkMode)
               ),
               (
                 'f',
-                'Female',
+                l10n.globalFemaleLabel,
                 ColorGenerator.getColor('sex', 'f', isDarkMode: isDarkMode)
               ),
               (
                 'nb',
-                'Non-Binary',
+                l10n.globalNonBinaryLabel,
                 ColorGenerator.getColor('sex', 'nb', isDarkMode: isDarkMode)
               ),
             ],
@@ -196,14 +195,14 @@ class _EditResponseDialogContentState
           ),
         ],
 
-        // Preferences selection
         if (widget.survey.maxPreferences != null) ...[
           SizedBox(height: Foundations.spacing.lg),
           BaseMultiSelect<String>(
-            label: 'Preferences',
-            hint: 'Select preferences',
-            description:
-                'Select up to ${widget.survey.maxPreferences} preferred users',
+            label: l10n.sortingModulePreferences(0),
+            hint: l10n.globalSelectX(
+                l10n.sortingModulePreferences(widget.survey.maxPreferences!)),
+            description: l10n.sortingModuleSelectUpToXPreferencesLabel(
+                widget.survey.maxPreferences!),
             searchable: true,
             values: selectedPreferences,
             options: widget.survey.responses.entries
@@ -244,10 +243,9 @@ class _EditResponseDialogContentState
           ),
         ],
 
-        // Parameters
         SizedBox(height: Foundations.spacing.lg),
         Text(
-          'Parameters',
+          l10n.sortingModuleParameters,
           style: TextStyle(
             fontSize: Foundations.typography.base,
             fontWeight: Foundations.typography.medium,
@@ -267,8 +265,8 @@ class _EditResponseDialogContentState
               child: ToggleChipGroup<String>(
                 label: ParameterFormatter.formatParameterNameForDisplay(name),
                 options: [
-                  ('yes', 'Yes', ColorGenerator.yesColor),
-                  ('no', 'No', ColorGenerator.noColor),
+                  ('yes', l10n.globalYes, ColorGenerator.yesColor),
+                  ('no', l10n.globalNo, ColorGenerator.noColor),
                 ],
                 selectedValue: parameterResponses[name],
                 onChanged: (value) =>
@@ -277,7 +275,6 @@ class _EditResponseDialogContentState
             );
           }
 
-          // Regular input for categorical parameters
           return Padding(
             padding: EdgeInsets.only(bottom: Foundations.spacing.md),
             child: Column(
@@ -294,7 +291,6 @@ class _EditResponseDialogContentState
                 ),
                 SizedBox(height: Foundations.spacing.xs),
                 BaseInput(
-                  hint: 'Enter answer',
                   controller: parameterControllers[name],
                   onChanged: (value) {
                     setState(() => parameterResponses[name] = value);
@@ -308,15 +304,14 @@ class _EditResponseDialogContentState
     );
   }
 
-  bool validate() {
-    // Validate form
+  bool validate(AppLocalizations l10n) {
     if (isManualEntry &&
         (manualFirstNameController.text.isEmpty ||
             manualLastNameController.text.isEmpty)) {
       Dialogs.alert(
         context: context,
-        title: 'Validation Error',
-        message: 'Please enter first and last name',
+        title: l10n.validationError,
+        message: l10n.validationRequiredSnackbar,
         variant: DialogVariant.danger,
       );
       return false;
@@ -325,8 +320,8 @@ class _EditResponseDialogContentState
     if (widget.survey.askBiologicalSex && selectedSex == null) {
       Dialogs.alert(
         context: context,
-        title: 'Validation Error',
-        message: 'Please select biological sex',
+        title: l10n.validationError,
+        message: l10n.validationRequiredSnackbar,
         variant: DialogVariant.danger,
       );
       return false;
@@ -335,14 +330,13 @@ class _EditResponseDialogContentState
     if (parameterResponses.length != widget.survey.parameters.length) {
       Dialogs.alert(
         context: context,
-        title: 'Validation Error',
-        message: 'Please answer all parameters',
+        title: l10n.validationError,
+        message: l10n.validationRequiredSnackbar,
         variant: DialogVariant.danger,
       );
       return false;
     }
 
-    // Format categorical values
     final formattedResponses = Map<String, dynamic>.from(parameterResponses);
     for (var param in widget.survey.parameters) {
       if (param['type'] != 'binary') {
@@ -352,21 +346,18 @@ class _EditResponseDialogContentState
       }
     }
 
-    // Create updated response data
     final updatedResponse = {
-      ...widget.response, // Keep existing data
-      ...formattedResponses, // Update with new parameters
+      ...widget.response,
+      ...formattedResponses,
       if (widget.survey.askBiologicalSex) 'sex': selectedSex,
       'prefs': selectedPreferences,
     };
 
-    // Update manual entry fields if applicable
     if (isManualEntry) {
       updatedResponse['_first_name'] = manualFirstNameController.text;
       updatedResponse['_last_name'] = manualLastNameController.text;
     }
 
-    // Call the validation callback
     widget.onValidate({
       'response': updatedResponse,
     });

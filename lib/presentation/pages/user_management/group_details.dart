@@ -1,7 +1,10 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
+import 'package:edconnect_admin/core/providers/interface_providers.dart';
 import 'package:edconnect_admin/domain/entities/group.dart';
 import 'package:edconnect_admin/domain/entities/permissions.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/user_management/user_details.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
@@ -52,7 +55,6 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
     super.initState();
     _nameController = TextEditingController(text: widget.group.name);
 
-    // Initialize state providers
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(groupNameProvider.notifier).state = widget.group.name;
       ref.read(selectedMembersProvider.notifier).state =
@@ -68,7 +70,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
     super.dispose();
   }
 
-  Future<void> _saveGroupName() async {
+  Future<void> _saveGroupName(AppLocalizations l10n) async {
     final newName = ref.read(groupNameProvider);
     if (newName.trim().isEmpty) {
       Toaster.error(context, 'Group name cannot be empty');
@@ -76,65 +78,63 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
     }
 
     try {
-      Toaster.info(context, 'Saving group name...');
-
       final updatedGroup = widget.group.copyWith(name: newName);
       await ref
           .read(groupManagementProvider.notifier)
           .updateGroup(updatedGroup);
-
-      Toaster.success(context, 'Group name updated successfully');
+      if (!mounted) return;
+      Toaster.success(context, l10n.successXUpdated(l10n.globalGroupLabel(1)));
       ref.read(groupNameEditingProvider.notifier).state = false;
     } catch (e) {
-      Toaster.error(context, 'Error saving group name: ${e.toString()}');
+      Toaster.error(context, l10n.errorUnexpectedWithError(e.toString()));
     }
   }
 
-  Future<void> _saveGroupPermissions() async {
+  Future<void> _saveGroupPermissions(AppLocalizations l10n) async {
     final selectedPermissions = ref.read(selectedGroupPermissionsProvider);
 
     try {
-      Toaster.info(context, 'Saving group permissions...');
-
+      if (!mounted) return;
       final updatedGroup =
           widget.group.copyWith(permissions: selectedPermissions);
       await ref
           .read(groupManagementProvider.notifier)
           .updateGroup(updatedGroup);
-
-      Toaster.success(context, 'Group permissions updated successfully');
+      if (!mounted) return;
+      Toaster.success(context,
+          l10n.successXUpdated(l10n.userManagementPermissionsLabel(0)));
       ref.read(groupPermissionsEditingProvider.notifier).state = false;
     } catch (e) {
-      Toaster.error(context, 'Error saving permissions: ${e.toString()}');
+      Toaster.error(context, l10n.errorUnexpectedWithError(e.toString()));
     }
   }
 
-  Future<void> _saveGroupMembers() async {
+  Future<void> _saveGroupMembers(AppLocalizations l10n) async {
     final selectedMembers = ref.read(selectedMembersProvider);
 
     try {
-      Toaster.info(context, 'Saving group members...');
-
       final updatedGroup = widget.group.copyWith(memberIds: selectedMembers);
       await ref
           .read(groupManagementProvider.notifier)
           .updateGroup(updatedGroup);
-
-      Toaster.success(context, 'Group members updated successfully');
+      if (!mounted) return;
+      Toaster.success(
+          context, l10n.successXUpdated(l10n.userManagementMembersLabel));
       ref.read(membersEditingProvider.notifier).state = false;
     } catch (e) {
-      Toaster.error(context, 'Error saving group members: ${e.toString()}');
+      Toaster.error(context, l10n.errorUnexpectedWithError(e.toString()));
     }
   }
 
-  Future<void> _deleteGroup() async {
+  Future<void> _deleteGroup(AppLocalizations l10n) async {
     try {
       await ref
           .read(groupManagementProvider.notifier)
           .deleteGroup(widget.group.id);
+      if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
-      Toaster.error(context, 'Error deleting group: ${e.toString()}');
+      Toaster.error(context, l10n.errorUnexpectedWithError(e.toString()));
     }
   }
 
@@ -147,34 +147,36 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
     final isNameEditing = ref.watch(groupNameEditingProvider);
     final isMembersEditing = ref.watch(membersEditingProvider);
     final isPermissionsEditing = ref.watch(groupPermissionsEditingProvider);
-
+    final localizations = ref.watch(localizationRepositoryProvider);
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: isDarkMode
           ? Foundations.darkColors.background
           : Foundations.colors.background,
       appBar: BaseAppBar(
-        title: 'Group Details',
+        title: l10n.globalDetailsLabel,
         showLeading: true,
         actions: [
           BaseButton(
-            label: 'Delete Group',
+            label: l10n.globalDeleteWithName(l10n.globalGroupLabel(1)),
             variant: ButtonVariant.filled,
             backgroundColor: Foundations.colors.error,
             onPressed: () async {
               final confirm = await Dialogs.confirm(
                 context: context,
-                title: 'Confirm Group Deletion',
-                message:
-                    'Are you sure you want to delete this group? This action cannot be undone.',
-                confirmText: 'Delete',
+                title: l10n.globalConfirm,
+                message: l10n.globalDeleteConfirmationDialogWithName(
+                    l10n.globalGroupLabel(1)),
+                confirmText: l10n.globalDelete,
                 dangerous: true,
               );
 
               if (confirm == true) {
-                await _deleteGroup();
+                await _deleteGroup(l10n);
                 if (!context.mounted) return;
                 Navigator.pop(context);
-                Toaster.success(context, 'Group deleted successfully');
+                Toaster.success(context,
+                    l10n.successDeletedWithName(l10n.globalGroupLabel(1)));
               }
             },
           ),
@@ -185,42 +187,41 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Group name card
-            _buildGroupNameCard(isDarkMode, isNameEditing),
+            _buildGroupNameCard(isDarkMode, isNameEditing, l10n),
             SizedBox(height: Foundations.spacing.lg),
-
-            // Permissions section
             _buildSectionHeader(
-              'Permissions',
+              l10n.userManagementPermissionsLabel(0),
               isPermissionsEditing,
               onEditPressed: () => ref
                   .read(groupPermissionsEditingProvider.notifier)
                   .state = true,
-              onSavePressed: _saveGroupPermissions,
+              onSavePressed: () => _saveGroupPermissions(l10n),
               isDarkMode: isDarkMode,
+              l10n,
             ),
             SizedBox(height: Foundations.spacing.md),
-            _buildPermissionsCard(isDarkMode, isPermissionsEditing),
+            _buildPermissionsCard(
+                isDarkMode, isPermissionsEditing, localizations, l10n),
             SizedBox(height: Foundations.spacing.lg),
-
-            // Members section
             _buildSectionHeader(
-              'Members',
+              l10n.userManagementMembersLabel,
               isMembersEditing,
               onEditPressed: () =>
                   ref.read(membersEditingProvider.notifier).state = true,
-              onSavePressed: _saveGroupMembers,
+              onSavePressed: () => _saveGroupMembers(l10n),
               isDarkMode: isDarkMode,
+              l10n,
             ),
             SizedBox(height: Foundations.spacing.md),
-            _buildMembersCard(allUsers, isDarkMode, isMembersEditing),
+            _buildMembersCard(allUsers, isDarkMode, isMembersEditing, l10n),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildGroupNameCard(bool isDarkMode, bool isEditing) {
+  Widget _buildGroupNameCard(
+      bool isDarkMode, bool isEditing, AppLocalizations l10n) {
     final groupName = ref.watch(groupNameProvider);
     final isLoading = ref.watch(groupManagementProvider).isLoading;
 
@@ -235,7 +236,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Group Name',
+                l10n.globalGroupName,
                 style: TextStyle(
                   fontSize: Foundations.typography.lg,
                   fontWeight: Foundations.typography.semibold,
@@ -248,7 +249,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
                 Row(
                   children: [
                     BaseButton(
-                      label: 'Cancel',
+                      label: l10n.globalCancel,
                       variant: ButtonVariant.outlined,
                       size: ButtonSize.medium,
                       prefixIcon: Icons.close,
@@ -261,17 +262,17 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
                     ),
                     SizedBox(width: Foundations.spacing.sm),
                     BaseButton(
-                      label: 'Save',
+                      label: l10n.globalSave,
                       variant: ButtonVariant.filled,
                       size: ButtonSize.medium,
                       isLoading: isLoading,
-                      onPressed: _saveGroupName,
+                      onPressed: () => _saveGroupName(l10n),
                     ),
                   ],
                 )
               else
                 BaseButton(
-                  label: 'Edit Name',
+                  label: l10n.globalEditWithName(l10n.globalGroupLabel(1)),
                   variant: ButtonVariant.outlined,
                   size: ButtonSize.medium,
                   prefixIcon: Icons.edit_outlined,
@@ -283,7 +284,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
           SizedBox(height: Foundations.spacing.md),
           if (isEditing)
             BaseInput(
-              label: 'Group Name',
+              label: l10n.globalGroupName,
               initialValue: groupName,
               onChanged: (value) =>
                   ref.read(groupNameProvider.notifier).state = value,
@@ -316,7 +317,8 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
 
   Widget _buildSectionHeader(
     String title,
-    bool isEditing, {
+    bool isEditing,
+    AppLocalizations l10n, {
     required Function() onEditPressed,
     required Function() onSavePressed,
     required bool isDarkMode,
@@ -340,17 +342,17 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
           Row(
             children: [
               BaseButton(
-                label: 'Cancel',
+                label: l10n.globalCancel,
                 variant: ButtonVariant.outlined,
                 size: ButtonSize.medium,
                 prefixIcon: Icons.close,
                 onPressed: () {
-                  if (title == 'Permissions') {
+                  if (title == l10n.userManagementPermissionsLabel(0)) {
                     ref.read(selectedGroupPermissionsProvider.notifier).state =
                         List.from(widget.group.permissions);
                     ref.read(groupPermissionsEditingProvider.notifier).state =
                         false;
-                  } else if (title == 'Members') {
+                  } else if (title == l10n.userManagementMembersLabel) {
                     ref.read(selectedMembersProvider.notifier).state =
                         List.from(widget.group.memberIds);
                     ref.read(membersEditingProvider.notifier).state = false;
@@ -359,7 +361,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
               ),
               SizedBox(width: Foundations.spacing.sm),
               BaseButton(
-                label: 'Save Changes',
+                label: l10n.globalSave,
                 variant: ButtonVariant.filled,
                 size: ButtonSize.medium,
                 isLoading: isLoading,
@@ -369,7 +371,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
           )
         else
           BaseButton(
-            label: 'Edit $title',
+            label: l10n.globalEditWithName(title),
             variant: ButtonVariant.outlined,
             size: ButtonSize.medium,
             prefixIcon: Icons.edit_outlined,
@@ -379,7 +381,8 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
     );
   }
 
-  Widget _buildPermissionsCard(bool isDarkMode, bool isEditing) {
+  Widget _buildPermissionsCard(bool isDarkMode, bool isEditing,
+      LocalizationRepository localizations, AppLocalizations l10n) {
     final selectedPermissions = ref.watch(selectedGroupPermissionsProvider);
     final permissionCategories = ref.watch(permissionCategoriesProvider);
 
@@ -398,6 +401,8 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
                   permissionCategories[category]!,
                   selectedPermissions,
                   isDarkMode,
+                  localizations,
+                  l10n,
                 ),
                 SizedBox(height: Foundations.spacing.md),
               ],
@@ -406,7 +411,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
             SizedBox(height: Foundations.spacing.md),
           ],
           Text(
-            'Group Permissions',
+            l10n.userManagementPermissionsLabel(0),
             style: TextStyle(
               fontSize: Foundations.typography.base,
               fontWeight: Foundations.typography.semibold,
@@ -418,7 +423,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
           SizedBox(height: Foundations.spacing.sm),
           if (selectedPermissions.isEmpty)
             Text(
-              'No permissions assigned to this group',
+              l10n.userManagementNoPermissiosnAssignedToGroup,
               style: TextStyle(
                 fontSize: Foundations.typography.base,
                 color: isDarkMode
@@ -435,7 +440,8 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
                   runSpacing: Foundations.spacing.sm,
                   children: selectedPermissions.map((permissionId) {
                     final permission = Permissions.getById(permissionId);
-                    final label = permission?.displayName ?? permissionId;
+                    final label = permission?.getDisplayName(localizations) ??
+                        permissionId;
 
                     return BaseChip(
                       label: label,
@@ -465,7 +471,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
                             EdgeInsets.only(bottom: Foundations.spacing.sm),
                         child: ListTile(
                           title: Text(
-                            permission.displayName,
+                            permission.getDisplayName(localizations),
                             style: TextStyle(
                               fontSize: Foundations.typography.base,
                               fontWeight: Foundations.typography.medium,
@@ -475,7 +481,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
                             ),
                           ),
                           subtitle: Text(
-                            permission.description,
+                            permission.getDescription(localizations),
                             style: TextStyle(
                               fontSize: Foundations.typography.sm,
                               color: isDarkMode
@@ -503,12 +509,14 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
     List<Permission> permissions,
     List<String> selectedPermissions,
     bool isDarkMode,
+    LocalizationRepository localizations,
+    AppLocalizations l10n,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          _getCategoryDisplayName(category),
+          _getCategoryDisplayName(category, l10n),
           style: TextStyle(
             fontSize: Foundations.typography.base,
             fontWeight: Foundations.typography.semibold,
@@ -521,8 +529,8 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
         ...permissions.map((permission) {
           final isSelected = selectedPermissions.contains(permission.id);
           return BaseCheckbox(
-            label: permission.displayName,
-            description: permission.description,
+            label: permission.getDisplayName(localizations),
+            description: permission.getDescription(localizations),
             value: isSelected,
             onChanged: (value) {
               final updatedPermissions = List<String>.from(selectedPermissions);
@@ -542,8 +550,8 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
     );
   }
 
-  Widget _buildMembersCard(
-      List<AppUser> allUsers, bool isDarkMode, bool isEditing) {
+  Widget _buildMembersCard(List<AppUser> allUsers, bool isDarkMode,
+      bool isEditing, AppLocalizations l10n) {
     final selectedMembers = ref.watch(selectedMembersProvider);
 
     // Convert IDs to user objects
@@ -573,8 +581,8 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
         children: [
           if (isEditing) ...[
             BaseMultiSelect<String>(
-              label: 'Assign Members',
-              hint: 'Select users to add to this group',
+              label: l10n.userManagementAssignMembersLabel,
+              hint: l10n.userManagementSelectUsersToAddToGroup,
               searchable: true,
               options: allUsers
                   .map((user) => SelectOption(
@@ -590,14 +598,14 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
               },
             ),
             SizedBox(height: Foundations.spacing.md),
-            Divider(),
+            const Divider(),
             SizedBox(height: Foundations.spacing.md),
           ],
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Members (${members.length})',
+                '${l10n.userManagementMembersLabel} (${members.length})',
                 style: TextStyle(
                   fontSize: Foundations.typography.base,
                   fontWeight: Foundations.typography.semibold,
@@ -606,23 +614,23 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
                       : Foundations.colors.textSecondary,
                 ),
               ),
-              if (!isEditing && members.isNotEmpty)
-                Text(
-                  'Tap to view details',
-                  style: TextStyle(
-                    fontSize: Foundations.typography.sm,
-                    fontStyle: FontStyle.italic,
-                    color: isDarkMode
-                        ? Foundations.darkColors.textMuted
-                        : Foundations.colors.textMuted,
-                  ),
-                ),
+              // if (!isEditing && members.isNotEmpty)
+              // Text(
+              // 'Tap to view details',
+              // style: TextStyle(
+              // fontSize: Foundations.typography.sm,
+              // fontStyle: FontStyle.italic,
+              // color: isDarkMode
+              // ? Foundations.darkColors.textMuted
+              // : Foundations.colors.textMuted,
+              // ),
+              // ),
             ],
           ),
           SizedBox(height: Foundations.spacing.sm),
           if (members.isEmpty)
             Text(
-              'No members in this group',
+              l10n.userManagementNoMembersInGroup,
               style: TextStyle(
                 fontSize: Foundations.typography.base,
                 color: isDarkMode
@@ -633,7 +641,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
           else
             ListView.separated(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: members.length,
               separatorBuilder: (context, index) => Divider(
                 height: 1,
@@ -715,7 +723,6 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
       onTap: isEditing
           ? null
           : () {
-              // Navigate to user details
               Navigator.of(context).pushNamed(
                 '/user-details',
                 arguments: user,
@@ -724,22 +731,23 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage> {
     );
   }
 
-  String _getCategoryDisplayName(PermissionCategory category) {
+  String _getCategoryDisplayName(
+      PermissionCategory category, AppLocalizations l10n) {
     switch (category) {
       case PermissionCategory.role:
-        return 'Roles';
+        return l10n.userManagementRolesLabel;
       case PermissionCategory.content:
-        return 'Content Management';
+        return l10n.userManagementContentManagementLabel;
       case PermissionCategory.user:
-        return 'User Management';
+        return l10n.userManagementUserManagementLabel;
       case PermissionCategory.media:
-        return 'Media';
+        return l10n.userManagementMediaLabel;
       case PermissionCategory.notification:
-        return 'Notifications';
+        return l10n.userManagementNotificationsLabel;
       case PermissionCategory.settings:
-        return 'Settings';
+        return l10n.navSettings;
       case PermissionCategory.survey:
-        return 'Surveys';
+        return l10n.userManagementSurveysLabel;
     }
   }
 }

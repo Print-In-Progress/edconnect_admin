@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:edconnect_admin/core/constants/database_constants.dart';
 import 'package:edconnect_admin/core/routing/app_routes.dart';
 import 'package:edconnect_admin/presentation/pages/home_page/main_page.dart';
+import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +16,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  // final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
-  // debugPrint('System locale: $systemLocale');
 
   runApp(const ProviderScope(
     child: EdConnectAdmin(),
@@ -38,6 +36,16 @@ class _EdConnectAdminState extends ConsumerState<EdConnectAdmin> {
     final theme = ref.watch(appThemeProvider);
     return MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
+      locale: ref.watch(appLocaleProvider),
+      localeListResolutionCallback: (locales, supportedLocales) {
+        if (locales != null && locales.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref.read(appLocaleProvider.notifier).updateLocale(locales.first);
+          });
+        }
+
+        return null;
+      },
       supportedLocales: AppLocalizations.supportedLocales,
       title: '$customerName Admin Panel',
       debugShowCheckedModeBanner: false,

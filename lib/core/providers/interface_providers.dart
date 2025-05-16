@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/core/interfaces/auth_repository.dart';
 import 'package:edconnect_admin/core/interfaces/group_repository.dart';
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
 import 'package:edconnect_admin/core/interfaces/navigation_repository.dart';
 import 'package:edconnect_admin/core/interfaces/storage_repository.dart';
 import 'package:edconnect_admin/core/interfaces/user_repository.dart';
@@ -25,4 +26,8 @@ final navigationRepositoryProvider = Provider<NavigationRepository>((ref) {
 
 final storageRepositoryProvider = Provider<StorageRepository>((ref) {
   return ref.watch(storageRepositoryImplProvider);
+});
+
+final localizationRepositoryProvider = Provider<LocalizationRepository>((ref) {
+  return ref.watch(localizationRepositoryImplProvider);
 });

@@ -2,6 +2,7 @@ import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/errors/error_handler.dart';
 import 'package:edconnect_admin/core/errors/error_messages.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/calculate/components/calculation_section.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/calculate/components/class_configuration_section.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/calculate/components/parameters_section.dart';
@@ -106,10 +107,11 @@ class _CalculateTabState extends ConsumerState<CalculateTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (widget.survey.status != SortingSurveyStatus.closed) {
       return Center(
         child: Text(
-          'Please close the survey before starting the calculation process.',
+          l10n.sortingModuleCloseSurveyBeforeCalculating,
           style: TextStyle(
             color: Foundations.colors.textMuted,
             fontSize: Foundations.typography.lg,
@@ -181,7 +183,7 @@ class _CalculateTabState extends ConsumerState<CalculateTab> {
               onTimeLimitChanged: (value) {
                 setState(() => timeLimit = value);
               },
-              onCalculate: _calculateClasses,
+              onCalculate: () => _calculateClasses(l10n),
             ),
           ],
         ),
@@ -189,7 +191,7 @@ class _CalculateTabState extends ConsumerState<CalculateTab> {
     );
   }
 
-  void _calculateClasses() async {
+  void _calculateClasses(AppLocalizations l10n) async {
     final Map<String, int> formattedClasses = {
       for (var clazz in classes)
         clazz.nameController.text: clazz.sizeController.value?.toInt() ?? 0
@@ -213,36 +215,33 @@ class _CalculateTabState extends ConsumerState<CalculateTab> {
             timeLimit: timeLimit,
             surveyId: widget.survey.id,
           );
-
+      if (!context.mounted) return;
       ref.read(calculationStateProvider).result;
       final state = ref.read(calculationStateProvider);
 
       if (state.error != null) {
-        if (context.mounted) {
-          final exception = ErrorHandler.handle(state.error);
-          Toaster.error(
-            context,
-            'Calculation Error',
-            description: exception.getLocalizedMessage(context),
-          );
-        }
-      } else if (state.result != null && context.mounted) {
+        if (!mounted) return;
+        final exception = ErrorHandler.handle(state.error);
+        Toaster.error(
+          context,
+          l10n.errorUnexpected,
+          description: exception.getLocalizedMessage(context),
+        );
+      } else if (state.result != null && mounted) {
         Toaster.success(
           context,
-          'Success',
-          description:
-              'Classes calculated successfully! Navigate to the results page to view them.',
+          l10n.successDefault,
+          description: l10n.successClassesCalculated,
         );
       }
     } catch (e) {
-      if (context.mounted) {
-        final exception = ErrorHandler.handle(e);
-        Toaster.error(
-          context,
-          'Calculation Error',
-          description: exception.getLocalizedMessage(context),
-        );
-      }
+      final exception = ErrorHandler.handle(e);
+      if (!mounted) return;
+      Toaster.error(
+        context,
+        l10n.errorUnexpected,
+        description: exception.getLocalizedMessage(context),
+      );
     }
   }
 }

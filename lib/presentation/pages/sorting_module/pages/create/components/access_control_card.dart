@@ -1,4 +1,5 @@
 import 'package:edconnect_admin/core/models/app_theme.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/widgets/common/dropdown/single_select_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,6 +40,7 @@ class AccessControlCard extends ConsumerWidget {
     final users = ref.watch(allUsersStreamProvider).value ?? [];
     final screenWidth = MediaQuery.of(context).size.width;
     final isWideScreen = screenWidth > 800;
+    final l10n = AppLocalizations.of(context)!;
 
     return BaseCard(
       variant: CardVariant.elevated,
@@ -48,7 +50,7 @@ class AccessControlCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Access Control',
+              l10n.globalAccessControlLabel,
               style: TextStyle(
                 fontSize: Foundations.typography.lg,
                 fontWeight: Foundations.typography.semibold,
@@ -63,20 +65,20 @@ class AccessControlCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: _buildEditorsSection(groups, users, theme),
+                    child: _buildEditorsSection(groups, users, theme, l10n),
                   ),
                   SizedBox(width: Foundations.spacing.lg),
                   Expanded(
-                    child: _buildRespondentsSection(groups, users, theme),
+                    child: _buildRespondentsSection(groups, users, theme, l10n),
                   ),
                 ],
               )
             else
               Column(
                 children: [
-                  _buildEditorsSection(groups, users, theme),
+                  _buildEditorsSection(groups, users, theme, l10n),
                   SizedBox(height: Foundations.spacing.lg),
-                  _buildRespondentsSection(groups, users, theme),
+                  _buildRespondentsSection(groups, users, theme, l10n),
                 ],
               ),
           ],
@@ -85,13 +87,13 @@ class AccessControlCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildEditorsSection(
-      List<Group> groups, List<AppUser> users, AppTheme theme) {
+  Widget _buildEditorsSection(List<Group> groups, List<AppUser> users,
+      AppTheme theme, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Editors',
+          l10n.globalEditorsLabel,
           style: TextStyle(
             fontSize: Foundations.typography.base,
             fontWeight: Foundations.typography.semibold,
@@ -101,7 +103,7 @@ class AccessControlCard extends ConsumerWidget {
           ),
         ),
         Text(
-          'Users and groups that can edit this survey',
+          l10n.sortingModuleAccessControlDescription,
           style: TextStyle(
             fontSize: Foundations.typography.sm,
             color: theme.isDarkMode
@@ -111,7 +113,7 @@ class AccessControlCard extends ConsumerWidget {
         ),
         SizedBox(height: Foundations.spacing.md),
         BaseMultiSelect<String>(
-          label: 'Editor Groups',
+          label: l10n.globalSelectGroups,
           searchable: true,
           values: selectedEditorGroups,
           options: _buildGroupOptions(groups),
@@ -119,7 +121,7 @@ class AccessControlCard extends ConsumerWidget {
         ),
         SizedBox(height: Foundations.spacing.md),
         BaseMultiSelect<String>(
-          label: 'Editor Users',
+          label: l10n.globalSelectUsers,
           values: selectedEditorUsers,
           searchable: true,
           options: _buildUserOptions(users),
@@ -129,13 +131,13 @@ class AccessControlCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildRespondentsSection(
-      List<Group> groups, List<AppUser> users, AppTheme theme) {
+  Widget _buildRespondentsSection(List<Group> groups, List<AppUser> users,
+      AppTheme theme, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Respondents',
+          l10n.sortingModuleRespondents,
           style: TextStyle(
             fontSize: Foundations.typography.base,
             fontWeight: Foundations.typography.semibold,
@@ -145,7 +147,7 @@ class AccessControlCard extends ConsumerWidget {
           ),
         ),
         Text(
-          'Users and groups that can respond to this survey',
+          l10n.sortingModuleRespondentsDescription,
           style: TextStyle(
             fontSize: Foundations.typography.sm,
             color: theme.isDarkMode
@@ -155,7 +157,7 @@ class AccessControlCard extends ConsumerWidget {
         ),
         SizedBox(height: Foundations.spacing.md),
         BaseMultiSelect<String>(
-          label: 'Respondent Groups',
+          label: l10n.globalSelectGroups,
           searchable: true,
           values: selectedRespondentGroups,
           options: _buildGroupOptions(groups),
@@ -163,7 +165,7 @@ class AccessControlCard extends ConsumerWidget {
         ),
         SizedBox(height: Foundations.spacing.md),
         BaseMultiSelect<String>(
-          label: 'Respondent Users',
+          label: l10n.globalSelectUsers,
           values: selectedRespondentUsers,
           searchable: true,
           options: _buildUserOptions(users),

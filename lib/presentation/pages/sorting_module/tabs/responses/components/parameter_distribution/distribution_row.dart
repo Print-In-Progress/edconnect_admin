@@ -1,6 +1,8 @@
 import 'package:edconnect_admin/core/design_system/color_generator.dart';
 import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/providers/interface_providers.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/responses/dialogs/view_all_dialog.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/utils/parameter_formatter.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
@@ -29,7 +31,8 @@ class DistributionRow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(appThemeProvider);
     final total = distribution.values.fold(0, (sum, count) => sum + count);
-
+    final l10n = AppLocalizations.of(context)!;
+    final localizations = ref.watch(localizationRepositoryProvider);
     var sortedEntries = distribution.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
@@ -40,7 +43,7 @@ class DistributionRow extends ConsumerWidget {
           sortedEntries.skip(3).fold(0, (sum, e) => sum + e.value);
       sortedEntries = sortedEntries.take(2).toList();
       if (othersCount > 0) {
-        sortedEntries.add(MapEntry('Other', othersCount));
+        sortedEntries.add(MapEntry(l10n.globalOtherLabel, othersCount));
       }
     }
 
@@ -83,7 +86,7 @@ class DistributionRow extends ConsumerWidget {
               const Spacer(),
               if (originalLength > 3)
                 BaseButton(
-                    label: 'View All',
+                    label: l10n.globalViewAllLabel,
                     onPressed: () {
                       _viewAllDialog(context, paramName);
                     },
@@ -100,7 +103,8 @@ class DistributionRow extends ConsumerWidget {
                     e.key.toLowerCase() == 'no');
 
             final displayValue = isSexParameter
-                ? ParameterFormatter.formatSexForDisplay(entry.key)
+                ? ParameterFormatter.formatSexForDisplay(
+                    entry.key, localizations)
                 : entry.key;
 
             final color = ColorGenerator.getColor(

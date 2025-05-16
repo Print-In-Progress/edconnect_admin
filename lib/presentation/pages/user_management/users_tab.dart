@@ -1,8 +1,10 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
+import 'package:edconnect_admin/core/providers/interface_providers.dart';
 import 'package:edconnect_admin/core/routing/app_router.dart';
 import 'package:edconnect_admin/domain/entities/group.dart';
 import 'package:edconnect_admin/domain/entities/permissions.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/cards/base_card.dart';
@@ -13,16 +15,12 @@ import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// State provider for managing the search query
 final userFilterQueryProvider = StateProvider<String>((ref) => '');
 
-// State provider for group filter
 final userGroupFilterProvider = StateProvider<List<String>>((ref) => []);
 
-// State provider for permission filter
 final userPermissionFilterProvider = StateProvider<List<String>>((ref) => []);
 
-// Combined filtered users provider
 final filteredUsersWithFiltersProvider =
     Provider<AsyncValue<List<AppUser>>>((ref) {
   final usersAsync = ref.watch(filteredUsersProvider);
@@ -36,11 +34,9 @@ final filteredUsersWithFiltersProvider =
       }
 
       final filteredUsers = users.where((user) {
-        // Check if user belongs to any of the selected groups
         bool matchesGroups = selectedGroups.isEmpty ||
             selectedGroups.any((groupId) => user.groupIds.contains(groupId));
 
-        // Check if user has any of the selected permissions
         bool matchesPermissions = selectedPermissions.isEmpty ||
             selectedPermissions
                 .any((permission) => user.hasPermission(permission));
@@ -70,7 +66,6 @@ class _UsersTabState extends ConsumerState<UsersTab> {
     super.initState();
     _searchController = TextEditingController();
 
-    // Initialize with any existing search query
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final currentQuery = ref.read(userFilterQueryProvider);
       if (currentQuery.isNotEmpty) {
@@ -93,8 +88,9 @@ class _UsersTabState extends ConsumerState<UsersTab> {
     final selectedPermissions = ref.watch(userPermissionFilterProvider);
     final usersAsync = ref.watch(filteredUsersWithFiltersProvider);
     final groups = ref.watch(allGroupsStreamProvider).value ?? [];
+    final l10n = AppLocalizations.of(context)!;
+    final localizations = ref.watch(localizationRepositoryProvider);
 
-    // Create a flattened list of all possible permissions from groups
     final permissions = Permissions.allPermissionIds;
     return LayoutBuilder(builder: (context, constraints) {
       final isWideScreen = constraints.maxWidth > 800;
@@ -102,7 +98,6 @@ class _UsersTabState extends ConsumerState<UsersTab> {
         controller: usersTabScrollController,
         physics: const BouncingScrollPhysics(),
         slivers: [
-          // Filters section
           SliverToBoxAdapter(
             child: BaseCard(
               variant: CardVariant.outlined,
@@ -112,7 +107,7 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Filters',
+                    l10n.globalFiltersLabel,
                     style: TextStyle(
                       fontSize: Foundations.typography.lg,
                       fontWeight: Foundations.typography.semibold,
@@ -132,7 +127,8 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                         Expanded(
                           flex: 2,
                           child: BaseInput(
-                            hint: 'Search users...',
+                            hint: l10n
+                                .globalSearchWithName(l10n.globalUserLabel(0)),
                             leadingIcon: Icons.search,
                             controller: _searchController,
                             onChanged: (value) {
@@ -147,7 +143,7 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                         Expanded(
                           flex: 1,
                           child: BaseMultiSelect<String>(
-                            hint: 'Filter by group',
+                            hint: l10n.globalFilterByGroup,
                             options: groups
                                 .map((group) => SelectOption(
                                     value: group.id, label: group.name))
@@ -165,12 +161,13 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                         Expanded(
                           flex: 1,
                           child: BaseMultiSelect<String>(
-                            hint: 'Filter by permission',
+                            hint: l10n.userManagementFilterbyPermissions,
                             options: permissions.map((permission) {
                               final permissionObj =
                                   Permissions.getById(permission);
-                              final label =
-                                  permissionObj?.displayName ?? permission;
+                              final label = permissionObj
+                                      ?.getDisplayName(localizations) ??
+                                  permission;
                               return SelectOption(
                                   value: permission, label: label);
                             }).toList(),
@@ -190,7 +187,8 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         BaseInput(
-                          hint: 'Search users...',
+                          hint: l10n
+                              .globalSearchWithName(l10n.globalUserLabel(0)),
                           leadingIcon: Icons.search,
                           controller: _searchController,
                           onChanged: (value) {
@@ -200,7 +198,7 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                         ),
                         SizedBox(height: Foundations.spacing.md),
                         BaseMultiSelect<String>(
-                          hint: 'Filter by group',
+                          hint: l10n.globalFilterByGroup,
                           options: groups
                               .map((group) => SelectOption(
                                   value: group.id, label: group.name))
@@ -213,12 +211,13 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                         ),
                         SizedBox(height: Foundations.spacing.md),
                         BaseMultiSelect<String>(
-                          hint: 'Filter by permission',
+                          hint: l10n.userManagementFilterbyPermissions,
                           options: permissions.map((permission) {
                             final permissionObj =
                                 Permissions.getById(permission);
                             final label =
-                                permissionObj?.displayName ?? permission;
+                                permissionObj?.getDisplayName(localizations) ??
+                                    permission;
                             return SelectOption(
                                 value: permission, label: label);
                           }).toList(),
@@ -262,7 +261,8 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                           );
                         }),
                         ...selectedPermissions.map((permission) => BaseChip(
-                              label: 'Permission: $permission',
+                              label:
+                                  '${l10n.userManagementPermissionsLabel(1)}: $permission',
                               variant: ChipVariant.secondary,
                               onDismissed: () {
                                 ref
@@ -289,7 +289,7 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                 return SliverToBoxAdapter(
                   child: Center(
                     child: Text(
-                      'No users match the current filters',
+                      l10n.globalNoResults,
                       style: TextStyle(
                         fontSize: Foundations.typography.base,
                         color: isDarkMode
@@ -322,19 +322,20 @@ class _UsersTabState extends ConsumerState<UsersTab> {
                       ),
                       itemBuilder: (context, index) {
                         final user = users[index];
-                        return _buildUserListItem(context, user, isDarkMode);
+                        return _buildUserListItem(
+                            context, user, isDarkMode, l10n);
                       },
                     ),
                   ),
                 ),
               );
             },
-            loading: () => SliverToBoxAdapter(
+            loading: () => const SliverToBoxAdapter(
                 child: Center(child: CircularProgressIndicator())),
             error: (error, stackTrace) => Center(
               child: SliverToBoxAdapter(
                 child: Text(
-                  'Error loading users: ${error.toString()}',
+                  l10n.errorUnexpectedWithError(error.toString()),
                   style: TextStyle(
                     color: Foundations.colors.error,
                     fontSize: Foundations.typography.base,
@@ -352,6 +353,7 @@ class _UsersTabState extends ConsumerState<UsersTab> {
     BuildContext context,
     AppUser user,
     bool isDarkMode,
+    AppLocalizations l10n,
   ) {
     return Material(
       color: Colors.transparent,
@@ -424,9 +426,10 @@ class _UsersTabState extends ConsumerState<UsersTab> {
               if (user.accountType.isNotEmpty) ...[
                 BaseChip(
                   label: switch (user.accountType) {
-                    'faculty' => 'Faculty & Staff',
-                    'parent' => 'Parent',
-                    'student' => 'Student',
+                    'faculty' =>
+                      l10n.userManagementAccountTypeLabelFacultyAndStaff,
+                    'parent' => l10n.userManagementAccountTypeLabelParent,
+                    'student' => l10n.userManagementAccountTypeLabelStudent,
                     _ => 'User',
                   },
                   variant: ChipVariant.outlined,

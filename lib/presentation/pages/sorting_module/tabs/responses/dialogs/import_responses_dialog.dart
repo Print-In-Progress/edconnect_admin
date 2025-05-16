@@ -1,3 +1,6 @@
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
+import 'package:edconnect_admin/core/providers/interface_providers.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/utils/parameter_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,12 +24,14 @@ class ImportResponsesDialog extends ConsumerWidget {
     final theme = ref.watch(appThemeProvider);
     final isDarkMode = theme.isDarkMode;
     final importState = ref.watch(responseImportProvider);
+    final l10n = AppLocalizations.of(context)!;
+    final LocalizationRepository localizations =
+        ref.watch(localizationRepositoryProvider);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // File Upload Section
         BaseCard(
           variant: CardVariant.outlined,
           padding: EdgeInsets.all(Foundations.spacing.md),
@@ -34,7 +39,7 @@ class ImportResponsesDialog extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Import File',
+                l10n.globalImportX(l10n.sortingModuleResponses(0)),
                 style: TextStyle(
                   fontSize: Foundations.typography.base,
                   fontWeight: Foundations.typography.semibold,
@@ -46,8 +51,9 @@ class ImportResponsesDialog extends ConsumerWidget {
               SizedBox(height: Foundations.spacing.md),
               FileInput(
                 allowedExtensions: const ['xlsx', 'csv'],
-                hint: 'Select file to import',
-                description: 'Supported formats: Excel (.xlsx), CSV (.csv)',
+                hint: l10n.globalSelectFileToImport,
+                description: l10n.globalSupportedFormatsWithFormats(
+                    'Excel (.xlsx), CSV (.csv)'),
                 onFilesChanged: (files) {
                   if (files.isNotEmpty) {
                     ref
@@ -59,7 +65,6 @@ class ImportResponsesDialog extends ConsumerWidget {
             ],
           ),
         ),
-
         if (importState.error != null) ...[
           SizedBox(height: Foundations.spacing.md),
           Text(
@@ -70,15 +75,13 @@ class ImportResponsesDialog extends ConsumerWidget {
             ),
           ),
         ],
-
         if (importState.isLoading) ...[
           SizedBox(height: Foundations.spacing.xl),
           const Center(child: CircularProgressIndicator()),
         ],
-
         if (!importState.isLoading && importState.previewData != null) ...[
           SizedBox(height: Foundations.spacing.xl),
-          _buildPreviewSection(context, importState, isDarkMode),
+          _buildPreviewSection(context, importState, isDarkMode, localizations),
         ],
       ],
     );
@@ -88,14 +91,16 @@ class ImportResponsesDialog extends ConsumerWidget {
     BuildContext context,
     ImportState state,
     bool isDarkMode,
+    LocalizationRepository localizations,
   ) {
     final responses = state.previewData!['responses'] as Map<String, dynamic>;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Preview',
+          l10n.globalPreviewLabel,
           style: TextStyle(
             fontSize: Foundations.typography.lg,
             fontWeight: Foundations.typography.semibold,
@@ -107,14 +112,14 @@ class ImportResponsesDialog extends ConsumerWidget {
         if (state.duplicates?.isNotEmpty ?? false) ...[
           SizedBox(height: Foundations.spacing.md),
           _buildWarningBanner(
-            'Duplicate names found: ${state.duplicates!.join(", ")}',
+            '${l10n.sortingModuleDuplicateNamesFound}: ${state.duplicates!.join(", ")}',
             isDarkMode,
           ),
         ],
         SizedBox(height: Foundations.spacing.md),
-        _buildStatisticsGrid(state, isDarkMode),
+        _buildStatisticsGrid(state, isDarkMode, l10n),
         SizedBox(height: Foundations.spacing.lg),
-        _buildResponsesPreview(responses, isDarkMode),
+        _buildResponsesPreview(responses, isDarkMode, l10n, localizations),
       ],
     );
   }
@@ -154,7 +159,8 @@ class ImportResponsesDialog extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatisticsGrid(ImportState state, bool isDarkMode) {
+  Widget _buildStatisticsGrid(
+      ImportState state, bool isDarkMode, AppLocalizations l10n) {
     final responses = state.previewData!['responses'] as Map<String, dynamic>;
     final hasPreferences = state.previewData!['has_preferences'] as bool;
     final hasBiologicalSex = state.previewData!['ask_biological_sex'] as bool;
@@ -164,16 +170,20 @@ class ImportResponsesDialog extends ConsumerWidget {
       spacing: Foundations.spacing.md,
       runSpacing: Foundations.spacing.md,
       children: [
-        _buildStatCard('Responses', responses.length.toString(), isDarkMode),
-        _buildStatCard('Parameters', parameters.length.toString(), isDarkMode),
+        _buildStatCard(l10n.sortingModuleResponses(0),
+            responses.length.toString(), isDarkMode),
+        _buildStatCard(l10n.sortingModuleParameters,
+            parameters.length.toString(), isDarkMode),
         _buildStatCard(
-          'Preferences',
-          hasPreferences ? 'Enabled' : 'Disabled',
+          l10n.sortingModulePreferences(0),
+          hasPreferences ? l10n.globalEnabledLabel : l10n.globalDisabledLabel,
           isDarkMode,
         ),
         _buildStatCard(
-          'Biological Sex',
-          hasBiologicalSex ? 'Asked' : 'Not Asked',
+          l10n.globalBiologicalSexLabel,
+          hasBiologicalSex
+              ? l10n.globalRequiredLabel
+              : l10n.globalNotRequiredLabel,
           isDarkMode,
         ),
       ],
@@ -213,10 +223,8 @@ class ImportResponsesDialog extends ConsumerWidget {
     );
   }
 
-  Widget _buildResponsesPreview(
-    Map<String, dynamic> responses,
-    bool isDarkMode,
-  ) {
+  Widget _buildResponsesPreview(Map<String, dynamic> responses, bool isDarkMode,
+      AppLocalizations l10n, LocalizationRepository localizations) {
     return BaseCard(
       variant: CardVariant.outlined,
       padding: EdgeInsets.all(Foundations.spacing.md),
@@ -224,7 +232,7 @@ class ImportResponsesDialog extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Response Preview',
+            l10n.globalPreviewLabel,
             style: TextStyle(
               fontSize: Foundations.typography.base,
               fontWeight: Foundations.typography.semibold,
@@ -241,16 +249,16 @@ class ImportResponsesDialog extends ConsumerWidget {
               child: SingleChildScrollView(
                 child: DataTable(
                   columns: [
-                    const DataColumn(label: Text('Name')),
+                    DataColumn(label: Text(l10n.globalName)),
                     if (survey.askBiologicalSex)
-                      const DataColumn(label: Text('Sex')),
+                      DataColumn(label: Text(l10n.globalBiologicalSexLabel)),
                     ...survey.parameters.map(
                       (param) => DataColumn(
                         label: Text(param['name']),
                       ),
                     ),
                     if (survey.maxPreferences != null)
-                      const DataColumn(label: Text('Preferences')),
+                      DataColumn(label: Text(l10n.sortingModulePreferences(0))),
                   ],
                   rows: responses.entries.map((entry) {
                     final response = entry.value as Map<String, dynamic>;
@@ -260,7 +268,7 @@ class ImportResponsesDialog extends ConsumerWidget {
                             '${response['_first_name']} ${response['_last_name']}')),
                         if (survey.askBiologicalSex)
                           DataCell(Text(ParameterFormatter.formatSexForDisplay(
-                              response['sex']))),
+                              response['sex'], localizations))),
                         ...survey.parameters.map(
                           (param) => DataCell(
                             Text(ParameterFormatter

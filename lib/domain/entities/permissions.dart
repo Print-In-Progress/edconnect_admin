@@ -1,3 +1,5 @@
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
+
 enum PermissionCategory {
   role, // Core roles like admin, author
   content, // Content management (articles, events)
@@ -11,108 +13,120 @@ enum PermissionCategory {
 /// Represents an application permission
 class Permission {
   final String id;
-  final String displayName;
-  final String description;
+  final String displayNameKey;
+  final String descriptionKey;
   final PermissionCategory category;
 
   const Permission({
     required this.id,
-    required this.displayName,
-    required this.description,
+    required this.displayNameKey,
+    required this.descriptionKey,
     required this.category,
   });
+
+  String getDisplayName(LocalizationRepository localization) {
+    final strings = localization.getPermissionsStrings();
+    return strings[displayNameKey] ?? displayNameKey;
+  }
+
+  // Get localized description using the repository
+  String getDescription(LocalizationRepository localization) {
+    final strings = localization.getPermissionsStrings();
+    return strings[descriptionKey] ?? descriptionKey;
+  }
 }
 
 /// Central registry of all application permissions
 class Permissions {
   // Role-based permissions
+
   static const Permission admin = Permission(
     id: 'admin',
-    displayName: 'Administrator',
-    description: 'Full system access',
+    displayNameKey: 'userManagementPermissionsAdministrator',
+    descriptionKey: 'userManagementPermissionsAdministratorDescription',
     category: PermissionCategory.role,
   );
 
   static const Permission author = Permission(
     id: 'author',
-    displayName: 'Author',
-    description: 'Can create and manage content',
+    displayNameKey: 'userManagementPermissionsAuthor',
+    descriptionKey: 'userManagementPermissionsAuthorDescription',
     category: PermissionCategory.role,
   );
 
   // Article permissions
   static const Permission createArticles = Permission(
     id: 'create_articles',
-    displayName: 'Create Articles',
-    description: 'Can create new articles',
+    displayNameKey: 'userManagementPermissionsCreateArticles',
+    descriptionKey: 'userManagementPermissionsCreateArticlesDescription',
     category: PermissionCategory.content,
   );
 
   static const Permission editArticles = Permission(
     id: 'edit_articles',
-    displayName: 'Edit Articles',
-    description: 'Can modify existing articles',
+    displayNameKey: 'userManagementPermissionsEditArticles',
+    descriptionKey: 'userManagementPermissionsEditArticlesDescription',
     category: PermissionCategory.content,
   );
 
   // Event permissions
   static const Permission createEvents = Permission(
     id: 'create_events',
-    displayName: 'Create Events',
-    description: 'Can create new events',
+    displayNameKey: 'userManagementPermissionsCreateEvents',
+    descriptionKey: 'userManagementPermissionsCreateEventsDescription',
     category: PermissionCategory.content,
   );
 
   static const Permission editEvents = Permission(
     id: 'edit_events',
-    displayName: 'Edit Events',
-    description: 'Can modify existing events',
+    displayNameKey: 'userManagementPermissionsEditEvents',
+    descriptionKey: 'userManagementPermissionsEditEventsDescription',
     category: PermissionCategory.content,
   );
 
   // Survey permissions
   static const Permission createSurveys = Permission(
     id: 'create_surveys',
-    displayName: 'Create Surveys',
-    description: 'Can create new surveys',
+    displayNameKey: 'userManagementPermissionsCreateSurveys',
+    descriptionKey: 'userManagementPermissionsCreateSurveysDescription',
     category: PermissionCategory.survey,
   );
 
   static const Permission editSurveys = Permission(
     id: 'edit_surveys',
-    displayName: 'Edit Surveys',
-    description: 'Can modify existing surveys',
+    displayNameKey: 'userManagementPermissionsEditSurveys',
+    descriptionKey: 'userManagementPermissionsEditSurveysDescription',
     category: PermissionCategory.survey,
   );
 
   // User management permissions
   static const Permission userManagement = Permission(
     id: 'user_management',
-    displayName: 'User Management',
-    description: 'Can manage users and their permissions',
+    displayNameKey: 'userManagementPermissionsUserManagement',
+    descriptionKey: 'userManagementPermissionsUserManagementDescription',
     category: PermissionCategory.user,
   );
 
   // Media permissions
   static const Permission fileManagement = Permission(
     id: 'file_management',
-    displayName: 'File Management',
-    description: 'Can upload and manage files',
+    displayNameKey: 'userManagementFileManagement',
+    descriptionKey: 'userManagementFileManagementDescription',
     category: PermissionCategory.media,
   );
 
+  // Additional permissions - add these to your localization repository
   static const Permission digitalLibrary = Permission(
     id: 'digital_library',
-    displayName: 'Digital Library',
-    description: 'Can access and manage digital library',
+    displayNameKey: 'userManagementPermissionsDigitalLibrary',
+    descriptionKey: 'userManagementPermissionsDigitalLibraryDescription',
     category: PermissionCategory.media,
   );
 
-  // Notification permissions
   static const Permission pushNotifications = Permission(
     id: 'push_not',
-    displayName: 'Push Notifications',
-    description: 'Can send push notifications',
+    displayNameKey: 'userManagementPermissionsPushNotifications',
+    descriptionKey: 'userManagementPermissionsPushNotificationsDescription',
     category: PermissionCategory.notification,
   );
 
@@ -132,17 +146,21 @@ class Permissions {
     pushNotifications,
   ];
 
-  // Get all permission IDs
   static List<String> get allPermissionIds =>
       allPermissions.map((p) => p.id).toList();
 
-  // Get permission by ID - Fixed return type!
   static Permission? getById(String id) {
     try {
       return allPermissions.firstWhere((p) => p.id == id);
     } catch (e) {
-      return null; // Return null if not found
+      return null;
     }
+  }
+
+  static Permission? getByIdWithLocalization(
+      String id, LocalizationRepository localization) {
+    final permission = getById(id);
+    return permission;
   }
 
   // Permission sets by feature
@@ -162,13 +180,13 @@ class Permissions {
   static List<Permission> getByCategory(PermissionCategory category) =>
       allPermissions.where((p) => p.category == category).toList();
 
-  // Get permissions display data for UI
-  static List<Map<String, dynamic>> getPermissionsForDisplay() {
+  static List<Map<String, dynamic>> getPermissionsForDisplay(
+      LocalizationRepository localization) {
     return allPermissions
         .map((p) => {
               'id': p.id,
-              'displayName': p.displayName,
-              'description': p.description,
+              'displayName': p.getDisplayName(localization),
+              'description': p.getDescription(localization),
               'category': p.category.toString().split('.').last,
             })
         .toList();

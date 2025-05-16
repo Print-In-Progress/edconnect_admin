@@ -29,7 +29,6 @@ class InfoCard extends ConsumerWidget {
         child: Column(
           children: [
             ...children.asMap().entries.map((entry) {
-              // Add divider between items, but not after the last one
               return Column(
                 children: [
                   entry.value,

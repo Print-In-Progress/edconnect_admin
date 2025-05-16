@@ -1,7 +1,8 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/components/section_header.dart';
-import 'package:edconnect_admin/presentation/pages/sorting_module/dialogs/export_results_dialog.dart';
+import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/results/components/dialogs/export_results_dialog.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/results/utils/result_statistics.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
@@ -28,27 +29,28 @@ class _SortingSurveyResultsHeaderState
     extends ConsumerState<SortingSurveyResultsHeader> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = ref.watch(appThemeProvider);
     return Column(
       children: [
         SectionHeader(
-          title: 'Class Distribution Results',
+          title: l10n.sortingModuleClassDistributionResultsLabel,
           icon: Icons.pie_chart_outline,
           actionButton: BaseButton(
-            label: 'Export Results',
+            label: l10n.globalExportX(''),
             prefixIcon: Icons.download_outlined,
             variant: ButtonVariant.outlined,
             size: ButtonSize.medium,
-            onPressed: _exportResults,
+            onPressed: () => _exportResults(l10n),
           ),
         ),
         SizedBox(height: Foundations.spacing.xs),
-        _buildStatistics(theme.isDarkMode),
+        _buildStatistics(theme.isDarkMode, l10n),
       ],
     );
   }
 
-  Widget _buildStatistics(bool isDarkMode) {
+  Widget _buildStatistics(bool isDarkMode, AppLocalizations l10n) {
     final totalClasses = widget.currentResults.length;
     final totalStudents = widget.currentResults.values
         .fold(0, (sum, students) => sum + students.length);
@@ -67,19 +69,17 @@ class _SortingSurveyResultsHeaderState
         preferenceSatisfactionData['studentsWithPreferences'] as int;
 
     final satisfactionRate = totalPrefs > 0
-        ? (satisfiedPrefs / totalPrefs * 100).toStringAsFixed(1) + '%'
+        ? '${(satisfiedPrefs / totalPrefs * 100).toStringAsFixed(1)}%'
         : '0%';
 
     final studentSatisfactionRate = studentsWithPreferences > 0
-        ? (studentsWithSatisfiedPrefs / studentsWithPreferences * 100)
-                .toStringAsFixed(1) +
-            '%'
+        ? '${(studentsWithSatisfiedPrefs / studentsWithPreferences * 100).toStringAsFixed(1)}%'
         : '0%';
 
     return Row(
       children: [
         _buildCompactStatItem(
-          'Students',
+          l10n.sortingModuleTotalStudentsLabel,
           totalStudents.toString(),
           Icons.people_outline,
           isDarkMode,
@@ -87,7 +87,7 @@ class _SortingSurveyResultsHeaderState
         ),
         SizedBox(width: Foundations.spacing.md),
         _buildCompactStatItem(
-          'Preferences Satisfied',
+          l10n.sortingModulePreferencesSatisfiedLabel,
           '$satisfiedPrefs / $totalPrefs',
           Icons.favorite_outline,
           isDarkMode,
@@ -95,7 +95,7 @@ class _SortingSurveyResultsHeaderState
         ),
         SizedBox(width: Foundations.spacing.md),
         _buildCompactStatItem(
-          'Students With Preferences with at least one satisfied',
+          l10n.sortingModuleStudentsWithAtLeastOnePreferenceSatisfiedLabel,
           '$studentsWithSatisfiedPrefs / $studentsWithPreferences',
           Icons.check_circle_outline,
           isDarkMode,
@@ -169,13 +169,14 @@ class _SortingSurveyResultsHeaderState
     );
   }
 
-  Future<void> _exportResults() async {
+  Future<void> _exportResults(AppLocalizations l10n) async {
     final dialogKey = GlobalKey<ExportResultsDialogState>();
     bool isExporting = false;
 
     Dialogs.show(
       context: context,
-      title: 'Export Class Distribution Results',
+      title:
+          l10n.globalExportX(l10n.sortingModuleClassDistributionResultsLabel),
       width: 600,
       scrollable: true,
       content: StatefulBuilder(
@@ -192,7 +193,7 @@ class _SortingSurveyResultsHeaderState
       ),
       actions: [
         BaseButton(
-          label: 'Export to PDF',
+          label: l10n.globalExportX(''),
           prefixIcon: Icons.picture_as_pdf_outlined,
           variant: ButtonVariant.filled,
           isLoading: isExporting,

@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edconnect_admin/core/design_system/foundations.dart';
@@ -118,16 +119,18 @@ class _SortingSurveyCreatePageState
     final notifierState = ref.watch(sortingSurveyNotifierProvider);
     final screenWidth = MediaQuery.of(context).size.width;
     final isWideScreen = screenWidth > 1200;
+    final l10n = AppLocalizations.of(context)!;
 
     ref.listen<AsyncValue<void>>(sortingSurveyNotifierProvider, (_, state) {
       state.whenOrNull(
         error: (error, _) {
-          Toaster.error(context, 'Failed to create survey',
+          Toaster.error(context, l10n.errorCreateFailed(l10n.sortingSurvey(1)),
               description: error.toString());
         },
         data: (_) {
           Navigator.pop(context);
-          Toaster.success(context, 'Survey created successfully');
+          Toaster.success(
+              context, l10n.successCreatedWithPrefix(l10n.sortingSurvey(1)));
         },
       );
     });
@@ -139,11 +142,11 @@ class _SortingSurveyCreatePageState
       body: Column(
         children: [
           BaseAppBar(
-            title: 'Create Sorting Survey',
+            title: l10n.globalCreateButtonLabel(l10n.sortingSurvey(1)),
             showLeading: true,
             actions: [
               BaseButton(
-                label: 'Save',
+                label: l10n.globalSave,
                 prefixIcon: Icons.save_outlined,
                 variant: ButtonVariant.filled,
                 isLoading: notifierState.isLoading,
@@ -160,7 +163,6 @@ class _SortingSurveyCreatePageState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (isWideScreen)
-                      // Wide screen layout - cards side by side
                       IntrinsicHeight(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,7 +220,6 @@ class _SortingSurveyCreatePageState
                         ),
                       )
                     else
-                      // Mobile/narrow layout - cards stacked
                       Column(
                         children: [
                           BasicInfoCard(

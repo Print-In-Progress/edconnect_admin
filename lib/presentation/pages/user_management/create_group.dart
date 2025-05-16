@@ -1,6 +1,9 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
+import 'package:edconnect_admin/core/providers/interface_providers.dart';
 import 'package:edconnect_admin/domain/entities/permissions.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
@@ -15,25 +18,6 @@ import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.d
 import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-// State providers for create group page
-final createGroupNameProvider = StateProvider.autoDispose<String>((ref) => '');
-final createGroupMembersProvider =
-    StateProvider.autoDispose<List<String>>((ref) => []);
-final createGroupPermissionsProvider =
-    StateProvider.autoDispose<List<String>>((ref) => []);
-
-// Provider to get permission categories - same as in details page
-final createPermissionCategoriesProvider =
-    Provider.autoDispose<Map<PermissionCategory, List<Permission>>>((ref) {
-  final categories = <PermissionCategory, List<Permission>>{};
-
-  for (final category in PermissionCategory.values) {
-    categories[category] = Permissions.getByCategory(category);
-  }
-
-  return categories;
-});
 
 class CreateGroupPage extends ConsumerStatefulWidget {
   const CreateGroupPage({super.key});
@@ -53,8 +37,7 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
     super.dispose();
   }
 
-  // Create the group
-  Future<void> _createGroup() async {
+  Future<void> _createGroup(AppLocalizations l10n) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -63,20 +46,13 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
     final selectedMembers = ref.read(createGroupMembersProvider);
     final selectedPermissions = ref.read(createGroupPermissionsProvider);
 
-    // Validate group name
-    if (groupName.trim().isEmpty) {
-      Toaster.error(context, 'Group name cannot be empty');
-      return;
-    }
-
     setState(() {
       _isSubmitting = true;
     });
 
     try {
-      Toaster.info(context, 'Creating group...');
+      Toaster.info(context, l10n.globalCreatingX(l10n.globalGroupLabel(1)));
 
-      // Create group ID
       ref.read(groupManagementProvider.notifier).createGroup(
             groupName,
             selectedPermissions,
@@ -84,11 +60,12 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
           );
       if (!context.mounted) return;
 
-      Toaster.success(context, 'Group created successfully');
+      Toaster.success(
+          context, l10n.successCreatedWithPrefix(l10n.globalGroupLabel(1)));
       Navigator.pop(context);
     } catch (e) {
       if (!context.mounted) return;
-      Toaster.error(context, 'Error creating group: ${e.toString()}');
+      Toaster.error(context, l10n.errorCreateFailed(l10n.globalGroupLabel(1)));
     } finally {
       setState(() {
         _isSubmitting = false;
@@ -101,22 +78,24 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
     final theme = ref.watch(appThemeProvider);
     final isDarkMode = theme.isDarkMode;
     final allUsers = ref.watch(allUsersStreamProvider).value ?? [];
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
+    final localizations = ref.watch(localizationRepositoryProvider);
 
     return Scaffold(
       backgroundColor: isDarkMode
           ? Foundations.darkColors.background
           : Foundations.colors.background,
       appBar: BaseAppBar(
-        title: 'Create Group',
+        title: l10n.globalCreateButtonLabel(l10n.globalGroupLabel(1)),
         showLeading: true,
         actions: [
           BaseButton(
-            label: 'Create Group',
+            label: l10n.globalCreateButtonLabel(l10n.globalGroupLabel(1)),
             variant: ButtonVariant.filled,
             size: ButtonSize.large,
             isLoading: _isSubmitting,
             prefixIcon: Icons.add_circle_outline,
-            onPressed: _createGroup,
+            onPressed: () => _createGroup(l10n),
           ),
         ],
       ),
@@ -127,7 +106,6 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Group information card
               BaseCard(
                 variant: CardVariant.elevated,
                 padding: EdgeInsets.all(Foundations.spacing.lg),
@@ -136,7 +114,7 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Group Information',
+                      l10n.userManagementGroupInformationLabel,
                       style: TextStyle(
                         fontSize: Foundations.typography.lg,
                         fontWeight: Foundations.typography.semibold,
@@ -147,8 +125,7 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
                     ),
                     SizedBox(height: Foundations.spacing.md),
                     BaseInput(
-                      label: 'Group Name',
-                      hint: 'Enter group name',
+                      label: l10n.globalGroupName,
                       isRequired: true,
                       controller: _nameController,
                       onChanged: (value) {
@@ -160,10 +137,8 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
                 ),
               ),
               SizedBox(height: Foundations.spacing.lg),
-
-              // Members section
               Text(
-                'Members',
+                l10n.userManagementMembersLabel,
                 style: TextStyle(
                   fontSize: Foundations.typography.xl,
                   fontWeight: Foundations.typography.semibold,
@@ -173,12 +148,10 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
                 ),
               ),
               SizedBox(height: Foundations.spacing.md),
-              _buildMembersCard(allUsers, isDarkMode),
+              _buildMembersCard(allUsers, isDarkMode, l10n),
               SizedBox(height: Foundations.spacing.lg),
-
-              // Permissions section
               Text(
-                'Permissions',
+                l10n.userManagementPermissionsLabel(0),
                 style: TextStyle(
                   fontSize: Foundations.typography.xl,
                   fontWeight: Foundations.typography.semibold,
@@ -188,7 +161,7 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
                 ),
               ),
               SizedBox(height: Foundations.spacing.md),
-              _buildPermissionsCard(isDarkMode),
+              _buildPermissionsCard(isDarkMode, l10n, localizations),
               SizedBox(height: Foundations.spacing.lg),
             ],
           ),
@@ -197,7 +170,8 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
     );
   }
 
-  Widget _buildMembersCard(List<AppUser> allUsers, bool isDarkMode) {
+  Widget _buildMembersCard(
+      List<AppUser> allUsers, bool isDarkMode, AppLocalizations l10n) {
     final selectedMembers = ref.watch(createGroupMembersProvider);
 
     return BaseCard(
@@ -208,8 +182,8 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           BaseMultiSelect<String>(
-            label: 'Assign Members',
-            hint: 'Select users to add to this group',
+            label: l10n.userManagementAssignMembersLabel,
+            hint: l10n.userManagementSelectUsersToAddToGroup,
             searchable: true,
             size: SelectSize.large,
             options: allUsers
@@ -228,7 +202,7 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
           if (selectedMembers.isNotEmpty) ...[
             SizedBox(height: Foundations.spacing.md),
             Text(
-              'Selected Members (${selectedMembers.length})',
+              l10n.userManagementSelectedMembers(selectedMembers.length),
               style: TextStyle(
                 fontSize: Foundations.typography.base,
                 fontWeight: Foundations.typography.semibold,
@@ -238,10 +212,8 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
               ),
             ),
             SizedBox(height: Foundations.spacing.sm),
-
-            // Show a preview of selected users
             Container(
-              constraints: BoxConstraints(
+              constraints: const BoxConstraints(
                 maxHeight: 200,
               ),
               child: ListView.separated(
@@ -332,7 +304,8 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
     );
   }
 
-  Widget _buildPermissionsCard(bool isDarkMode) {
+  Widget _buildPermissionsCard(bool isDarkMode, AppLocalizations l10n,
+      LocalizationRepository localizations) {
     final selectedPermissions = ref.watch(createGroupPermissionsProvider);
     final permissionCategories = ref.watch(createPermissionCategoriesProvider);
 
@@ -344,7 +317,7 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Select Permissions',
+            l10n.globalSelectX(l10n.userManagementPermissionsLabel(0)),
             style: TextStyle(
               fontSize: Foundations.typography.base,
               fontWeight: Foundations.typography.semibold,
@@ -354,8 +327,6 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
             ),
           ),
           SizedBox(height: Foundations.spacing.md),
-
-          // Show permissions by category without expansion panels
           for (final category in PermissionCategory.values) ...[
             if (permissionCategories[category]!.isNotEmpty) ...[
               Text(
@@ -372,8 +343,8 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
               ...permissionCategories[category]!.map((permission) {
                 final isSelected = selectedPermissions.contains(permission.id);
                 return BaseCheckbox(
-                  label: permission.displayName,
-                  description: permission.description,
+                  label: permission.getDisplayName(localizations),
+                  description: permission.getDescription(localizations),
                   value: isSelected,
                   onChanged: (value) {
                     final updatedPermissions =
@@ -393,12 +364,11 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
               SizedBox(height: Foundations.spacing.md),
             ],
           ],
-
-          // Selected permissions summary
           if (selectedPermissions.isNotEmpty) ...[
             SizedBox(height: Foundations.spacing.md),
             Text(
-              'Selected Permissions (${selectedPermissions.length})',
+              l10n.userManagementSelectedPermissions(
+                  selectedPermissions.length),
               style: TextStyle(
                 fontSize: Foundations.typography.base,
                 fontWeight: Foundations.typography.semibold,
@@ -413,14 +383,15 @@ class _CreateGroupState extends ConsumerState<CreateGroupPage> {
               runSpacing: Foundations.spacing.sm,
               children: selectedPermissions.map((permissionId) {
                 final permission = Permissions.getById(permissionId);
-                final label = permission?.displayName ?? permissionId;
+                final label =
+                    permission?.getDisplayName(localizations) ?? permissionId;
 
                 return Chip(
                   label: Text(label),
                   backgroundColor: isDarkMode
                       ? Foundations.darkColors.textMuted
                       : Foundations.colors.textMuted,
-                  deleteIcon: Icon(
+                  deleteIcon: const Icon(
                     Icons.close,
                     size: 18,
                   ),

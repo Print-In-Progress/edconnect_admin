@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/utils/parameter_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,25 +28,28 @@ class ParametersSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionHeader(
-            title: 'Parameters Configuration', icon: Icons.tune_outlined),
+            title: l10n.sortingModuleParametersConfigurationTitle,
+            icon: Icons.tune_outlined),
         SizedBox(height: Foundations.spacing.md),
         Wrap(
           spacing: Foundations.spacing.md,
           runSpacing: Foundations.spacing.md,
           children: allParameters
-              .map((param) => _buildParameterCard(context, ref, param))
+              .map((param) => _buildParameterCard(context, ref, param, l10n))
               .toList(),
         ),
       ],
     );
   }
 
-  Widget _buildParameterCard(
-      BuildContext context, WidgetRef ref, Map<String, dynamic> param) {
+  Widget _buildParameterCard(BuildContext context, WidgetRef ref,
+      Map<String, dynamic> param, AppLocalizations l10n) {
     final isDarkMode = ref.watch(appThemeProvider).isDarkMode;
     final name = param['name'] as String;
     final type = param['type'] as String;
@@ -59,7 +63,6 @@ class ParametersSection extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with name, type and checkbox
             Padding(
               padding: EdgeInsets.all(Foundations.spacing.md),
               child: Row(
@@ -80,7 +83,7 @@ class ParametersSection extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          'Type: ${type == 'binary' ? 'Binary (Yes/No)' : 'Categorical (Text)'}',
+                          '${l10n.globalTypeLabel}: ${type == 'binary' ? l10n.sortingModuleTypeBinary : l10n.sortingModuleTypeCategorical}',
                           style: TextStyle(
                             fontSize: Foundations.typography.sm,
                             color: isDarkMode
@@ -100,21 +103,22 @@ class ParametersSection extends ConsumerWidget {
                 ],
               ),
             ),
-            Divider(height: 1),
-            // Controls section
+            const Divider(height: 1),
             Padding(
               padding: EdgeInsets.all(Foundations.spacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   BaseSelect<String>(
-                    label: 'Strategy',
+                    label: l10n.sortingModuleStrategy,
                     value: param['strategy'],
                     options: [
                       SelectOption(
-                          value: 'distribute', label: 'Distribute Evenly'),
+                          value: 'distribute',
+                          label: l10n.sortingModuleStrategyDistribute),
                       SelectOption(
-                          value: 'concentrate', label: 'Concentrate Together'),
+                          value: 'concentrate',
+                          label: l10n.sortingModuleStrategyConcentrate),
                     ],
                     onChanged: (value) {
                       onParameterValueChanged(param, 'strategy', value);
@@ -123,12 +127,12 @@ class ParametersSection extends ConsumerWidget {
                   SizedBox(height: Foundations.spacing.md),
                   NumberInput(
                     controller: priorityControllers[name]!,
-                    label: 'Priority',
+                    label: l10n.sortingModulePriorityLabel,
                     type: NumberFormatType.integer,
                     min: 1,
-                    max: allParameters.length,
+                    max: 10,
                     showStepper: true,
-                    description: 'Lower numbers indicate higher priority',
+                    description: l10n.sortingModulePriorityDescription,
                   ),
                   if (!isSelected) ...[
                     SizedBox(height: Foundations.spacing.md),
@@ -149,7 +153,7 @@ class ParametersSection extends ConsumerWidget {
                           SizedBox(width: Foundations.spacing.xs),
                           Expanded(
                             child: Text(
-                              'This parameter is disabled and will not be used in calculations',
+                              l10n.sortingModuleParameterDisabledDescription,
                               style: TextStyle(
                                 fontSize: Foundations.typography.sm,
                                 color: Foundations.colors.warning,

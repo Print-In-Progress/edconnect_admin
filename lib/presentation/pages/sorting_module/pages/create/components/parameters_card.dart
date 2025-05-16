@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edconnect_admin/core/design_system/foundations.dart';
@@ -36,7 +37,7 @@ class ParametersCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(appThemeProvider);
-
+    final l10n = AppLocalizations.of(context)!;
     return BaseCard(
       variant: CardVariant.elevated,
       child: Padding(
@@ -48,7 +49,7 @@ class ParametersCard extends ConsumerWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Parameters',
+                    l10n.sortingModuleParameters,
                     style: TextStyle(
                       fontSize: Foundations.typography.lg,
                       fontWeight: Foundations.typography.semibold,
@@ -59,7 +60,7 @@ class ParametersCard extends ConsumerWidget {
                   ),
                 ),
                 BaseButton(
-                  label: 'Add Parameter',
+                  label: l10n.globalAdd,
                   prefixIcon: Icons.add,
                   variant: ButtonVariant.outlined,
                   size: ButtonSize.medium,
@@ -70,36 +71,37 @@ class ParametersCard extends ConsumerWidget {
             SizedBox(height: Foundations.spacing.lg),
             BaseCheckbox(
                 value: askBiologicalSex,
-                label: 'Ask respondents their biological sex',
+                label: l10n.sortingModuleAskForBiologicalSex,
                 size: CheckboxSize.medium,
                 onChanged: (value) =>
                     onAskBiologicalSexChanged(value ?? false)),
             BaseCheckbox(
               value: allowPreferences,
-              label: 'Allow respondents to select preferred people',
+              label: l10n.sortingModuleAskForPreferences,
               size: CheckboxSize.medium,
               onChanged: (value) => onAllowPreferencesChanged(value ?? false),
             ),
             if (allowPreferences) ...[
               SizedBox(height: Foundations.spacing.sm),
               NumberInput(
-                label: 'Maximum Preferences',
-                description: 'Maximum number of people that can be selected',
+                label: l10n.sortingModuleMaximumPreferencesLabel,
+                description: l10n.sortingModuleMaximumPreferencesDescription,
                 controller: maxPreferencesController,
                 min: 1,
-                max: 5,
+                max: 10,
                 showStepper: true,
               ),
             ],
             SizedBox(height: Foundations.spacing.lg),
-            ...parameters.map((param) => _buildParameterItem(param)),
+            ...parameters.map((param) => _buildParameterItem(param, l10n)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildParameterItem(Map<String, dynamic> parameter) {
+  Widget _buildParameterItem(
+      Map<String, dynamic> parameter, AppLocalizations l10n) {
     return Card(
       margin: EdgeInsets.only(bottom: Foundations.spacing.md),
       child: Padding(
@@ -107,7 +109,7 @@ class ParametersCard extends ConsumerWidget {
         child: Column(
           children: [
             BaseInput(
-              label: 'Parameter Name',
+              label: l10n.sortingModuleParameterName,
               controller: parameter['name'],
             ),
             SizedBox(height: Foundations.spacing.sm),
@@ -115,12 +117,14 @@ class ParametersCard extends ConsumerWidget {
               children: [
                 Expanded(
                   child: BaseSelect<String>(
-                    label: 'Type',
+                    label: l10n.globalTypeLabel,
                     value: parameter['type'],
                     options: [
-                      SelectOption(value: 'binary', label: 'Binary (Yes/No)'),
                       SelectOption(
-                          value: 'categorical', label: 'Categorical (Text)'),
+                          value: 'binary', label: l10n.sortingModuleTypeBinary),
+                      SelectOption(
+                          value: 'categorical',
+                          label: l10n.sortingModuleTypeCategorical),
                     ],
                     onChanged: (value) =>
                         onUpdateParameter(parameter, 'type', value),
@@ -129,11 +133,15 @@ class ParametersCard extends ConsumerWidget {
                 SizedBox(width: Foundations.spacing.md),
                 Expanded(
                   child: BaseSelect<String>(
-                    label: 'Strategy',
+                    label: l10n.sortingModuleStrategy,
                     value: parameter['strategy'],
                     options: [
-                      SelectOption(value: 'distribute', label: 'Distribute'),
-                      SelectOption(value: 'concentrate', label: 'Concentrate'),
+                      SelectOption(
+                          value: 'distribute',
+                          label: l10n.sortingModuleStrategyDistribute),
+                      SelectOption(
+                          value: 'concentrate',
+                          label: l10n.sortingModuleStrategyConcentrate),
                     ],
                     onChanged: (value) =>
                         onUpdateParameter(parameter, 'strategy', value),
@@ -143,18 +151,18 @@ class ParametersCard extends ConsumerWidget {
             ),
             SizedBox(height: Foundations.spacing.sm),
             NumberInput(
-              label: 'Priority',
-              description: 'Lower numbers indicates higher priority (1-5)',
+              label: l10n.sortingModulePriorityLabel,
+              description: l10n.sortingModulePriorityDescription,
               controller: parameter['priority'],
               min: 1,
-              max: 5,
+              max: 10,
               showStepper: true,
             ),
             SizedBox(height: Foundations.spacing.sm),
             Align(
               alignment: Alignment.centerRight,
               child: BaseButton(
-                label: 'Remove',
+                label: l10n.globalDelete,
                 prefixIcon: Icons.delete_outline,
                 backgroundColor: Foundations.colors.error,
                 size: ButtonSize.small,

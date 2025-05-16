@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/components/section_header.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
@@ -33,18 +34,18 @@ class CalculationSection extends ConsumerStatefulWidget {
 class _CalculationSectionState extends ConsumerState<CalculationSection> {
   @override
   Widget build(BuildContext context) {
-    // Check if calculation results are available
     final hasResults = widget.survey.calculationResults != null &&
         widget.survey.calculationResults!.isNotEmpty;
 
-    // Get values from report
     final varCounts = widget.complexityReport['variables'] as Map<String, int>;
     final complexityColor = Foundations.colors.backgroundSubtle;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionHeader(title: 'Calculate', icon: Icons.calculate_outlined),
+        SectionHeader(
+            title: l10n.sortingModuleCalculate, icon: Icons.calculate_outlined),
         SizedBox(height: Foundations.spacing.md),
         LayoutBuilder(
           builder: (context, constraints) {
@@ -62,6 +63,7 @@ class _CalculationSectionState extends ConsumerState<CalculationSection> {
                       varCounts,
                       complexityColor,
                       isWideScreen,
+                      l10n,
                     ),
             );
           },
@@ -76,6 +78,7 @@ class _CalculationSectionState extends ConsumerState<CalculationSection> {
     Map<String, int> varCounts,
     Color complexityColor,
     bool isWideScreen,
+    AppLocalizations l10n,
   ) {
     return Column(children: [
       Container(
@@ -92,7 +95,7 @@ class _CalculationSectionState extends ConsumerState<CalculationSection> {
               children: [
                 Expanded(
                   child: _buildComplexityItem(
-                    'Variables',
+                    l10n.sortingModuleVariables,
                     varCounts['totalVariables'].toString(),
                     Icons.data_object,
                   ),
@@ -103,7 +106,7 @@ class _CalculationSectionState extends ConsumerState<CalculationSection> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Problem Size',
+                  l10n.sortingModuleProblemSize,
                   style: TextStyle(
                     fontSize: Foundations.typography.sm,
                     fontWeight: FontWeight.bold,
@@ -115,19 +118,23 @@ class _CalculationSectionState extends ConsumerState<CalculationSection> {
                   runSpacing: Foundations.spacing.xs,
                   children: [
                     _buildDetailChip(
-                      'Students: ${widget.complexityReport['problemSize']['students']}',
+                      l10n.sortingModuleNumOfStudents(
+                          widget.complexityReport['problemSize']['students']),
                       Icons.person_outline,
                     ),
                     _buildDetailChip(
-                      'Classes: ${widget.complexityReport['problemSize']['classes']}',
+                      l10n.sortingModuleNumOfClasses(
+                          widget.complexityReport['problemSize']['classes']),
                       Icons.category_outlined,
                     ),
                     _buildDetailChip(
-                      'Parameters: ${widget.complexityReport['problemSize']['parameters']}',
+                      l10n.sortingModuleNumOfParams(
+                          widget.complexityReport['problemSize']['parameters']),
                       Icons.tune_outlined,
                     ),
                     _buildDetailChip(
-                      'Preferences: ${widget.complexityReport['problemSize']['totalPreferences']}',
+                      l10n.sortingModuleNumOfPreferences(widget
+                          .complexityReport['problemSize']['totalPreferences']),
                       Icons.favorite_outline,
                     ),
                   ],
@@ -143,7 +150,6 @@ class _CalculationSectionState extends ConsumerState<CalculationSection> {
           width: isWideScreen ? 800 : double.infinity,
           child: Column(
             children: [
-              // Time limit selection
               Row(
                 children: [
                   Expanded(
@@ -151,7 +157,7 @@ class _CalculationSectionState extends ConsumerState<CalculationSection> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Maximum Calculation Time',
+                          l10n.sortingModuleMaxCalcTimeLabel,
                           style: TextStyle(
                             fontSize: Foundations.typography.base,
                             fontWeight: FontWeight.bold,
@@ -159,7 +165,7 @@ class _CalculationSectionState extends ConsumerState<CalculationSection> {
                         ),
                         SizedBox(height: Foundations.spacing.xs),
                         Text(
-                          'The algorithm will attempt to find the best solution within this time limit. In most cases, it will find a solution faster.',
+                          l10n.sortingModuleMaxCalcTimeDescription,
                           style: TextStyle(
                             fontSize: Foundations.typography.sm,
                             color: Foundations.colors.textSecondary,
@@ -173,12 +179,16 @@ class _CalculationSectionState extends ConsumerState<CalculationSection> {
                     width: 160,
                     child: BaseSelect<int>(
                       value: widget.timeLimit,
-                      label: 'Time Limit',
+                      label: l10n.sortingModuleTimeLimitLabel,
                       options: [
-                        SelectOption(value: 30, label: '30 seconds'),
-                        SelectOption(value: 60, label: '1 minute'),
-                        SelectOption(value: 120, label: '2 minutes'),
-                        SelectOption(value: 300, label: '5 minutes'),
+                        SelectOption(
+                            value: 30, label: l10n.globalSecondsWithNumber(30)),
+                        SelectOption(
+                            value: 60, label: l10n.globalMintuesWithNumber(1)),
+                        SelectOption(
+                            value: 120, label: l10n.globalMintuesWithNumber(2)),
+                        SelectOption(
+                            value: 300, label: l10n.globalMintuesWithNumber(5)),
                       ],
                       onChanged: (value) {
                         if (value != null) {
@@ -195,7 +205,7 @@ class _CalculationSectionState extends ConsumerState<CalculationSection> {
                 Padding(
                   padding: EdgeInsets.only(top: Foundations.spacing.md),
                   child: Text(
-                    'Calculating... This may take a moment depending on the complexity of your parameters. Please do not close the app.',
+                    l10n.sortingModuleCalculateLoadingLabel,
                     style: TextStyle(
                       fontSize: Foundations.typography.sm,
                       color: Foundations.colors.textSecondary,
@@ -208,7 +218,7 @@ class _CalculationSectionState extends ConsumerState<CalculationSection> {
                   variant: ButtonVariant.filled,
                   size: ButtonSize.large,
                   prefixIcon: Icons.calculate_outlined,
-                  label: 'Calculate Classes',
+                  label: l10n.sortingModuleCalculate,
                   isLoading: widget.isCalculating,
                   onPressed: widget.onCalculate,
                 ),

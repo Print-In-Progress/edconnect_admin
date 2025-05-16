@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/responses/dialogs/add_response_dialog.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/responses/dialogs/import_responses_dialog.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
@@ -22,6 +23,8 @@ class EmptyResponsesTableState extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     final theme = ref.watch(appThemeProvider);
     return Center(
       child: Padding(
@@ -39,8 +42,8 @@ class EmptyResponsesTableState extends ConsumerWidget {
             SizedBox(height: Foundations.spacing.lg),
             Text(
               hasAnyResponses
-                  ? 'No responses match the current filters'
-                  : 'No responses yet',
+                  ? l10n.globalNoResponsesMatchFilter
+                  : l10n.sortingModuleNoResponsesYet,
               style: TextStyle(
                 fontSize: Foundations.typography.xl,
                 fontWeight: Foundations.typography.semibold,
@@ -52,10 +55,10 @@ class EmptyResponsesTableState extends ConsumerWidget {
             SizedBox(height: Foundations.spacing.md),
             Text(
               hasAnyResponses
-                  ? 'Try adjusting your filters to see more responses'
+                  ? l10n.globalAdjustFilters
                   : (survey.status == SortingSurveyStatus.draft
-                      ? 'Publish the survey to start collecting responses'
-                      : 'Start by adding responses manually or importing from a file'),
+                      ? l10n.sortingModulePublishSortingSurveyNoResponsesLabel
+                      : l10n.sortingModuleNoResponsesImportManuallyLabel),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: Foundations.typography.base,
@@ -67,7 +70,7 @@ class EmptyResponsesTableState extends ConsumerWidget {
             SizedBox(height: Foundations.spacing.xl),
             if (hasAnyResponses)
               BaseButton(
-                label: 'Clear Filters',
+                label: l10n.globalClearFilters,
                 prefixIcon: Icons.clear_all,
                 variant: ButtonVariant.outlined,
                 onPressed: () {
@@ -81,7 +84,7 @@ class EmptyResponsesTableState extends ConsumerWidget {
                 children: [
                   if (survey.status == SortingSurveyStatus.draft) ...[
                     BaseButton(
-                      label: 'Publish Survey',
+                      label: l10n.globalPublish,
                       prefixIcon: Icons.publish_outlined,
                       variant: ButtonVariant.filled,
                       onPressed: () async {
@@ -89,20 +92,21 @@ class EmptyResponsesTableState extends ConsumerWidget {
                             .read(sortingSurveyNotifierProvider.notifier)
                             .publishSortingSurvey(survey.id);
 
-                        // Invalidate providers to force refresh
                         ref.invalidate(
                             selectedSortingSurveyProvider(survey.id));
                         ref.invalidate(getSortingSurveyByIdProvider);
 
                         if (context.mounted) {
                           Toaster.success(
-                              context, 'Survey published successfully');
+                              context,
+                              l10n.successPublishedSuccessfullyWithName(
+                                  l10n.sortingSurvey(1)));
                         }
                       },
                     ),
                   ] else ...[
                     BaseButton(
-                      label: 'Add Manually',
+                      label: l10n.sortingModuleAddManuallyLabel,
                       prefixIcon: Icons.person_add_outlined,
                       variant: ButtonVariant.outlined,
                       size: ButtonSize.medium,
@@ -115,17 +119,20 @@ class EmptyResponsesTableState extends ConsumerWidget {
                                 .read(sortingSurveyNotifierProvider.notifier)
                                 .addResponse(survey.id, respondentId, response);
                             Toaster.success(
-                                context, 'Response added successfully');
+                                context,
+                                l10n.successXAdded(
+                                    l10n.sortingModuleResponses(1)));
                           },
                         );
                       },
                     ),
                     SizedBox(width: Foundations.spacing.md),
                     BaseButton(
-                      label: 'Import Responses',
+                      label: l10n.globalImportX(l10n.sortingModuleResponses(0)),
                       prefixIcon: Icons.upload_file_outlined,
                       variant: ButtonVariant.outlined,
-                      onPressed: () => _showImportDialog(context, ref, survey),
+                      onPressed: () =>
+                          _showImportDialog(context, ref, survey, l10n),
                     ),
                   ],
                 ],
@@ -136,11 +143,11 @@ class EmptyResponsesTableState extends ConsumerWidget {
     );
   }
 
-  void _showImportDialog(
-      BuildContext context, WidgetRef ref, SortingSurvey survey) {
+  void _showImportDialog(BuildContext context, WidgetRef ref,
+      SortingSurvey survey, AppLocalizations l10n) {
     Dialogs.show(
       context: context,
-      title: 'Import Responses',
+      title: l10n.globalImportX(l10n.sortingModuleResponses(0)),
       scrollable: true,
       width: 800,
       variant: DialogVariant.default_,
@@ -148,7 +155,7 @@ class EmptyResponsesTableState extends ConsumerWidget {
       actions: [
         Consumer(builder: (context, ref, _) {
           return BaseButton(
-            label: 'Cancel',
+            label: l10n.globalCancel,
             variant: ButtonVariant.text,
             onPressed: () {
               Navigator.of(context).pop();
@@ -160,7 +167,7 @@ class EmptyResponsesTableState extends ConsumerWidget {
             final importState = ref.watch(responseImportProvider);
 
             return BaseButton(
-              label: 'Import',
+              label: l10n.globalImportX(''),
               variant: ButtonVariant.filled,
               isLoading: importState.isLoading,
               onPressed: importState.previewData == null

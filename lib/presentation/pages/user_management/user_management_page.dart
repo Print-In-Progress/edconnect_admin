@@ -1,4 +1,5 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/app_bar.dart';
 import 'package:edconnect_admin/presentation/widgets/common/navigation/tabs.dart';
@@ -21,24 +22,25 @@ class _UserManagementPageState extends ConsumerState<UserManagementPage> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: theme.isDarkMode
           ? Foundations.darkColors.background
           : Foundations.colors.background,
       appBar: BaseAppBar(
-        title: 'User Management',
+        title: l10n.userManagementUserManagementLabel,
       ),
       body: Padding(
         padding: EdgeInsets.all(Foundations.spacing.lg),
         child: Tabs(
           tabs: [
             TabItem(
-              label: 'Users',
+              label: l10n.globalUserLabel(0),
               icon: Icons.people_outline,
               content: const UsersTab(),
             ),
             TabItem(
-              label: 'Groups',
+              label: l10n.globalGroupLabel(0),
               icon: Icons.group_work_outlined,
               content: const GroupsTab(),
             ),

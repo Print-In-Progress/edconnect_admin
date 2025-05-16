@@ -1,7 +1,9 @@
 import 'package:edconnect_admin/core/design_system/color_generator.dart';
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/models/app_user.dart';
+import 'package:edconnect_admin/core/providers/interface_providers.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/utils/parameter_formatter.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/cards/base_card.dart';
@@ -32,10 +34,12 @@ class _SortingSurveyStudentCardState
   @override
   Widget build(BuildContext context) {
     final isDarkMode = ref.watch(appThemeProvider).isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
+    final localizations = ref.watch(localizationRepositoryProvider);
+
     final user = widget.allUsers.firstWhere(
       (u) => u.id == widget.studentId,
       orElse: () {
-        // Check if it's a manual entry
         final response = widget.survey.responses[widget.studentId];
         if (response != null && response['_manual_entry'] == true) {
           return AppUser(
@@ -64,7 +68,6 @@ class _SortingSurveyStudentCardState
       },
     );
 
-    // Get biological sex if available
     String? sex;
     final response = widget.survey.responses[widget.studentId];
     if (widget.survey.askBiologicalSex && response != null) {
@@ -80,7 +83,6 @@ class _SortingSurveyStudentCardState
       margin: EdgeInsets.zero,
       child: Column(
         children: [
-          // Student basic info row
           Row(
             children: [
               Container(
@@ -122,7 +124,8 @@ class _SortingSurveyStudentCardState
                     if (sex != null) ...[
                       SizedBox(height: Foundations.spacing.xs),
                       BaseChip(
-                        label: ParameterFormatter.formatSexForDisplay(sex),
+                        label: ParameterFormatter.formatSexForDisplay(
+                            sex, localizations),
                         variant: ChipVariant.default_,
                         size: ChipSize.small,
                         backgroundColor: ColorGenerator.getColor(
@@ -142,12 +145,10 @@ class _SortingSurveyStudentCardState
               ),
             ],
           ),
-
-          // Show response details in expansion tile if response exists
           if (response != null) ...[
             ExpansionTile(
               title: Text(
-                'Response Details',
+                l10n.globalDetailsLabel,
                 style: TextStyle(
                   fontSize: Foundations.typography.xs,
                   color: isDarkMode
@@ -167,13 +168,10 @@ class _SortingSurveyStudentCardState
               shape: const Border(),
               collapsedShape: const Border(),
               children: [
-                // Preferences section
                 _buildPreferencesSection(
-                    responseWithId, widget.allUsers, isDarkMode),
-
-                // Parameters section based on survey parameters
+                    responseWithId, widget.allUsers, isDarkMode, l10n),
                 ...widget.survey.parameters.map((param) {
-                  return _buildParameterInfo(param, response, isDarkMode);
+                  return _buildParameterInfo(param, response, isDarkMode, l10n);
                 }),
               ],
             ),
@@ -183,16 +181,15 @@ class _SortingSurveyStudentCardState
     );
   }
 
-  Widget _buildPreferencesSection(
-      Map<String, dynamic> response, List<AppUser> allUsers, bool isDarkMode) {
-    // We need to get the actual student ID first
-    final studentId = response['_student_id'] ?? ''; // This might be missing
+  Widget _buildPreferencesSection(Map<String, dynamic> response,
+      List<AppUser> allUsers, bool isDarkMode, AppLocalizations l10n) {
+    final studentId = response['_student_id'] ?? '';
 
     final prefs = response['prefs'] as List?;
     if (prefs == null || prefs.isEmpty) {
       return _buildInfoRow(
-        'Preferences',
-        'No preferences selected',
+        l10n.sortingModulePreferences(0),
+        l10n.sortingModuleNoPreferencesSelected,
         isDarkMode,
         icon: Icons.favorite_border,
       );
@@ -201,15 +198,14 @@ class _SortingSurveyStudentCardState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('Preferences', Icons.favorite_border, isDarkMode),
+        _buildSectionTitle(l10n.sortingModulePreferences(0),
+            Icons.favorite_border, isDarkMode),
         SizedBox(height: Foundations.spacing.xs),
         ...prefs.map((prefId) {
           if (prefId is String) {
-            // Find preferred student name
             final prefUser = allUsers.firstWhere(
               (u) => u.id == prefId,
               orElse: () {
-                // Check if it's a manual entry
                 final prefResponse = widget.survey.responses[prefId];
                 if (prefResponse != null &&
                     prefResponse['_manual_entry'] == true) {
@@ -239,7 +235,6 @@ class _SortingSurveyStudentCardState
               },
             );
 
-            // Get the current student's class
             String? currentStudentClass;
             for (final entry in widget.currentResults.entries) {
               if (entry.value.contains(studentId)) {
@@ -248,14 +243,12 @@ class _SortingSurveyStudentCardState
               }
             }
 
-            // Check if preferred student is in the same class
             bool isSatisfied = false;
             if (currentStudentClass != null) {
               isSatisfied =
                   widget.currentResults[currentStudentClass]!.contains(prefId);
             }
 
-            // Get a color based on the preferred student's name/ID
             final nameColor = ColorGenerator.getColor(
               prefUser.fullName,
               prefUser.id,
@@ -267,9 +260,7 @@ class _SortingSurveyStudentCardState
               child: Row(
                 children: [
                   Icon(
-                    isSatisfied
-                        ? Icons.check // Use simple checkmark when satisfied
-                        : Icons.highlight_off,
+                    isSatisfied ? Icons.check : Icons.highlight_off,
                     size: 14,
                     color: isSatisfied
                         ? Foundations.colors.success
@@ -283,10 +274,7 @@ class _SortingSurveyStudentCardState
                         fontWeight: isSatisfied
                             ? Foundations.typography.medium
                             : Foundations.typography.regular,
-                        color:
-                            nameColor // Use color generated from student name
-
-                        ),
+                        color: nameColor),
                   ),
                 ],
               ),
@@ -298,15 +286,13 @@ class _SortingSurveyStudentCardState
     );
   }
 
-// Build individual parameter info row based on parameter type
   Widget _buildParameterInfo(Map<String, dynamic> param,
-      Map<String, dynamic> response, bool isDarkMode) {
+      Map<String, dynamic> response, bool isDarkMode, AppLocalizations l10n) {
     final paramName = param['name'] as String;
     final paramType = param['type'] as String;
     final displayName =
         ParameterFormatter.formatParameterNameForDisplay(paramName);
 
-    // Skip sex parameter as it's already shown in the header
     if (paramName == 'sex') return const SizedBox.shrink();
 
     String valueText = 'Not provided';
@@ -318,20 +304,18 @@ class _SortingSurveyStudentCardState
       if (paramType == 'binary') {
         paramIcon = Icons.check_box_outline_blank;
 
-        // Format binary value
         if (value.toString().toLowerCase() == 'yes' ||
             value.toString().toLowerCase() == 'true' ||
             value.toString() == '1') {
-          valueText = 'Yes';
+          valueText = l10n.globalYes;
         } else if (value.toString().toLowerCase() == 'no' ||
             value.toString().toLowerCase() == 'false' ||
             value.toString() == '0') {
-          valueText = 'No';
+          valueText = l10n.globalNo;
         } else {
           valueText = value.toString();
         }
       } else {
-        // Categorical parameter
         paramIcon = Icons.label_outline;
         valueText =
             ParameterFormatter.formatParameterNameForDisplay(value.toString());
@@ -370,7 +354,6 @@ class _SortingSurveyStudentCardState
     );
   }
 
-// Build a generic parameter row
   Widget _buildInfoRow(String label, String value, bool isDarkMode,
       {IconData? icon}) {
     return Padding(
@@ -402,7 +385,7 @@ class _SortingSurveyStudentCardState
                         : Foundations.colors.textMuted,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   value,
                   style: TextStyle(

@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/utils/parameter_formatter.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_icon_button.dart';
@@ -22,6 +23,8 @@ class _ResponseTableFilterState extends ConsumerState<ResponseTableFilter> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       children: [
         Padding(
@@ -31,7 +34,7 @@ class _ResponseTableFilterState extends ConsumerState<ResponseTableFilter> {
               Expanded(
                 child: BaseInput(
                   leadingIcon: Icons.search,
-                  hint: 'Search by name...',
+                  hint: l10n.globalSearchWithName(''),
                   size: InputSize.small,
                   onChanged: (value) {
                     ref
@@ -56,12 +59,12 @@ class _ResponseTableFilterState extends ConsumerState<ResponseTableFilter> {
                   options: [
                     SelectOption(
                       value: SortOrder.asc,
-                      label: 'Name A-Z',
+                      label: l10n.globalFilterByNameAZ,
                       icon: Icons.arrow_upward,
                     ),
                     SelectOption(
                       value: SortOrder.desc,
-                      label: 'Name Z-A',
+                      label: l10n.globalFilterByNameZA,
                       icon: Icons.arrow_downward,
                     ),
                   ],
@@ -109,10 +112,15 @@ class _ResponseTableFilterState extends ConsumerState<ResponseTableFilter> {
                                     responsesFilterProvider(widget.survey.id))
                                 .parameterFilters['sex'],
                             options: [
-                              SelectOption(value: null, label: 'All'),
-                              SelectOption(value: 'm', label: 'Male'),
-                              SelectOption(value: 'f', label: 'Female'),
-                              SelectOption(value: 'nb', label: 'Non-Binary'),
+                              SelectOption(
+                                  value: null, label: l10n.globalAllLabel),
+                              SelectOption(
+                                  value: 'm', label: l10n.globalMaleLabel),
+                              SelectOption(
+                                  value: 'f', label: l10n.globalFemaleLabel),
+                              SelectOption(
+                                  value: 'nb',
+                                  label: l10n.globalNonBinaryLabel),
                             ],
                             onChanged: (value) {
                               final currentFilters = Map<String, String?>.from(
@@ -154,9 +162,11 @@ class _ResponseTableFilterState extends ConsumerState<ResponseTableFilter> {
                                       responsesFilterProvider(widget.survey.id))
                                   .parameterFilters[param['name']],
                               options: [
-                                SelectOption(value: null, label: 'All'),
-                                SelectOption(value: 'yes', label: 'Yes'),
-                                SelectOption(value: 'no', label: 'No'),
+                                SelectOption(
+                                    value: null, label: l10n.globalAllLabel),
+                                SelectOption(
+                                    value: 'yes', label: l10n.globalYes),
+                                SelectOption(value: 'no', label: l10n.globalNo),
                               ],
                               onChanged: (value) {
                                 final currentFilters =
@@ -206,7 +216,8 @@ class _ResponseTableFilterState extends ConsumerState<ResponseTableFilter> {
                                     responsesFilterProvider(widget.survey.id))
                                 .parameterFilters[param['name']],
                             options: [
-                              SelectOption(value: null, label: 'All'),
+                              SelectOption(
+                                  value: null, label: l10n.globalAllLabel),
                               ...uniqueValues.map((v) => SelectOption(
                                   value: v,
                                   label: ParameterFormatter
@@ -244,7 +255,7 @@ class _ResponseTableFilterState extends ConsumerState<ResponseTableFilter> {
                                 .notifier)
                             .state = const ResponsesFilterState();
                       },
-                      tooltip: 'Clear filters',
+                      tooltip: l10n.globalClearFilters,
                       variant: IconButtonVariant.outlined,
                       size: IconButtonSize.small,
                     ),

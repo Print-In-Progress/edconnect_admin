@@ -1,5 +1,6 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/components/info_card.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/components/section_header.dart';
 import 'package:edconnect_admin/presentation/pages/sorting_module/tabs/overview/components/multi_value_row.dart';
@@ -19,47 +20,49 @@ class AccessControlSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifierState = ref.watch(sortingSurveyNotifierProvider);
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         SectionHeader(
-            title: 'Access Control',
+            title: l10n.globalAccessControlLabel,
             icon: Icons.people_outline,
             actionButton: BaseButton(
-              label: 'Edit Access',
+              label: l10n.globalEdit,
               prefixIcon: Icons.edit,
               variant: ButtonVariant.outlined,
               size: ButtonSize.small,
               isLoading: notifierState.isLoading,
-              onPressed: () => _showEditAccessDialog(context, ref, survey),
+              onPressed: () =>
+                  _showEditAccessDialog(context, ref, survey, l10n),
             )),
         SizedBox(height: Foundations.spacing.md),
         InfoCard(children: [
           MultiValueRow(
             ids: survey.editorGroups.isEmpty
-                ? ['No editor groups']
+                ? [l10n.globalNoGroupsSelected]
                 : survey.editorGroups,
-            label: 'Editor Groups',
+            label: l10n.globalEditorGroups,
             isUserIds: false,
           ),
           MultiValueRow(
             ids: survey.editorUsers.isEmpty
-                ? ['No editor users']
+                ? [l10n.globalNoUsersSelected]
                 : survey.editorUsers,
-            label: 'Editor Users',
+            label: l10n.globalEditorUsers,
             isUserIds: true,
           ),
           MultiValueRow(
             ids: survey.respondentsGroups.isEmpty
-                ? ['No respondent groups']
+                ? [l10n.globalNoGroupsSelected]
                 : survey.respondentsGroups,
-            label: 'Respondent Groups',
+            label: l10n.globalRespondentGroups,
             isUserIds: false,
           ),
           MultiValueRow(
             ids: survey.respondentsUsers.isEmpty
-                ? ['No respondent users']
+                ? [l10n.globalNoUsersSelected]
                 : survey.respondentsUsers,
-            label: 'Respondent Users',
+            label: l10n.globalRespondentUsers,
             isUserIds: true,
           ),
         ]),
@@ -67,8 +70,8 @@ class AccessControlSection extends ConsumerWidget {
     );
   }
 
-  void _showEditAccessDialog(
-      BuildContext context, WidgetRef ref, SortingSurvey survey) {
+  void _showEditAccessDialog(BuildContext context, WidgetRef ref,
+      SortingSurvey survey, AppLocalizations l10n) {
     final groups = ref.watch(allGroupsStreamProvider).value ?? [];
     final users = ref.watch(allUsersStreamProvider).value ?? [];
 
@@ -78,15 +81,14 @@ class AccessControlSection extends ConsumerWidget {
     List<String> respondentUsers = List.from(survey.respondentsUsers);
     Dialogs.show(
         context: context,
-        title: 'Edit Access Control',
+        title: l10n.globalEditWithName(l10n.globalAccessControlLabel),
         content: StatefulBuilder(builder: (context, setState) {
           return SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Editor Groups
                 BaseMultiSelect<String>(
-                  label: 'Editor Groups',
+                  label: l10n.globalEditorGroups,
                   searchable: true,
                   values: editorGroups,
                   options: groups
@@ -103,10 +105,8 @@ class AccessControlSection extends ConsumerWidget {
                   },
                 ),
                 SizedBox(height: Foundations.spacing.md),
-
-                // Editor Users
                 BaseMultiSelect<String>(
-                  label: 'Editor Users',
+                  label: l10n.globalEditorUsers,
                   searchable: true,
                   values: editorUsers,
                   options: users
@@ -122,12 +122,9 @@ class AccessControlSection extends ConsumerWidget {
                     });
                   },
                 ),
-
                 SizedBox(height: Foundations.spacing.lg),
-
-                // Respondent Groups
                 BaseMultiSelect<String>(
-                  label: 'Respondent Groups',
+                  label: l10n.globalRespondentGroups,
                   searchable: true,
                   values: respondentGroups,
                   options: groups
@@ -144,10 +141,8 @@ class AccessControlSection extends ConsumerWidget {
                   },
                 ),
                 SizedBox(height: Foundations.spacing.md),
-
-                // Respondent Users
                 BaseMultiSelect<String>(
-                  label: 'Respondent Users',
+                  label: l10n.globalRespondentUsers,
                   searchable: true,
                   values: respondentUsers,
                   options: users
@@ -170,7 +165,7 @@ class AccessControlSection extends ConsumerWidget {
         showCancelButton: true,
         actions: [
           BaseButton(
-            label: 'Save',
+            label: l10n.globalSave,
             onPressed: () {
               final updatedSurvey = survey.copyWith(
                 editorGroups: editorGroups,

@@ -1,4 +1,5 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,6 +8,7 @@ class SurveyEmptyState extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -18,7 +20,7 @@ class SurveyEmptyState extends ConsumerWidget {
           ),
           SizedBox(height: Foundations.spacing.md),
           Text(
-            'No surveys found',
+            l10n.globalNoXFound(l10n.sortingSurvey(0)),
             style: TextStyle(
               fontSize: Foundations.typography.lg,
               color: Foundations.colors.textMuted,

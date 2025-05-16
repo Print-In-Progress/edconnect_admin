@@ -1,3 +1,4 @@
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:edconnect_admin/core/design_system/foundations.dart';
@@ -46,10 +47,11 @@ class _ClassConfigurationSectionState
   Widget build(
     BuildContext context,
   ) {
-    return _buildClassConfiguration();
+    final l10n = AppLocalizations.of(context)!;
+    return _buildClassConfiguration(l10n);
   }
 
-  Widget _buildClassConfiguration() {
+  Widget _buildClassConfiguration(AppLocalizations l10n) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWideScreen = constraints.maxWidth > 900;
@@ -59,14 +61,14 @@ class _ClassConfigurationSectionState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SectionHeader(
-                title: 'Class  Configuration', icon: Icons.school_outlined),
+                title: l10n.sortingModuleClassConfigLabel,
+                icon: Icons.school_outlined),
             SizedBox(height: Foundations.spacing.md),
             if (isWideScreen)
               IntrinsicHeight(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Left card - Class controls
                     Expanded(
                       flex: 3,
                       child: BaseCard(
@@ -78,7 +80,7 @@ class _ClassConfigurationSectionState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Classes',
+                                l10n.sortingModuleClassesLabel,
                                 style: TextStyle(
                                   fontSize: Foundations.typography.base,
                                   fontWeight: FontWeight.bold,
@@ -98,14 +100,14 @@ class _ClassConfigurationSectionState
                                     return SizedBox(
                                       width: 400,
                                       child: _buildWideClassRow(
-                                          index, classConfig),
+                                          index, classConfig, l10n),
                                     );
                                   }),
                                 ],
                               ),
                               if (widget.classes.isNotEmpty)
                                 Divider(height: Foundations.spacing.xl),
-                              _buildWideAddClass(),
+                              _buildWideAddClass(l10n),
                             ],
                           ),
                         ),
@@ -125,7 +127,7 @@ class _ClassConfigurationSectionState
                             children: [
                               if (widget.survey.askBiologicalSex) ...[
                                 Text(
-                                  'Distribution Settings',
+                                  l10n.sortingModuleDistributionSettingsLabel,
                                   style: TextStyle(
                                     fontSize: Foundations.typography.base,
                                     fontWeight: FontWeight.bold,
@@ -134,9 +136,10 @@ class _ClassConfigurationSectionState
                                 SizedBox(height: Foundations.spacing.md),
                                 BaseCheckbox(
                                   value: widget.distributeBySex,
-                                  label: 'Distribute by Biological Sex',
-                                  description:
-                                      'Attempt to achieve an even male/female ratio in each class',
+                                  label: l10n
+                                      .sortingModuleDistributeByBiologicalSexLabel,
+                                  description: l10n
+                                      .sortingModuleDistributeByBiologicalSexDescription,
                                   onChanged: (value) {
                                     widget.onDistributeBySexChanged(
                                         value ?? false);
@@ -145,14 +148,14 @@ class _ClassConfigurationSectionState
                                 Divider(height: Foundations.spacing.xl),
                               ],
                               Text(
-                                'Capacity Information',
+                                l10n.sortingModuleCapacityInfoLabel,
                                 style: TextStyle(
                                   fontSize: Foundations.typography.base,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               SizedBox(height: Foundations.spacing.md),
-                              _buildCapacityInfo(hasEnoughCapacity),
+                              _buildCapacityInfo(hasEnoughCapacity, l10n),
                             ],
                           ),
                         ),
@@ -176,18 +179,18 @@ class _ClassConfigurationSectionState
                         return Padding(
                           padding:
                               EdgeInsets.only(bottom: Foundations.spacing.md),
-                          child: _buildNarrowClassRow(index, classConfig),
+                          child: _buildNarrowClassRow(index, classConfig, l10n),
                         );
                       }),
                       SizedBox(height: Foundations.spacing.md),
-                      _buildNarrowAddClass(),
+                      _buildNarrowAddClass(l10n),
                       if (widget.classes.isNotEmpty) ...[
                         SizedBox(height: Foundations.spacing.lg),
                         const Divider(),
                         SizedBox(height: Foundations.spacing.md),
                         if (widget.survey.askBiologicalSex) ...[
                           Text(
-                            'Distribution Settings',
+                            l10n.sortingModuleDistributionSettingsLabel,
                             style: TextStyle(
                               fontSize: Foundations.typography.base,
                               fontWeight: FontWeight.bold,
@@ -196,16 +199,17 @@ class _ClassConfigurationSectionState
                           SizedBox(height: Foundations.spacing.md),
                           BaseCheckbox(
                             value: widget.distributeBySex,
-                            label: 'Distribute by Biological Sex',
-                            description:
-                                'Attempt to achieve an even male/female ratio in each class',
+                            label: l10n
+                                .sortingModuleDistributeByBiologicalSexLabel,
+                            description: l10n
+                                .sortingModuleDistributeByBiologicalSexDescription,
                             onChanged: (value) {
                               widget.onDistributeBySexChanged(value ?? false);
                             },
                           ),
                           SizedBox(height: Foundations.spacing.lg),
                         ],
-                        _buildCapacityInfo(hasEnoughCapacity),
+                        _buildCapacityInfo(hasEnoughCapacity, l10n),
                       ],
                     ],
                   ),
@@ -217,14 +221,15 @@ class _ClassConfigurationSectionState
     );
   }
 
-  Widget _buildWideClassRow(int index, ClassConfig classConfig) {
+  Widget _buildWideClassRow(
+      int index, ClassConfig classConfig, AppLocalizations l10n) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
           child: BaseInput(
             controller: classConfig.nameController,
-            label: 'Class Name',
+            label: l10n.sortingModuleClassNameLabel,
             isRequired: true,
           ),
         ),
@@ -233,7 +238,7 @@ class _ClassConfigurationSectionState
           width: 200,
           child: NumberInput(
             controller: classConfig.sizeController,
-            label: 'Class Size',
+            label: l10n.sortingModuleClassSizeLabel,
             type: NumberFormatType.integer,
             min: 1,
             isRequired: true,
@@ -254,13 +259,14 @@ class _ClassConfigurationSectionState
     );
   }
 
-  Widget _buildNarrowClassRow(int index, ClassConfig classConfig) {
+  Widget _buildNarrowClassRow(
+      int index, ClassConfig classConfig, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         BaseInput(
           controller: classConfig.nameController,
-          label: 'Class Name',
+          label: l10n.sortingModuleClassNameLabel,
           isRequired: true,
         ),
         SizedBox(height: Foundations.spacing.sm),
@@ -269,7 +275,7 @@ class _ClassConfigurationSectionState
             Expanded(
               child: NumberInput(
                 controller: classConfig.sizeController,
-                label: 'Class Size',
+                label: l10n.sortingModuleClassSizeLabel,
                 type: NumberFormatType.integer,
                 min: 1,
                 isRequired: true,
@@ -292,18 +298,18 @@ class _ClassConfigurationSectionState
     );
   }
 
-  Widget _buildWideAddClass() {
+  Widget _buildWideAddClass(AppLocalizations l10n) {
     return Row(
       children: [
         Expanded(
           child: BaseInput(
             controller: widget.newClassNameController,
-            label: 'New Class Name',
-            hint: 'Leave empty for automatic naming',
+            label: l10n.sortingModuleNewClassNameLabel,
+            hint: l10n.sortingModuleNewClassNameHint,
             button: BaseButton(
               onPressed: widget.onAddClass,
               prefixIcon: Icons.add,
-              label: 'Add Class',
+              label: l10n.globalAdd,
             ),
           ),
         ),
@@ -311,27 +317,27 @@ class _ClassConfigurationSectionState
     );
   }
 
-  Widget _buildNarrowAddClass() {
+  Widget _buildNarrowAddClass(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         BaseInput(
           controller: widget.newClassNameController,
-          label: 'New Class Name',
-          hint: 'Leave empty for automatic naming',
+          label: l10n.sortingModuleNewClassNameLabel,
+          hint: l10n.sortingModuleNewClassNameHint,
         ),
         SizedBox(height: Foundations.spacing.md),
         BaseButton(
           onPressed: widget.onAddClass,
           prefixIcon: Icons.add,
-          label: 'Add Class',
+          label: l10n.globalAdd,
           fullWidth: true,
         ),
       ],
     );
   }
 
-  Widget _buildCapacityInfo(bool hasEnoughCapacity) {
+  Widget _buildCapacityInfo(bool hasEnoughCapacity, AppLocalizations l10n) {
     return Container(
       padding: EdgeInsets.all(Foundations.spacing.md),
       decoration: BoxDecoration(
@@ -344,7 +350,7 @@ class _ClassConfigurationSectionState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Total Capacity: $totalCapacity students',
+            l10n.sortingModuleTotalCapacity(totalCapacity),
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: hasEnoughCapacity
@@ -353,14 +359,14 @@ class _ClassConfigurationSectionState
             ),
           ),
           Text(
-            'Minimum Required: $minimumRequired students',
+            l10n.sortingModuleMinimumRequiredCapacity(totalCapacity),
             style: TextStyle(
               color: Foundations.colors.textSecondary,
             ),
           ),
           if (!hasEnoughCapacity)
             Text(
-              'Warning: Total capacity must be at least equal to the number of students',
+              l10n.sortingModuleWarningMinimumRequiredCapacity,
               style: TextStyle(
                 color: Foundations.colors.error,
                 fontSize: Foundations.typography.sm,
@@ -368,7 +374,7 @@ class _ClassConfigurationSectionState
             ),
           SizedBox(height: Foundations.spacing.sm),
           Text(
-            'Recommendation: Consider leaving space for at least one additional student per class for better algorithm flexibility.',
+            l10n.sortingModuleCapacityRecommendation,
             style: TextStyle(
               color: Foundations.colors.warning,
               fontSize: Foundations.typography.sm,

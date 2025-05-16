@@ -1,6 +1,7 @@
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/routing/app_router.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
+import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/cards/base_card.dart';
@@ -20,9 +21,9 @@ class SurveyCard extends ConsumerWidget {
 
     final isCalculating = ref.watch(calculationStateProvider).isCalculating &&
         ref.read(selectedSortingSurveyIdProvider) == survey.id;
-    // Check if results are available
     final hasResults = survey.calculationResults != null &&
         survey.calculationResults!.isNotEmpty;
+    final l10n = AppLocalizations.of(context)!;
 
     return BaseCard(
       variant: CardVariant.outlined,
@@ -30,7 +31,6 @@ class SurveyCard extends ConsumerWidget {
       onTap: () {
         ref.read(selectedSortingSurveyIdProvider.notifier).state = survey.id;
 
-        // Navigate to details
         AppRouter.toSortingSurveyDetails(context, surveyId: survey.id);
       },
       child: Padding(
@@ -53,11 +53,11 @@ class SurveyCard extends ConsumerWidget {
                   ),
                 ),
                 if (isCalculating)
-                  _buildCalculatingIndicator()
+                  _buildCalculatingIndicator(l10n)
                 else if (hasResults)
-                  _buildResultsAvailableChip()
+                  _buildResultsAvailableChip(l10n)
                 else
-                  _buildStatusChip(survey.status),
+                  _buildStatusChip(survey.status, l10n),
               ],
             ),
             if (survey.description.isNotEmpty) ...[
@@ -97,7 +97,7 @@ class SurveyCard extends ConsumerWidget {
                 ),
                 SizedBox(width: Foundations.spacing.xs),
                 Text(
-                  DateFormat('MMM d, yyyy').format(survey.createdAt),
+                  DateFormat.yMd().format(survey.createdAt),
                   style: TextStyle(
                     color: Foundations.colors.textMuted,
                     fontSize: Foundations.typography.sm,
@@ -111,11 +111,11 @@ class SurveyCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildCalculatingIndicator() {
+  Widget _buildCalculatingIndicator(AppLocalizations l10n) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
+        const SizedBox(
           height: 16,
           width: 16,
           child: CircularProgressIndicator(
@@ -124,7 +124,7 @@ class SurveyCard extends ConsumerWidget {
         ),
         SizedBox(width: Foundations.spacing.xs),
         BaseChip(
-          label: 'Calculating',
+          label: l10n.sortingModuleCalculating,
           variant: ChipVariant.secondary,
           size: ChipSize.small,
         ),
@@ -132,31 +132,31 @@ class SurveyCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildResultsAvailableChip() {
+  Widget _buildResultsAvailableChip(AppLocalizations l10n) {
     return BaseChip(
-      label: 'Results Available',
+      label: l10n.sortingModuleResultsAvailable,
       variant: ChipVariant.secondary,
       size: ChipSize.small,
       leadingIcon: Icons.check_circle,
     );
   }
 
-  Widget _buildStatusChip(SortingSurveyStatus status) {
+  Widget _buildStatusChip(SortingSurveyStatus status, AppLocalizations l10n) {
     ChipVariant variant;
     String label;
 
     switch (status) {
       case SortingSurveyStatus.draft:
         variant = ChipVariant.default_;
-        label = 'Draft';
+        label = l10n.globalDraft;
         break;
       case SortingSurveyStatus.published:
         variant = ChipVariant.primary;
-        label = 'Published';
+        label = l10n.globalPublished;
         break;
       case SortingSurveyStatus.closed:
         variant = ChipVariant.secondary;
-        label = 'Closed';
+        label = l10n.globalClosed;
         break;
     }
 
