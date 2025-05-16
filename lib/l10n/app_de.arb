@@ -1,1129 +1,235 @@
 {
     "@@locale": "de",
     "globalLanguage": "Deutsch",
-    "@globalLanguage": {
-        "description": "Global section - The current language"
-    },
     "globalOk": "OK",
-    "@globalOk": {
-        "description": "Global section - OK button text"
-    },
     "globalCancel": "Abbrechen",
-    "@globalCancel": {
-        "description": "Global section - Cancel button text"
-    },
     "globalSave": "Speichern",
-    "@globalSave": {
-        "description": "Global section - Save button text"
-    },
     "globalEdit": "Bearbeiten",
-    "@globalEdit": {
-        "description": "Global section - Edit button text"
-    },
     "globalEditWithName": "{name} bearbeiten",
-    "@globalEditWithName": {
-        "description": "Global section - Edit with name button text",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item to be edited"
-            }
-        }
-    },
     "globalYes": "Ja",
-    "@globalYes": {
-        "description": "Global section - Yes button text"
-    },
     "globalNo": "Nein",
-    "@globalNo": {
-        "description": "Global section - No button text"
-    },
     "globalAdd": "Hinzufügen",
-    "@globalAdd": {
-        "description": "Global section - Add button text"
-    },
     "globalUserLabel": "{count, plural, one {Nutzer} other {Nutzer}}",
-    "@globalUserLabel": {
-        "description": "Global section - User label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Number of users"
-            }
-        }
-    },
     "globalAddX": "{name} hinzufügen",
-    "@globalAddX": {
-        "description": "Global section - Add with name button text",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item to be added"
-            }
-        }
-    },
     "globalFromX": "Von {name}",
-    "@globalFromX": {
-        "description": "Global section - From with name label",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item"
-            }
-        }
-    },
     "globalFiltersLabel": "Filter",
-    "@globalFiltersLabel": {
-        "description": "Global section - Filters label"
-    },
-    "globalFilterByGroup": "Filtern nach Gruppen",
-    "@globalFilterByGroup": {
-        "description": "Global section - Filter by group label"
-    },
-    "globalRequiredLabel": "Required",
-    "@globalRequiredLabel": {
-        "description": "Global section - Required label"
-    },
-    "globalNotRequiredLabel": "Not Required",
-    "@globalNotRequiredLabel": {
-        "description": "Global section - Not Required label"
-    },
-    "globalStatisticsLabel": "Statistics",
-    "@globalStatisticsLabel": {
-        "description": "Global section - Statistics label"
-    },
-    "globalOtherLabel": "Other",
-    "@globalOtherLabel": {
-        "description": "Global section - Other label"
-    },
-    "globalEnabledLabel": "Enabled",
-    "@globalEnabledLabel": {
-        "description": "Global section - Enabled status text"
-    },
-    "globalConfirm": "Confirm",
-    "@globalConfirm": {
-        "description": "Global section - Confirm button text"
-    },
-    "globalDelete": "Delete",
-    "@globalDelete": {
-        "description": "Global section - Delete button text"
-    },
-    "globalActionsLabel": "Actions",
-    "@globalActionsLabel": {
-        "description": "Global section - Actions label"
-    },
-    "globalViewAllLabel": "View All",
-    "@globalViewAllLabel": {
-        "description": "Global section - View All label"
-    },
-    "globalSelectX": "Select {name}",
-    "@globalSelectX": {
-        "description": "Global section - Select with name button text",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item to be selected"
-            }
-        }
-    },
-    "globalDraft": "Draft",
-    "@globalDraft": {
-        "description": "Global section - Draft status text"
-    },
-    "globalPublished": "Published",
-    "@globalPublished": {
-        "description": "Global section - Published status text"
-    },
-    "globalClosed": "Closed",
-    "@globalClosed": {
-        "description": "Global section - Pending status text"
-    },
-    "globalLoading": "Loading...",
-    "@globalLoading": {
-        "description": "Global section - Loading indicator text"
-    },
-    "globalReauthenticate": "Re-authentification required",
-    "@globalReauthenticate": {
-        "description": "Global section - Re-authentication required message"
-    },
-    "globalEditorsLabel": "Editors",
-    "@globalEditorsLabel": {
-        "description": "Global section - Editors label"
-    },
-    "globalDeleteConfirmationDialogWithName": "Are you sure you want to delete this {name}?",
-    "@globalDeleteConfirmationDialogWithName": {
-        "description": "Global section - Delete confirmation dialog message",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item to be deleted"
-            }
-        }
-    },
-    "globalDeleteConfirmationDialogAllWithName": "Are you sure you want to delete all {name}?",
-    "@globalDeleteConfirmationDialogAllWithName": {
-        "description": "Global section - Delete all confirmation dialog message",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item to be deleted"
-            }
-        }
-    },
-    "globalYouHaveUnsavedChanges": "You have unsaved changes",
-    "@globalYouHaveUnsavedChanges": {
-        "description": "Global section - Unsaved changes warning message"
-    },
-    "globaDiscard": "Discard",
-    "@globaDiscard": {
-        "description": "Global section - Discard button text"
-    },
-    "globalDisabledLabel": "Disabled",
-    "@globalDisabledLabel": {
-        "description": "Global section - Disabled status text"
-    },
+    "globalFilterByGroup": "Nach Gruppen filtern",
+    "globalRequiredLabel": "Erforderlich",
+    "globalNotRequiredLabel": "Nicht erforderlich",
+    "globalStatisticsLabel": "Statistiken",
+    "globalOtherLabel": "Andere",
+    "globalEnabledLabel": "Aktiviert",
+    "globalConfirm": "Bestätigen",
+    "globalDelete": "Löschen",
+    "globalActionsLabel": "Aktionen",
+    "globalViewAllLabel": "Alle anzeigen",
+    "globalSelectX": "{name} auswählen",
+    "globalDraft": "Entwurf",
+    "globalPublished": "Veröffentlicht",
+    "globalClosed": "Geschlossen",
+    "globalLoading": "Wird geladen...",
+    "globalReauthenticate": "Erneute Authentifizierung erforderlich",
+    "globalEditorsLabel": "Editoren",
+    "globalDeleteConfirmationDialogWithName": "Möchten Sie {name} wirklich löschen?",
+    "globalDeleteConfirmationDialogAllWithName": "Möchten Sie wirklich alle {name} löschen?",
+    "globalYouHaveUnsavedChanges": "Sie haben ungespeicherte Änderungen",
+    "globaDiscard": "Verwerfen",
+    "globalDisabledLabel": "Deaktiviert",
     "globalStatusLabel": "Status",
-    "@globalStatusLabel": {
-        "description": "Global section - Status label"
-    },
-    "globalCreatedByLabel": "Created by",
-    "@globalCreatedByLabel": {
-        "description": "Global section - Created By label"
-    },
-    "globalCreatedAtLabel": "Created at",
-    "@globalCreatedAtLabel": {
-        "description": "Global section - Created At label"
-    },
-    "globalTitle": "Title",
-    "@globalTitle": {
-        "description": "Global section - Title label"
-    },
-    "globalTypeLabel": "Type",
-    "@globalTypeLabel": {
-        "description": "Global section - Type label"
-    },
-    "globalRetry": "Retry",
-    "@globalRetry": {
-        "description": "Global section - Retry button text"
-    },
-    "globalNoGroupsSelected": "No groups selected",
-    "@globalNoGroupsSelected": {
-        "description": "Global section - No groups selected message"
-    },
-    "globalFeatureNotImplementedYet": "Feature not implemented yet",
-    "@globalFeatureNotImplementedYet": {
-        "description": "Global section - Feature not implemented message"
-    },
-    "globalNoUsersSelected": "No users selected",
-    "@globalNoUsersSelected": {
-        "description": "Global section - No users selected message"
-    },
-    "globalTitleWithPrefix": "{prefix} Title",
-    "@globalTitleWithPrefix": {
-        "description": "Global section - Title with prefix label",
-        "placeholders": {
-            "prefix": {
-                "type": "String",
-                "description": "Prefix for the title"
-            }
-        }
-    },
-    "globalDescription": "Description",
-    "@globalDescription": {
-        "description": "Global section - Description label"
-    },
+    "globalCreatedByLabel": "Erstellt von",
+    "globalCreatedAtLabel": "Erstellt am",
+    "globalTitle": "Titel",
+    "globalTypeLabel": "Typ",
+    "globalRetry": "Wiederholen",
+    "globalNoGroupsSelected": "Keine Gruppen ausgewählt",
+    "globalFeatureNotImplementedYet": "Funktion noch nicht implementiert",
+    "globalNoUsersSelected": "Keine Nutzer ausgewählt",
+    "globalTitleWithPrefix": "{prefix} Titel",
+    "globalDescription": "Beschreibung",
     "globalName": "Name",
-    "@globalName": {
-        "description": "Global section - Name label"
-    },
-    "globalBiologicalSexLabel": "Biological Sex",
-    "@globalBiologicalSexLabel": {
-        "description": "Global section - Gender label"
-    },
-    "globalDescriptionWithPrefix": "{prefix} Description",
-    "@globalDescriptionWithPrefix": {
-        "description": "Global section - Description with prefix label",
-        "placeholders": {
-            "prefix": {
-                "type": "String",
-                "description": "Prefix for the description"
-            }
-        }
-    },
-    "globalSupportedFormatsWithFormats": "Supported formats: {formats}",
-    "@globalSupportedFormatsWithFormats": {
-        "description": "Global section - Supported formats message",
-        "placeholders": {
-            "formats": {
-                "type": "String",
-                "description": "List of supported formats"
-            }
-        }
-    },
-    "globalSelectFileToImport": "Select file to import",
-    "@globalSelectFileToImport": {
-        "description": "Global section - Select file to import button text"
-    },
-    "globalImportX": "Import {name}",
-    "@globalImportX": {
-        "description": "Global section - Import with name button text",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item to be imported"
-            }
-        }
-    },
-    "globalPreviewLabel": "Preview",
-    "@globalPreviewLabel": {
-        "description": "Global section - Preview label"
-    },
-    "globalSelectPageSize": "Select page size",
-    "@globalSelectPageSize": {
-        "description": "Global section - Select page size label"
-    },
-    "globalEdConnectRegistrationForm": "edConnect Registration Form",
-    "@globalEdConnectRegistrationForm": {
-        "description": "Global section - edConnect registration form title"
-    },
-    "globalPageSize": "Page size",
-    "@globalPageSize": {
-        "description": "Global section - Page size label"
-    },
-    "globalFormCryptographicallySigned": "This form was cryptographically signed by the user using the edConnect System.",
-    "@globalFormCryptographicallySigned": {
-        "description": "Global section - Form cryptographically signed message"
-    },
-    "globalCreateButtonLabel": "Create {prefix}",
-    "@globalCreateButtonLabel": {
-        "description": "Global section - Create button label",
-        "placeholders": {
-            "prefix": {
-                "type": "String",
-                "description": "Prefix for the create button"
-            }
-        }
-    },
-    "globalLoadingWithName": "Loading {name}...",
-    "@globalLoadingWithName": {
-        "description": "Global section - Loading with name message",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item being loaded"
-            }
-        }
-    },
-    "globalNotFoundWithName": "{name} not found",
-    "@globalNotFoundWithName": {
-        "description": "Global section - Not found with name message",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item not found"
-            }
-        }
-    },
-    "globalNoXFound": "No {name} found",
-    "@globalNoXFound": {
-        "description": "Global section - No items found message",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item not found"
-            }
-        }
-    },
-    "globalExportX": "Export {name}",
-    "@globalExportX": {
-        "description": "Global section - Export with name button text",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item to be exported"
-            }
-        }
-    },
-    "globalDeleteAllX": "Delete All {name}",
-    "@globalDeleteAllX": {
-        "description": "Global section - Delete All button text",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item to be deleted"
-            }
-        }
-    },
-    "globalGroupLabel": "{count, plural, one {Group} other {Groups}}",
-    "@globalGroupLabel": {
-        "description": "Global section - Group label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Number of groups"
-            }
-        }
-    },
-    "globalFilterStatus": "Filter by status",
-    "@globalFilterStatus": {
-        "description": "Global section - Filter by status label"
-    },
-    "globalAdjustFilters": "Adjust filters to see more results",
-    "@globalAdjustFilters": {
-        "description": "Global section - Adjust filters message"
-    },
-    "globalClearFilters": "Clear filters",
-    "@globalClearFilters": {
-        "description": "Global section - Clear filters button text"
-    },
-    "globalSortBy": "Sort by",
-    "@globalSortBy": {
-        "description": "Global section - Sort by label"
-    },
+    "globalBiologicalSexLabel": "Biologisches Geschlecht",
+    "globalDescriptionWithPrefix": "{prefix} Beschreibung",
+    "globalSupportedFormatsWithFormats": "Unterstützte Formate: {formats}",
+    "globalSelectFileToImport": "Datei zum Importieren auswählen",
+    "globalImportX": "{name} importieren",
+    "globalPreviewLabel": "Vorschau",
+    "globalSelectPageSize": "Seitengröße auswählen",
+    "globalEdConnectRegistrationForm": "edConnect Registrierungsformular",
+    "globalPageSize": "Seitengröße",
+    "globalFormCryptographicallySigned": "Dieses Formular wurde kryptographisch vom Nutzer mit dem edConnect-System signiert.",
+    "globalCreateButtonLabel": "{prefix} erstellen",
+    "globalLoadingWithName": "{name} wird geladen...",
+    "globalNotFoundWithName": "{name} nicht gefunden",
+    "globalNoXFound": "Keine {name} gefunden",
+    "globalExportX": "{name} exportieren",
+    "globalDeleteAllX": "Alle {name} löschen",
+    "globalGroupLabel": "{count, plural, one {Gruppe} other {Gruppen}}",
+    "globalFilterStatus": "Nach Status filtern",
+    "globalAdjustFilters": "Filter anpassen, um mehr Ergebnisse zu sehen",
+    "globalClearFilters": "Filter löschen",
+    "globalSortBy": "Sortieren nach",
     "globalFilterByNameAZ": "Name A-Z",
-    "@globalFilterByNameAZ": {
-        "description": "Global section - Filter by name A-Z label"
-    },
     "globalFilterByNameZA": "Name Z-A",
-    "@globalFilterByNameZA": {
-        "description": "Global section - Filter by name Z-A label"
-    },
-    "globalFilterByNewestFirst": "Newest first",
-    "@globalFilterByNewestFirst": {
-        "description": "Global section - Filter by newest first label"
-    },
-    "globalFilterByOldestFirst": "Oldest first",
-    "@globalFilterByOldestFirst": {
-        "description": "Global section - Filter by oldest first label"
-    },
-    "globalFilterByAlphabetical": "Alphabetical",
-    "@globalFilterByAlphabetical": {
-        "description": "Global section - Filter by alphabetical label"
-    },
-    "globalSelectGroups": "Select groups",
-    "@globalSelectGroups": {
-        "description": "Global section - Select groups label"
-    },
-    "globalBasicInfo": "Basic Information",
-    "@globalBasicInfo": {
-        "description": "Global section - Basic information label"
-    },
-    "globalSelectUsers": "Select Users",
-    "@globalSelectUsers": {
-        "description": "Global section - Select users label"
-    },
-    "globalSelectUser": "Select User",
-    "@globalSelectUser": {
-        "description": "Global section - Select user label"
-    },
-    "globalSearch": "Search",
-    "@globalSearch": {
-        "description": "Global section - Search button text"
-    },
-    "globalXSelected": "{number} selected",
-    "@globalXSelected": {
-        "description": "Global section - Number of items selected message",
-        "placeholders": {
-            "number": {
-                "type": "num",
-                "description": "Number of items selected"
-            }
-        }
-    },
-    "globalAllLabel": "All",
-    "@globalAllLabel": {
-        "description": "Global section - All label"
-    },
-    "globalSaveChangesConfirmationDialog": "Are you sure you want to save these changes?",
-    "@globalSaveChangesConfirmationDialog": {
-        "description": "Global section - Save changes confirmation dialog message"
-    },
-    "globalAccessControlLabel": "Access Control",
-    "@globalAccessControlLabel": {
-        "description": "Global section - Access control label"
-    },
-    "globalSearchWithName": "Search {name} ...",
-    "@globalSearchWithName": {
-        "description": "Global section - Search with name placeholder",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item to search for"
-            }
-        }
-    },
-    "globalCreatingX": "Creating {name}...",
-    "@globalCreatingX": {
-        "description": "Global section - Creating with name message",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item being created"
-            }
-        }
-    },
-    "globalExportOptions": "Export Options",
-    "@globalExportOptions": {
-        "description": "Global section - Export options label"
-    },
-    "globalMaleLabel": "Male",
-    "@globalMaleLabel": {
-        "description": "Global section - Male label"
-    },
+    "globalFilterByNewestFirst": "Neueste zuerst",
+    "globalFilterByOldestFirst": "Älteste zuerst",
+    "globalFilterByAlphabetical": "Alphabetisch",
+    "globalSelectGroups": "Gruppen auswählen",
+    "globalBasicInfo": "Grundinformationen",
+    "globalSelectUsers": "Benutzer auswählen",
+    "globalSelectUser": "Benutzer auswählen",
+    "globalSearch": "Suchen",
+    "globalXSelected": "{number} ausgewählt",
+    "globalAllLabel": "Alle",
+    "globalSaveChangesConfirmationDialog": "Möchten Sie diese Änderungen wirklich speichern?",
+    "globalAccessControlLabel": "Zugriffskontrolle",
+    "globalSearchWithName": "{name} suchen...",
+    "globalCreatingX": "{name} wird erstellt...",
+    "globalExportOptions": "Export-Optionen",
+    "globalMaleLabel": "Männlich",
     "globalDetailsLabel": "Details",
-    "@globalDetailsLabel": {
-        "description": "Global section - Details label"
-    },
-    "globalFemaleLabel": "Female",
-    "@globalFemaleLabel": {
-        "description": "Global section - Female label"
-    },
-    "globalNonBinaryLabel": "Non-binary",
-    "@globalNonBinaryLabel": {
-        "description": "Global section - Non-binary label"
-    },
+    "globalFemaleLabel": "Weiblich",
+    "globalNonBinaryLabel": "Nicht-binär",
     "globalMaleLegend": "M",
-    "@globalMaleLegend": {
-        "description": "Global - male legend text"
-    },
-    "globalFemaleLegend": "F",
-    "@globalFemaleLegend": {
-        "description": "Global - female legend text"
-    },
+    "globalFemaleLegend": "W",
     "globalNonBinaryLegend": "NB",
-    "@globalNonBinaryLegend": {
-        "description": "Global - non-binary legend text"
-    },
-    "globalPublish": "Publish",
-    "@globalPublish": {
-        "description": "Global section - Publish button text"
-    },
-    "globalClose": "Close",
-    "@globalClose": {
-        "description": "Global section - Close button text"
-    },
-    "globalEditorGroups": "Editor Groups",
-    "@globalEditorGroups": {
-        "description": "Global section - Editor groups label"
-    },
-    "globalEditorUsers": "Editor Users",
-    "@globalEditorUsers": {
-        "description": "Global section - Editor users label"
-    },
-    "globalRespondentGroups": "Respondent Groups",
-    "@globalRespondentGroups": {
-        "description": "Global section - Respondent groups label"
-    },
-    "globalGroupName": "Group Name",
-    "@globalGroupName": {
-        "description": "Global section - Group name label"
-    },
-    "globalRespondentUsers": "Respondent Users",
-    "@globalRespondentUsers": {
-        "description": "Global section - Respondent users label"
-    },
-    "globalClear": "Clear",
-    "@globalClear": {
-        "description": "Global section - Clear button text"
-    },
-    "globalMintuesWithNumber": "{number, plural, one {minute} other {minutes}}",
-    "@globalMintuesWithNumber": {
-        "description": "Global section - Minutes with number message",
-        "placeholders": {
-            "number": {
-                "type": "num",
-                "description": "Number of minutes"
-            }
-        }
-    },
-    "globalSecondsWithNumber": "{number, plural, one {second} other {seconds}}",
-    "@globalSecondsWithNumber": {
-        "description": "Global section - Seconds with number message",
-        "placeholders": {
-            "number": {
-                "type": "num",
-                "description": "Number of seconds"
-            }
-        }
-    },
-    "globalNoResults": "No results found",
-    "@globalNoResults": {
-        "description": "Global section - No results found message"
-    },
-    "globalLogout": "Logout",
-    "@globalLogout": {
-        "description": "Global section - Logout button text"
-    },
-    "globalDeleteAccount": "Delete Account",
-    "@globalDeleteAccount": {
-        "description": "Global section - Delete account button text"
-    },
-    "globalFirstNameTextFieldHintText": "First Name",
-    "@globalFirstNameTextFieldHintText": {
-        "description": "Global section - First name input hint"
-    },
-    "globalLastNameTextFieldHintText": "Last Name",
-    "@globalLastNameTextFieldHintText": {
-        "description": "Global section - Last name input hint"
-    },
-    "globalEmailLabel": "Email",
-    "@globalEmailLabel": {
-        "description": "Global section - Email input label"
-    },
-    "globalLegalNotice": "Legal Notice",
-    "@globalLegalNotice": {
-        "description": "Global section - Legal notice text"
-    },
-    "globalSubmit": "Submit",
-    "@globalSubmit": {
-        "description": "Global section - Submit button text"
-    },
-    "globalDismiss": "Dismiss",
-    "@globalDismiss": {
-        "description": "Global section - Dismiss button text"
-    },
-    "globalGreetingOne": "Hi, {firstName}!",
-    "@globalGreetingOne": {
-        "description": "Global section - Greeting message with first name",
-        "placeholders": {
-            "firstName": {
-                "type": "String",
-                "description": "User's first name"
-            }
-        }
-    },
-    "globalDeleteWithName": "Delete {name}",
-    "@globalDeleteWithName": {
-        "description": "Global section - Delete with name message",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item to be deleted"
-            }
-        }
-    },
-    "globalNoResponsesMatchFilter": "No responses match the current filter",
-    "@globalNoResponsesMatchFilter": {
-        "description": "Global section - No responses match filter message"
-    },
-    "globalToS": "Terms of Service",
-    "@globalToS": {
-        "description": "Global section - Terms of Service text"
-    },
-    "globalBack": "Back",
-    "@globalBack": {
-        "description": "Global section - Back button text"
-    },
-    "globalBackToLogin": "Back to Login",
-    "@globalBackToLogin": {
-        "description": "Global section - Back to login button text"
-    },
-    "authResetPassword": "Reset Password",
-    "@authResetPassword": {
-        "description": "Global section - Reset password button text"
-    },
-    "authLoginTitle": "Login",
-    "@authLoginTitle": {
-        "description": "Auth section - Login page title"
-    },
-    "authSignDocument": "Sign Document",
-    "@authSignDocument": {
-        "description": "Auth section - Sign document button text"
-    },
-    "authSignDocumentBody": "I hereby confirm that by checking this box and submitting this form, I give my consent to digitally sign this document. I understand that my signature will be generated securely using cryptographic techniques to ensure the authenticity and integrity of the document. This signature is legally binding and I certify that the information provided is correct to the best of my knowledge and belief.",
-    "@authSignDocumentBody": {
-        "description": "Auth section - Sign document message body"
-    },
-    "authDocumentSigned": "Document Signed",
-    "@authDocumentSigned": {
-        "description": "Auth section - Document signed message"
-    },
-    "authPasswordLabel": "Password",
-    "@authPasswordLabel": {
-        "description": "Global section - Password input label"
-    },
-    "authForgotPassword": "Forgot Password?",
-    "@authForgotPassword": {
-        "description": "Global section - Forgot password link text"
-    },
-    "authResetPasswordSendEmail": "Send Reset Password Email",
-    "@authResetPasswordSendEmail": {
-        "description": "Auth section - Send reset password email button text"
-    },
-    "authResetPasswordBody": "Please enter your email address to receive a link to reset your password.",
-    "@authResetPasswordBody": {
-        "description": "Auth section - Reset password message body"
-    },
-    "authPagesRegisterConfirmPasswordTextFieldHintText": "Confirm Password",
-    "@authPagesRegisterConfirmPasswordTextFieldHintText": {
-        "description": "Auth section - Confirm password input hint"
-    },
-    "authPagesWelcomeLabelOne": "Welcome!",
-    "@authPagesWelcomeLabelOne": {
-        "description": "Auth section - Primary welcome message"
-    },
-    "authPagesRegisterWelcomeLabelTwo": "Create your account",
-    "@authPagesRegisterWelcomeLabelTwo": {
-        "description": "Auth section - Secondary welcome message for registration"
-    },
-    "authPagesRegisterButtonLabel": "Register",
-    "@authPagesRegisterButtonLabel": {
-        "description": "Auth section - Register button text"
-    },
-    "authVerifyEmailTitle": "Verify your email address",
-    "@authVerifyEmailTitle": {
-        "description": "Auth section - Email verification message"
-    },
-    "authVerifyEmailBody": "A verification link has been sent to your email address. Please check your inbox and click the link to verify your account.",
-    "@authVerifyEmailBody": {
-        "description": "Auth section - Email verification message body"
-    },
-    "authResendVerificationEmail": "Resend Verification Email",
-    "@authResendVerificationEmail": {
-        "description": "Auth section - Resend verification email button text"
-    },
+    "globalPublish": "Veröffentlichen",
+    "globalClose": "Schließen",
+    "globalEditorGroups": "Editor-Gruppen",
+    "globalEditorUsers": "Editor-Benutzer",
+    "globalRespondentGroups": "Teilnehmer-Gruppen",
+    "globalGroupName": "Gruppenname",
+    "globalRespondentUsers": "Teilnehmer-Benutzer",
+    "globalClear": "Löschen",
+    "globalMintuesWithNumber": "{number, plural, one {Minute} other {Minuten}}",
+    "globalSecondsWithNumber": "{number, plural, one {Sekunde} other {Sekunden}}",
+    "globalNoResults": "Keine Ergebnisse gefunden",
+    "globalLogout": "Abmelden",
+    "globalDeleteAccount": "Konto löschen",
+    "globalFirstNameTextFieldHintText": "Vorname",
+    "globalLastNameTextFieldHintText": "Nachname",
+    "globalEmailLabel": "E-Mail",
+    "globalLegalNotice": "Rechtlicher Hinweis",
+    "globalSubmit": "Absenden",
+    "globalDismiss": "Verwerfen",
+    "globalGreetingOne": "Hallo, {firstName}!",
+    "globalDeleteWithName": "{name} löschen",
+    "globalNoResponsesMatchFilter": "Keine Antworten entsprechen dem aktuellen Filter",
+    "globalToS": "Nutzungsbedingungen",
+    "globalBack": "Zurück",
+    "globalBackToLogin": "Zurück zum Login",
+    "authResetPassword": "Passwort zurücksetzen",
+    "authLoginTitle": "Anmelden",
+    "authSignDocument": "Dokument unterschreiben",
+    "authSignDocumentBody": "Ich bestätige hiermit, dass ich durch Ankreuzen dieses Kästchens und Absenden dieses Formulars meine Zustimmung zur digitalen Unterzeichnung dieses Dokuments gebe. Ich verstehe, dass meine Unterschrift sicher mit kryptografischen Techniken erstellt wird, um die Authentizität und Integrität des Dokuments zu gewährleisten. Diese Unterschrift ist rechtlich bindend, und ich bestätige, dass die angegebenen Informationen nach meinem besten Wissen und Gewissen korrekt sind.",
+    "authDocumentSigned": "Dokument unterschrieben",
+    "authPasswordLabel": "Passwort",
+    "authForgotPassword": "Passwort vergessen?",
+    "authResetPasswordSendEmail": "E-Mail zum Zurücksetzen des Passworts senden",
+    "authResetPasswordBody": "Bitte geben Sie Ihre E-Mail-Adresse ein, um einen Link zum Zurücksetzen Ihres Passworts zu erhalten.",
+    "authPagesRegisterConfirmPasswordTextFieldHintText": "Passwort bestätigen",
+    "authPagesWelcomeLabelOne": "Willkommen!",
+    "authPagesRegisterWelcomeLabelTwo": "Erstellen Sie Ihr Konto",
+    "authPagesRegisterButtonLabel": "Registrieren",
+    "authVerifyEmailTitle": "E-Mail-Adresse bestätigen",
+    "authVerifyEmailBody": "Ein Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet. Bitte prüfen Sie Ihren Posteingang und klicken Sie auf den Link, um Ihr Konto zu verifizieren.",
+    "authResendVerificationEmail": "Bestätigungs-E-Mail erneut senden",
     "navDashboard": "Dashboard",
-    "@navDashboard": {
-        "description": "Navigation section - Dashboard menu item"
-    },
-    "navHideSidebar": "Hide Sidebar",
-    "@navHideSidebar": {
-        "description": "Navigation section - Hide sidebar button text"
-    },
-    "navArticles": "Articles",
-    "@navArticles": {
-        "description": "Navigation section - Articles menu item"
-    },
-    "navEvents": "Events",
-    "@navEvents": {
-        "description": "Navigation section - Events menu item"
-    },
-    "navUsers": "Users",
-    "@navUsers": {
-        "description": "Navigation section - Users menu item"
-    },
-    "navComments": "Comments",
-    "@navComments": {
-        "description": "Navigation section - Comments menu item"
-    },
-    "navDigitalLibrary": "Digital Library",
-    "@navDigitalLibrary": {
-        "description": "Navigation section - Digital Library menu item"
-    },
-    "navMedia": "Media",
-    "@navMedia": {
-        "description": "Navigation section - Media menu item"
-    },
-    "navPushNotifications": "Push Notifications",
-    "@navPushNotifications": {
-        "description": "Navigation section - Push Notifications menu item"
-    },
-    "navAdminSettings": "Admin Settings",
-    "@navAdminSettings": {
-        "description": "Navigation section - Admin Settings menu item"
-    },
-    "navSurveys": "Surveys",
-    "@navSurveys": {
-        "description": "Navigation section - Surveys menu item"
-    },
-    "navSurveySorter": "Sorting Module",
-    "@navSurveySorter": {
-        "description": "Navigation section - Survey Sorter menu item"
-    },
-    "navSettings": "Settings",
-    "@navSettings": {
-        "description": "Navigation section - Settings button text"
-    },
-    "validationRequired": "This field is required",
-    "@validationRequired": {
-        "description": "Validation section - Required field message"
-    },
-    "validationError": "Validation error",
-    "@validationError": {
-        "description": "Validation section - Generic validation error message"
-    },
-    "validationRequiredSnackbar": "Please fill in all required fields",
-    "@validationRequiredSnackbar": {
-        "description": "Validation section - Snackbar message for required fields"
-    },
-    "validationEmail": "Please enter a valid email address",
-    "@validationEmail": {
-        "description": "Validation section - Invalid email message"
-    },
-    "validationSignatureMissing": "Signature is required",
-    "@validationSignatureMissing": {
-        "description": "Validation section - Signature field required message"
-    },
-    "validationSignatureFailed": "Signature validation failed",
-    "@validationSignatureFailed": {
-        "description": "Validation section - Signature validation failed message"
-    },
-    "validationTextTooShort": "Text is too short",
-    "@validationTextTooShort": {
-        "description": "Validation section - Text too short message"
-    },
-    "validationTextTooLong": "Text is too long",
-    "@validationTextTooLong": {
-        "description": "Validation section - Text too long message"
-    },
-    "termsAndConditionsPrefix": "I agree to the ",
-    "@termsAndConditionsPrefix": {
-        "description": "Terms section - Text before Terms & Conditions link"
-    },
-    "termsAndConditionsLinkText": "Terms & Conditions",
-    "@termsAndConditionsLinkText": {
-        "description": "Terms section - Terms & Conditions link text"
-    },
-    "termsAndConditionsMiddle": " and ",
-    "@termsAndConditionsMiddle": {
-        "description": "Terms section - Text between Terms and Privacy links"
-    },
-    "privacyPolicyLinkText": "Privacy Policy",
-    "@privacyPolicyLinkText": {
-        "description": "Terms section - Privacy Policy link text"
-    },
-    "termsAndConditionsSuffix": ".",
-    "@termsAndConditionsSuffix": {
-        "description": "Terms section - Text after Privacy Policy link"
-    },
-    "errorAccessDenied": "403 - Access Denied",
-    "@errorAccessDenied": {
-        "description": "Error section - Access denied message"
-    },
-    "errorUnexpectedWithError": "Unexpected error: {error}",
-    "@errorUnexpectedWithError": {
-        "description": "Error section - Unexpected error message",
-        "placeholders": {
-            "error": {
-                "type": "String",
-                "description": "Error message"
-            }
-        }
-    },
-    "errorCalculationFailed": "Failed to calculate classes. Please try again",
-    "@errorCalculationFailed": {
-        "description": "Error section - Calculation failed message"
-    },
-    "errorInvalidCalculationParameters": "Invalid calculation parameters. Please check your inputs.",
-    "@errorInvalidCalculationParameters": {
-        "description": "Error section - Invalid calculation parameters message"
-    },
-    "errorCalculationTimeout": "Calculation timed out. Try reducing complexity or increasing time limit.",
-    "@errorCalculationTimeout": {
-        "description": "Error section - Calculation timeout message"
-    },
-    "errorInsufficientClassCapacity": "Total class capacity must be at least equal to the number of students",
-    "@errorInsufficientClassCapacity": {
-        "description": "Error section - Insufficient class capacity message"
-    },
-    "errorCalculationServerError": "Unable to reach calculation server. Please check your connection and try again.",
-    "@errorCalculationServerError": {
-        "description": "Error section - Calculation server error message"
-    },
-    "errorAcceptToSAndPrivacyPolicy": "You must accept the Terms & Conditions and Privacy Policy",
-    "@errorAcceptToSAndPrivacyPolicy": {
-        "description": "Error section - Terms acceptance message"
-    },
-    "errorAccessDeniedMessage": "You do not have permission to access this page.",
-    "@errorAccessDeniedMessage": {
-        "description": "Global section - Access denied message body"
-    },
-    "errorUnauthorized": "Unauthorized Access",
-    "@errorUnauthorized": {
-        "description": "Error section - Unauthorized access message"
-    },
-    "errorImgCouldNotBeFound": "Image could not be found",
-    "@errorImgCouldNotBeFound": {
-        "description": "Global section - Image loading error message"
-    },
-    "errorNetwork": "Network error, please try again",
-    "@errorNetwork": {
-        "description": "Global section - Network error message"
-    },
-    "errorPagesRegisterAcceptToSAndPrivacyPolicy": "Please accept the Terms & Conditions and Privacy Policy",
-    "@errorPagesRegisterAcceptToSAndPrivacyPolicy": {
-        "description": "Auth section - Terms acceptance error message"
-    },
-    "errorUnexpected": "Unexpected error occurred",
-    "@errorUnexpected": {
-        "description": "Global section - Unknown error message"
-    },
-    "errorUserNotFound": "404 - User not found",
-    "@errorUserNotFound": {
-        "description": "Auth section - User not found error message"
-    },
-    "errorSelectFile": "Please select a file",
-    "@errorSelectFile": {
-        "description": "Error section - File selection error message"
-    },
-    "errorSaveFailed": "Save failed",
-    "@errorSaveFailed": {
-        "description": "Error section - Save failed message"
-    },
-    "errorExportFailed": "Export failed",
-    "@errorExportFailed": {
-        "description": "Error section - Export failed message"
-    },
-    "errorLoadingX": "Error loading {name}",
-    "@errorLoadingX": {
-        "description": "Error section - Error loading item message",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item being loaded"
-            }
-        }
-    },
-    "errorUserNotFoundMessage": "User not found. The user may have been deleted by an administrator or does not exist.",
-    "@errorUserNotFoundMessage": {
-        "description": "Auth section - User not found message body"
-    },
-    "errorInvalidPassword": "Invalid password",
-    "@errorInvalidPassword": {
-        "description": "Validation section - Invalid password message"
-    },
-    "errorPasswordMissingNumber": "Password must contain at least one number",
-    "@errorPasswordMissingNumber": {
-        "description": "Validation section - Password missing number message"
-    },
-    "errorPasswordMissingSpecial": "Password must contain at least one special character",
-    "@errorPasswordMissingSpecial": {
-        "description": "Validation section - Password missing special character message"
-    },
-    "errorPasswordsDoNotMatch": "Passwords do not match",
-    "@errorPasswordsDoNotMatch": {
-        "description": "Validation section - Passwords do not match message"
-    },
-    "errorEmailAlreadyInUse": "Email already in use",
-    "@errorEmailAlreadyInUse": {
-        "description": "Validation section - Email already registered message"
-    },
-    "errorGroupNotFound": "Group not found",
-    "@errorGroupNotFound": {
-        "description": "Error section - Group not found message"
-    },
-    "errorGroupUpdateFailed": "Group update failed",
-    "@errorGroupUpdateFailed": {
-        "description": "Error section - Group update failed message"
-    },
-    "errorGroupDeleteFailed": "Group deletion failed",
-    "@errorGroupDeleteFailed": {
-        "description": "Error section - Group deletion failed message"
-    },
-    "errorInvalidGroupOperation": "Invalid group operation",
-    "@errorInvalidGroupOperation": {
-        "description": "Error section - Invalid group operation message"
-    },
-    "errorUserGroupUpdateFailed": "User group update failed",
-    "@errorUserGroupUpdateFailed": {
-        "description": "Error section - User group update failed message"
-    },
-    "errorFileUploadFailed": "File upload failed",
-    "@errorFileUploadFailed": {
-        "description": "Error section - File upload failed message"
-    },
-    "errorFileDownloadFailed": "File download failed",
-    "@errorFileDownloadFailed": {
-        "description": "Error section - File download failed message"
-    },
-    "errorFileDeleteFailed": "File deletion failed",
-    "@errorFileDeleteFailed": {
-        "description": "Error section - File deletion failed message"
-    },
-    "errorAuthAccountAlreadyExists": "Auth account already exists",
-    "@errorAuthAccountAlreadyExists": {
-        "description": "Error section - Auth Account Already exists message"
-    },
-    "errorFileNotFound": "File not found",
-    "@errorFileNotFound": {
-        "description": "Error section - File not found message"
-    },
-    "errorInvalidFileType": "Invalid file type",
-    "@errorInvalidFileType": {
-        "description": "Error section - Invalid file type message"
-    },
-    "errorFileTooLarge": "File too large",
-    "@errorFileTooLarge": {
-        "description": "Error section - File too large message"
-    },
-    "errorCreateFailed": "Failed to create {name}",
-    "@errorCreateFailed": {
-        "description": "Error section - Creation failed message",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item that failed to be created"
-            }
-        }
-    },
-    "errorFileListFailed": "File list retrieval failed",
-    "@errorFileListFailed": {
-        "description": "Error section - File list retrieval failed message"
-    },
-    "errorStorageOperationFailed": "Storage operation failed",
-    "@errorStorageOperationFailed": {
-        "description": "Error section - Storage operation failed message"
-    },
-    "successDefault": "Success",
-    "@successDefault": {
-        "description": "Global section - Default success message"
-    },
-    "successClassesCalculated": "Classes calculated successfully! Navigate to results page to view them.",
-    "@successClassesCalculated": {
-        "description": "Success section - Classes calculated successfully message"
-    },
-    "successAccountCreated": "Account created successfully!",
-    "@successAccountCreated": {
-        "description": "Auth section - Account creation success message"
-    },
-    "successRegistration": "Registration successful!",
-    "@successRegistration": {
-        "description": "Auth section - Registration success message"
-    },
-    "successEmailVerificationSent": "Verification email sent successfully",
-    "@successEmailVerificationSent": {
-        "description": "Success section - Email verification sent confirmation"
-    },
-    "successPasswordChanged": "Password changed successfully",
-    "@successPasswordChanged": {
-        "description": "Success section - Password change confirmation"
-    },
-    "successResetPasswordEmailSent": "Reset password email sent successfully",
-    "@successResetPasswordEmailSent": {
-        "description": "Success section - Reset password email sent confirmation"
-    },
-    "successEmailChanged": "Email changed successfully",
-    "@successEmailChanged": {
-        "description": "Success section - Email change confirmation"
-    },
-    "successProfileUpdated": "Profile updated successfully",
-    "@successProfileUpdated": {
-        "description": "Success section - Profile update confirmation"
-    },
-    "successDataSaved": "Data saved successfully",
-    "@successDataSaved": {
-        "description": "Success section - Generic save confirmation"
-    },
-    "successPublishedSuccessfullyWithName": "{name} published successfully",
-    "@successPublishedSuccessfullyWithName": {
-        "description": "Success section - Published successfully with name confirmation",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item that was published"
-            }
-        }
-    },
-    "successClosedSuccessfullyWithName": "{name} closed successfully",
-    "@successClosedSuccessfullyWithName": {
-        "description": "Success section - Closed successfully with name confirmation",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item that was closed"
-            }
-        }
-    },
-    "successSettingsUpdated": "Settings updated successfully",
-    "@successSettingsUpdated": {
-        "description": "Success section - Settings update confirmation"
-    },
-    "successExport": "Export successful",
-    "@successExport": {
-        "description": "Success section - Export confirmation"
-    },
-    "successCreatedWithPrefix": "{prefix} created successfully",
-    "@successCreatedWithPrefix": {
-        "description": "Success section - Created with prefix confirmation",
-        "placeholders": {
-            "prefix": {
-                "type": "String",
-                "description": "Prefix for the created item"
-            }
-        }
-    },
-    "successDeletedWithName": "{name} deleted successfully",
-    "@successDeletedWithName": {
-        "description": "Success section - Deleted with name confirmation",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item that was deleted"
-            }
-        }
-    },
-    "successXAdded": "{name} added successfully",
-    "@successXAdded": {
-        "description": "Success section - Added successfully confirmation",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item that was added"
-            }
-        }
-    },
-    "successXUpdated": "{name} updated successfully",
-    "@successXUpdated": {
-        "description": "Success section - Updated successfully confirmation",
-        "placeholders": {
-            "name": {
-                "type": "String",
-                "description": "Name of the item that was updated"
-            }
-        }
-    },
-    "settingsLabel": "Settings",
-    "@settingsLabel": {
-        "description": "Settings section - Settings label"
-    },
-    "settingsManageAccount": "Manage Account",
-    "@settingsManageAccount": {
-        "description": "Settings section - Manage Account label"
-    },
-    "settingsChangeName": "Change Name",
-    "@settingsChangeName": {
-        "description": "Settings section - Change Name label"
-    },
-    "settingsChangeEmail": "Change Email",
-    "@settingsChangeEmail": {
-        "description": "Settings section - Change Email label"
-    },
-    "settingsChangePassword": "Change Password",
-    "@settingsChangePassword": {
-        "description": "Settings section - Change Password label"
-    },
-    "settingsUpdateRegistrationQuestionaire": "Update Registration Questionnaire",
-    "@settingsUpdateRegistrationQuestionaire": {
-        "description": "Settings section - Update Registration Questionnaire label"
-    },
-    "settingsAppearance": "Appearance",
-    "@settingsAppearance": {
-        "description": "Settings section - Appearance label"
-    },
-    "settingsDarkMode": "Dark Mode",
-    "@settingsDarkMode": {
-        "description": "Settings section - Dark Mode label"
-    },
-    "settingsDeleteDialogBody": "Are you sure you want to delete your account? This action cannot be undone.",
-    "@settingsDeleteDialogBody": {
-        "description": "Settings section - Delete Account dialog body"
-    },
-    "settingsNewPassword": "New Password",
-    "@settingsNewPassword": {
-        "description": "Settings section - New Password label"
-    },
-    "mediaSelectorInsertImage": "Insert Image",
-    "@mediaSelectorInsertImage": {
-        "description": "Media section - Insert Image button text"
-    },
-    "mediaSelectorInsertVideo": "Insert Video",
-    "@mediaSelectorInsertVideo": {
-        "description": "Media section - Insert Video button text"
-    },
-    "mediaSelectorInsertAudio": "Insert Audio",
-    "@mediaSelectorInsertAudio": {
-        "description": "Media section - Insert Audio button text"
-    },
+    "navHideSidebar": "Seitenleiste ausblenden",
+    "navArticles": "Artikel",
+    "navEvents": "Veranstaltungen",
+    "navUsers": "Benutzer",
+    "navComments": "Kommentare",
+    "navDigitalLibrary": "Digitale Bibliothek",
+    "navMedia": "Medien",
+    "navPushNotifications": "Push-Benachrichtigungen",
+    "navAdminSettings": "Admin-Einstellungen",
+    "navSurveys": "Umfragen",
+    "navSurveySorter": "Sortiermodul",
+    "navSettings": "Einstellungen",
+    "validationRequired": "Dieses Feld ist erforderlich",
+    "validationError": "Validierungsfehler",
+    "validationRequiredSnackbar": "Bitte füllen Sie alle erforderlichen Felder aus",
+    "validationEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    "validationSignatureMissing": "Unterschrift ist erforderlich",
+    "validationSignatureFailed": "Unterschriftsvalidierung fehlgeschlagen",
+    "validationTextTooShort": "Text ist zu kurz",
+    "validationTextTooLong": "Text ist zu lang",
+    "termsAndConditionsPrefix": "Ich stimme den ",
+    "termsAndConditionsLinkText": "Nutzungsbedingungen",
+    "termsAndConditionsMiddle": " und der ",
+    "privacyPolicyLinkText": "Datenschutzerklärung",
+    "termsAndConditionsSuffix": " zu.",
+    "errorAccessDenied": "403 - Zugriff verweigert",
+    "errorUnexpectedWithError": "Unerwarteter Fehler: {error}",
+    "errorCalculationFailed": "Berechnung der Klassen fehlgeschlagen. Bitte versuchen Sie es erneut",
+    "errorInvalidCalculationParameters": "Ungültige Berechnungsparameter. Bitte überprüfen Sie Ihre Eingaben.",
+    "errorCalculationTimeout": "Zeitüberschreitung bei der Berechnung. Versuchen Sie, die Komplexität zu reduzieren oder das Zeitlimit zu erhöhen.",
+    "errorInsufficientClassCapacity": "Die Gesamtklassenkapazität muss mindestens der Anzahl der Schüler entsprechen",
+    "errorCalculationServerError": "Berechnungsserver nicht erreichbar. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "errorAcceptToSAndPrivacyPolicy": "Sie müssen die Nutzungsbedingungen und die Datenschutzerklärung akzeptieren",
+    "errorAccessDeniedMessage": "Sie haben keine Berechtigung, auf diese Seite zuzugreifen.",
+    "errorUnauthorized": "Unautorisierter Zugriff",
+    "errorImgCouldNotBeFound": "Bild konnte nicht gefunden werden",
+    "errorNetwork": "Netzwerkfehler, bitte versuchen Sie es erneut",
+    "errorPagesRegisterAcceptToSAndPrivacyPolicy": "Bitte akzeptieren Sie die Nutzungsbedingungen und die Datenschutzerklärung",
+    "errorUnexpected": "Unerwarteter Fehler aufgetreten",
+    "errorUserNotFound": "404 - Benutzer nicht gefunden",
+    "errorSelectFile": "Bitte wählen Sie eine Datei aus",
+    "errorSaveFailed": "Speichern fehlgeschlagen",
+    "errorExportFailed": "Export fehlgeschlagen",
+    "errorLoadingX": "Fehler beim Laden von {name}",
+    "errorUserNotFoundMessage": "Benutzer nicht gefunden. Der Benutzer wurde möglicherweise von einem Administrator gelöscht oder existiert nicht.",
+    "errorInvalidPassword": "Ungültiges Passwort",
+    "errorPasswordMissingNumber": "Das Passwort muss mindestens eine Zahl enthalten",
+    "errorPasswordMissingSpecial": "Das Passwort muss mindestens ein Sonderzeichen enthalten",
+    "errorPasswordsDoNotMatch": "Passwörter stimmen nicht überein",
+    "errorEmailAlreadyInUse": "E-Mail wird bereits verwendet",
+    "errorGroupNotFound": "Gruppe nicht gefunden",
+    "errorGroupUpdateFailed": "Gruppenaktualisierung fehlgeschlagen",
+    "errorGroupDeleteFailed": "Gruppenlöschung fehlgeschlagen",
+    "errorInvalidGroupOperation": "Ungültige Gruppenoperation",
+    "errorUserGroupUpdateFailed": "Aktualisierung der Benutzergruppe fehlgeschlagen",
+    "errorFileUploadFailed": "Datei-Upload fehlgeschlagen",
+    "errorFileDownloadFailed": "Datei-Download fehlgeschlagen",
+    "errorFileDeleteFailed": "Dateilöschung fehlgeschlagen",
+    "errorAuthAccountAlreadyExists": "Authentifizierungskonto existiert bereits",
+    "errorFileNotFound": "Datei nicht gefunden",
+    "errorInvalidFileType": "Ungültiger Dateityp",
+    "errorFileTooLarge": "Datei zu groß",
+    "errorCreateFailed": "Fehler beim Erstellen von {name}",
+    "errorFileListFailed": "Abrufen der Dateiliste fehlgeschlagen",
+    "errorStorageOperationFailed": "Speicheroperation fehlgeschlagen",
+    "successDefault": "Erfolg",
+    "successClassesCalculated": "Klassen erfolgreich berechnet! Gehen Sie zur Ergebnisseite, um sie anzuzeigen.",
+    "successAccountCreated": "Konto erfolgreich erstellt!",
+    "successRegistration": "Registrierung erfolgreich!",
+    "successEmailVerificationSent": "Bestätigungs-E-Mail erfolgreich gesendet",
+    "successPasswordChanged": "Passwort erfolgreich geändert",
+    "successResetPasswordEmailSent": "E-Mail zum Zurücksetzen des Passworts erfolgreich gesendet",
+    "successEmailChanged": "E-Mail erfolgreich geändert",
+    "successProfileUpdated": "Profil erfolgreich aktualisiert",
+    "successDataSaved": "Daten erfolgreich gespeichert",
+    "successPublishedSuccessfullyWithName": "{name} erfolgreich veröffentlicht",
+    "successClosedSuccessfullyWithName": "{name} erfolgreich geschlossen",
+    "successSettingsUpdated": "Einstellungen erfolgreich aktualisiert",
+    "successExport": "Export erfolgreich",
+    "successCreatedWithPrefix": "{prefix} erfolgreich erstellt",
+    "successDeletedWithName": "{name} erfolgreich gelöscht",
+    "successXAdded": "{name} erfolgreich hinzugefügt",
+    "successXUpdated": "{name} erfolgreich aktualisiert",
+    "settingsLabel": "Einstellungen",
+    "settingsManageAccount": "Konto verwalten",
+    "settingsChangeName": "Namen ändern",
+    "settingsChangeEmail": "E-Mail ändern",
+    "settingsChangePassword": "Passwort ändern",
+    "settingsUpdateRegistrationQuestionaire": "Registrierungsfragebogen aktualisieren",
+    "settingsAppearance": "Erscheinungsbild",
+    "settingsDarkMode": "Dunkler Modus",
+    "settingsDeleteDialogBody": "Möchten Sie Ihr Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "settingsNewPassword": "Neues Passwort",
+    "mediaSelectorInsertImage": "Bild einfügen",
+    "mediaSelectorInsertVideo": "Video einfügen",
+    "mediaSelectorInsertAudio": "Audio einfügen",
     "textEditorInsertLink": "Insert Link",
     "@textEditorInsertLink": {
         "description": "Text Editor section - Insert Link button text"
@@ -1300,560 +406,119 @@
     "@textEditorListStyleMenuItemLowercaseClassicalGreek": {
         "description": "Text Editor section - Greek letters list style option"
     },
-    "userManagementGroupInformationLabel": "Group Information",
-    "@userManagementGroupInformationLabel": {
-        "description": "User Management section - Group information label"
-    },
-    "userManagementMembersLabel": "Members",
-    "@userManagementMembersLabel": {
-        "description": "User Management section - Members label"
-    },
-    "userManagementPermissionsLabel": "{count, plural, zero {Permissions} one {Permission} other {Permissions}}",
-    "@userManagementPermissionsLabel": {
-        "description": "User Management section - Permissions label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of permissions"
-            }
-        }
-    },
-    "userManagementFilterbyPermissions": "Filter by Permissions",
-    "@userManagementFilterbyPermissions": {
-        "description": "User Management section - Filter by permissions label"
-    },
-    "userManagementAccountTypeLabelFacultyAndStaff": "Faculty & Staff",
-    "@userManagementAccountTypeLabelFacultyAndStaff": {
-        "description": "User Management section - Faculty & Staff account type label"
-    },
+    "userManagementGroupInformationLabel": "Gruppeninformationen",
+    "userManagementMembersLabel": "Mitglieder",
+    "userManagementPermissionsLabel": "{count, plural, zero {Berechtigungen} one {Berechtigung} other {Berechtigungen}}",
+    "userManagementFilterbyPermissions": "Nach Berechtigungen filtern",
+    "userManagementAccountTypeLabelFacultyAndStaff": "Fakultät & Mitarbeiter",
     "userManagementAccountTypeLabelStudent": "Student",
-    "@userManagementAccountTypeLabelStudent": {
-        "description": "User Management section - Student account type label"
-    },
-    "userManagementAccountTypeLabelParent": "Parent",
-    "@userManagementAccountTypeLabelParent": {
-        "description": "User Management section - Parent account type label"
-    },
-    "userManagementNoPermissiosnAssignedToGroup": "No permissions assigned to this group",
-    "@userManagementNoPermissiosnAssignedToGroup": {
-        "description": "User Management section - No permissions assigned message"
-    },
-    "userManagementNoMembersInGroup": "No members in this group",
-    "@userManagementNoMembersInGroup": {
-        "description": "User Management section - No members in group message"
-    },
-    "userManagementAssignMembersLabel": "Assign Members",
-    "@userManagementAssignMembersLabel": {
-        "description": "User Management section - Assign members label"
-    },
-    "userManagementSelectUsersToAddToGroup": "Select users to add to this group",
-    "@userManagementSelectUsersToAddToGroup": {
-        "description": "User Management section - Select users to add to group message"
-    },
-    "userManagementSelectedMembers": "Selected Members ({count})",
-    "@userManagementSelectedMembers": {
-        "description": "User Management section - Selected members label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of selected members"
-            }
-        }
-    },
-    "userManagementSelectedPermissions": "Selected Permissions ({count})",
-    "@userManagementSelectedPermissions": {
-        "description": "User Management section - Selected permissions label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of selected permissions"
-            }
-        }
-    },
-    "userManagementSelectGroupsToAssign": "Select groups to assign to this user",
-    "@userManagementSelectGroupsToAssign": {
-        "description": "User Management section - Select groups to assign message"
-    },
-    "userManagementRolesLabel": "Roles",
-    "@userManagementRolesLabel": {
-        "description": "User Management section - Roles label"
-    },
-    "userManagementNoGroupsAssignedToUser": "No groups assigned to this user",
-    "@userManagementNoGroupsAssignedToUser": {
-        "description": "User Management section - No groups assigned message"
-    },
-    "userManagementNoGroupsCreatedYet": "No groups created yet",
-    "@userManagementNoGroupsCreatedYet": {
-        "description": "User Management section - No groups created message"
-    },
-    "userManagementContentManagementLabel": "Content Management",
-    "@userManagementContentManagementLabel": {
-        "description": "User Management section - Content management label"
-    },
-    "userManagementMediaLabel": "Media",
-    "@userManagementMediaLabel": {
-        "description": "User Management section - Media label"
-    },
-    "userManagementAssignedPermissions": "Assigned Permissions",
-    "@userManagementAssignedPermissions": {
-        "description": "User Management section - Assigned permissions label"
-    },
-    "userManagementNoPermissionsFromGroups": "No permissions from groups",
-    "@userManagementNoPermissionsFromGroups": {
-        "description": "User Management section - No permissions from groups message"
-    },
-    "userManagementNoDirectPermissionsAssigned": "No direct permissions assigned to this user",
-    "@userManagementNoDirectPermissionsAssigned": {
-        "description": "User Management section - No direct permissions assigned message"
-    },
-    "userManagementAssignGroupsLabel": "Assign Groups",
-    "@userManagementAssignGroupsLabel": {
-        "description": "User Management section - Assign groups label"
-    },
-    "userManagementPermissionsFromGroups": "Permissions from Groups",
-    "@userManagementPermissionsFromGroups": {
-        "description": "User Management section - Permissions from groups label"
-    },
-    "userManagementNotificationsLabel": "Notifications",
-    "@userManagementNotificationsLabel": {
-        "description": "User Management section - Notifications label"
-    },
-    "userManagementUserManagementLabel": "User Management",
-    "@userManagementUserManagementLabel": {
-        "description": "User Management section - User management label"
-    },
-    "userManagementSurveysLabel": "Surveys",
-    "@userManagementSurveysLabel": {
-        "description": "User Management section - Surveys label"
-    },
-    "sortingModuleAccessControlDescription": "Users and groups that can edit this survey",
-    "@sortingModuleAccessControlDescription": {
-        "description": "Sorting Module section - Access control description"
-    },
-    "sortingModuleRespondents": "Respondents",
-    "@sortingModuleRespondents": {
-        "description": "Sorting Module section - Respondents label"
-    },
-    "sortingModuleRespondentsDescription": "Users and groups that can respond to this survey",
-    "@sortingModuleRespondentsDescription": {
-        "description": "Sorting Module section - Respondents description"
-    },
-    "sortingModuleTotalResponsesLabel": "Total Responses",
-    "@sortingModuleTotalResponsesLabel": {
-        "description": "Sorting Module section - Total responses label"
-    },
-    "sortingSurvey": "{count, plural, zero {Sorting Surveys} one {Sorting Survey} other {Sorting Surveys}}",
-    "@sortingSurvey": {
-        "description": "Sorting Module section - Sorting survey label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of sorting surveys"
-            }
-        }
-    },
-    "sortingModulePreferences": "{count, plural, zero {Preferences} one {Preference} other {Preferences}}",
-    "@sortingModulePreferences": {
-        "description": "Sorting Module section - Preferences label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of preferences"
-            }
-        }
-    },
-    "sortingModuleParameters": "Sorting Parameters",
-    "@sortingModuleParameters": {
-        "description": "Sorting Module section - Sorting parameters label"
-    },
-    "sortingModuleNoResponsesYet": "No responses yet",
-    "@sortingModuleNoResponsesYet": {
-        "description": "Sorting Module section - No responses yet message"
-    },
-    "sortingModuleAskForBiologicalSex": "Ask respondents for their biological sex",
-    "@sortingModuleAskForBiologicalSex": {
-        "description": "Sorting Module section - Ask for biological"
-    },
-    "sortingModuleAskForPreferences": "Ask respondents to select preferred people",
-    "@sortingModuleAskForPreferences": {
-        "description": "Sorting Module section - Ask for preferences"
-    },
-    "sortingModuleMaximumPreferencesLabel": "Maximum Preferences",
-    "@sortingModuleMaximumPreferencesLabel": {
-        "description": "Sorting Module section - Maximum preferences label"
-    },
-    "sortingModuleMaximumPreferencesDescription": "Maximum number of people that can be selected",
-    "@sortingModuleMaximumPreferencesDescription": {
-        "description": "Sorting Module section - Maximum number of preferences label"
-    },
-    "sortingModuleNoResponsesImportManuallyLabel": "Start by adding responses manually or import from a file",
-    "@sortingModuleNoResponsesImportManuallyLabel": {
-        "description": "Sorting Module section - No responses import manually label"
-    },
-    "sortingModulePublishSortingSurveyNoResponsesLabel": "Publish Sorting Survey to start collecting responses",
-    "@sortingModulePublishSortingSurveyNoResponsesLabel": {
-        "description": "Sorting Module section - Publish sorting survey no responses label"
-    },
-    "sortingModuleParameterName": "Parameter Name",
-    "@sortingModuleParameterName": {
-        "description": "Sorting Module section - Parameter name label"
-    },
-    "sortingModuleStrategy": "Strategy",
-    "@sortingModuleStrategy": {
-        "description": "Sorting Module section - Strategy label"
-    },
-    "sortingModuleStrategyDistribute": "Distribute evenly",
-    "@sortingModuleStrategyDistribute": {
-        "description": "Sorting Module section - Distribute strategy label"
-    },
-    "sortingModuleStrategyConcentrate": "Concentrate in one class",
-    "@sortingModuleStrategyConcentrate": {
-        "description": "Sorting Module section - Concentrate strategy label"
-    },
-    "sortingModuleTypeBinary": "Binary (Yes/No)",
-    "@sortingModuleTypeBinary": {
-        "description": "Sorting Module section - Binary type label"
-    },
-    "sortingModuleTypeCategorical": "Categorical (Text)",
-    "@sortingModuleTypeCategorical": {
-        "description": "Sorting Module section - Categorical type label"
-    },
-    "sortingModulePriorityLabel": "Priority",
-    "@sortingModulePriorityLabel": {
-        "description": "Sorting Module section - Priority label"
-    },
-    "sortingModulePriorityDescription": "Lower number means higher priority (1-10)",
-    "@sortingModulePriorityDescription": {
-        "description": "Sorting Module section - Priority description"
-    },
-    "sortingModuleOverview": "Overview",
-    "@sortingModuleOverview": {
-        "description": "Sorting Module section - Overview label"
-    },
-    "sortingModuleCalculate": "Calculate",
-    "@sortingModuleCalculate": {
-        "description": "Sorting Module section - Calculate button text"
-    },
-    "sortingModuleResults": "Results",
-    "@sortingModuleResults": {
-        "description": "Sorting Module section - Results label"
-    },
-    "sortingModuleCalculating": "Calculating...",
-    "@sortingModuleCalculating": {
-        "description": "Sorting Module section - Calculating message"
-    },
-    "sortingModuleResultsAvailable": "Results available",
-    "@sortingModuleResultsAvailable": {
-        "description": "Sorting Module section - Results available message"
-    },
-    "sortingModuleVariables": "Variables",
-    "@sortingModuleVariables": {
-        "description": "Sorting Module section - Variables label"
-    },
-    "sortingModuleProblemSize": "Problem Size",
-    "@sortingModuleProblemSize": {
-        "description": "Sorting Module section - Problem size label"
-    },
-    "sortingModuleNumOfStudents": "Students: {count}",
-    "@sortingModuleNumOfStudents": {
-        "description": "Sorting Module section - Number of students label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of students"
-            }
-        }
-    },
-    "sortingModuleNumOfClasses": "Classes: {count}",
-    "@sortingModuleNumOfClasses": {
-        "description": "Sorting Module section - Number of classes label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of classes"
-            }
-        }
-    },
-    "sortingModuleNumOfParams": "Parameters: {count}",
-    "@sortingModuleNumOfParams": {
-        "description": "Sorting Module section - Number of parameters label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of parameters"
-            }
-        }
-    },
-    "sortingModuleNumOfPreferences": "Preferences: {count}",
-    "@sortingModuleNumOfPreferences": {
-        "description": "Sorting Module section - Number of preferences label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of preferences"
-            }
-        }
-    },
-    "sortingModuleMaxCalcTimeLabel": "Max Calculation Time",
-    "@sortingModuleMaxCalcTimeLabel": {
-        "description": "Sorting Module section - Max calculation time label"
-    },
-    "sortingModuleMaxCalcTimeDescription": "The algorithm will attempt to find the best solution within this time limit. In most cases, it will find a solution faster.",
-    "@sortingModuleMaxCalcTimeDescription": {
-        "description": "Sorting Module section - Max calculation time description"
-    },
-    "sortingModuleTimeLimitLabel": "Time Limit",
-    "@sortingModuleTimeLimitLabel": {
-        "description": "Sorting Module section - Time limit label"
-    },
-    "sortingModuleCalculateLoadingLabel": "The algorithm will attempt to find the best solution within this time limit. In most cases, it will find a solution faster.",
-    "@sortingModuleCalculateLoadingLabel": {
-        "description": "Sorting Module section - Calculate loading label"
-    },
-    "sortingModuleClassConfigLabel": "Class Configuration",
-    "@sortingModuleClassConfigLabel": {
-        "description": "Sorting Module section - Class configuration label"
-    },
-    "sortingModuleClassesLabel": "Classes",
-    "@sortingModuleClassesLabel": {
-        "description": "Sorting Module section - Classes label"
-    },
-    "sortingModuleSelectClassesToExportLabel": "Select classes to export",
-    "@sortingModuleSelectClassesToExportLabel": {
-        "description": "Sorting Module section - Select classes label"
-    },
-    "sortingModuleSelectAllClasses": "Select All Classes",
-    "@sortingModuleSelectAllClasses": {
-        "description": "Sorting Module section - Select all classes label"
-    },
-    "sortingModuleDistributionSettingsLabel": "Distribution Settings",
-    "@sortingModuleDistributionSettingsLabel": {
-        "description": "Sorting Module section - Distribution settings label"
-    },
-    "sortingModuleDistributeByBiologicalSexLabel": "Distribute by Biological Sex",
-    "@sortingModuleDistributeByBiologicalSexLabel": {
-        "description": "Sorting Module section - Distribute by biological"
-    },
-    "sortingModuleDistributeByBiologicalSexDescription": "Attempt to achieve an even male/female distribution in each class",
-    "@sortingModuleDistributeByBiologicalSexDescription": {
-        "description": "Sorting Module section - Distribute by biological"
-    },
-    "sortingModuleCapacityInfoLabel": "Capacity Information",
-    "@sortingModuleCapacityInfoLabel": {
-        "description": "Sorting Module section - Capacity information label"
-    },
-    "sortingModuleClassNameLabel": "Class Name",
-    "@sortingModuleClassNameLabel": {
-        "description": "Sorting Module section - Class name label"
-    },
-    "sortingModuleIncludeGender": "Include Gender",
-    "@sortingModuleIncludeGender": {
-        "description": "Sorting Module section - Include Gender label"
-    },
-    "sortingModuleSelectInfoToIncludeLabel": "Select information to include",
-    "@sortingModuleSelectInfoToIncludeLabel": {
-        "description": "Sorting Module section - Select information to include label"
-    },
-    "sortingModuleClassSizeLabel": "Class Size",
-    "@sortingModuleClassSizeLabel": {
-        "description": "Sorting Module section - Class size label"
-    },
-    "sortingModuleNewClassNameLabel": "New Class Name",
-    "@sortingModuleNewClassNameLabel": {
-        "description": "Sorting Module section - New class name label"
-    },
-    "sortingModuleNewClassNameHint": "Leave empty for automatic numbering",
-    "@sortingModuleNewClassNameHint": {
-        "description": "Sorting Module section - New class name hint"
-    },
-    "sortingModuleTotalCapacity": "Total Capacity: {count} students",
-    "@sortingModuleTotalCapacity": {
-        "description": "Sorting Module section - Total capacity label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of total capacity"
-            }
-        }
-    },
-    "sortingModuleMinimumRequiredCapacity": "Minimum Required Capacity: {count} students",
-    "@sortingModuleMinimumRequiredCapacity": {
-        "description": "Sorting Module section - Minimum required capacity label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of minimum required capacity"
-            }
-        }
-    },
-    "sortingModuleWarningMinimumRequiredCapacity": "Warning: Total Capacity must be at least equal to the number of students",
-    "@sortingModuleWarningMinimumRequiredCapacity": {
-        "description": "Sorting Module section - Warning minimum required capacity message"
-    },
-    "sortingModuleCapacityRecommendation": "Recommendation: Consider leaving space for at least one additional student in each class for better alogrithm flexibility.",
-    "@sortingModuleCapacityRecommendation": {
-        "description": "Sorting Module section - Capacity recommendation message"
-    },
-    "sortingModuleParametersConfigurationTitle": "Parameters Configuration",
-    "@sortingModuleParametersConfigurationTitle": {
-        "description": "Sorting Module section - Parameters configuration title"
-    },
-    "sortingModuleParameterDisabledDescription": "This parameter is disabled and will not be used in calculations",
-    "@sortingModuleParameterDisabledDescription": {
-        "description": "Sorting Module section - Parameter disabled description"
-    },
-    "sortingModuleCloseSurveyBeforeCalculating": "Please close the survey before starting the calculation process.",
-    "@sortingModuleCloseSurveyBeforeCalculating": {
-        "description": "Sorting Module section - Close survey before calculating message"
-    },
-    "sortingModuleNoParamsDefined": "No parameters defined",
-    "@sortingModuleNoParamsDefined": {
-        "description": "Sorting Module section - No parameters defined message"
-    },
-    "sortingModuleAddManuallyLabel": "Add Manually",
-    "@sortingModuleAddManuallyLabel": {
-        "description": "Sorting Module section - Add manually label"
-    },
-    "sortingModuleResponses": "{count, plural, zero {Responses} one {Response} other {Responses}}",
-    "@sortingModuleResponses": {
-        "description": "Sorting Module section - Responses label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of responses"
-            }
-        }
-    },
-    "sortingModuleTotalNumOfPreferences": "Total Number of Preferences",
-    "@sortingModuleTotalNumOfPreferences": {
-        "description": "Sorting Module section - Total number of preferences label"
-    },
-    "sortingModuleMaxPreferencesPerUser": "(max {count} per user)",
-    "@sortingModuleMaxPreferencesPerUser": {
-        "description": "Sorting Module section - Max preferences per user label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of max preferences per user"
-            }
-        }
-    },
-    "sortingModuleManualEntry": "Manual Entry",
-    "@sortingModuleManualEntry": {
-        "description": "Sorting Module section - Manual entry label"
-    },
-    "sortingModuleSelectUpToXPreferencesLabel": "Select up to {count} preferences",
-    "@sortingModuleSelectUpToXPreferencesLabel": {
-        "description": "Sorting Module section - Select up to X preferences label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of max preferences"
-            }
-        }
-    },
-    "sortingModuleDuplicateNamesFound": "Duplicate names found",
-    "@sortingModuleDuplicateNamesFound": {
-        "description": "Sorting Module section - Duplicate names found message"
-    },
-    "sortingModuleUniqueValuesCount": "Unique Values: {count}",
-    "@sortingModuleUniqueValuesCount": {
-        "description": "Sorting Module section - Unique values count label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of unique values"
-            }
-        }
-    },
-    "sortingModuleSelectInformationToIncludeLabel": "Select information to include",
-    "@sortingModuleSelectInformationToIncludeLabel": {
-        "description": "Sorting Module section - Select information to include label"
-    },
-    "sortingModuleNumOfStudentsForPdf": "({count} students)",
-    "@sortingModuleNumOfStudentsForPdf": {
-        "description": "Sorting Module section - Number of students label",
-        "placeholders": {
-            "count": {
-                "type": "num",
-                "description": "Count of students"
-            }
-        }
-    },
-    "sortingModuleExportIncludeSummaryStatistics": "Include Summary Statistics",
-    "@sortingModuleExportIncludeSummaryStatistics": {
-        "description": "Sorting Module section - Include summary statistics label"
-    },
-    "sortingModuleIncludeClassStatistics": "Include Class Statistics",
-    "@sortingModuleIncludeClassStatistics": {
-        "description": "Sorting Module section - Include class statistics label"
-    },
-    "sortingModuleResponseStatisticsLabel": "Response Statistics",
-    "@sortingModuleResponseStatisticsLabel": {
-        "description": "Sorting Module section - Response statistics label"
-    },
-    "sortingModuleParameterDistributionLabel": "Parameter Distribution",
-    "@sortingModuleParameterDistributionLabel": {
-        "description": "Sorting Module section - Parameter distribution label"
-    },
-    "sortingModuleIndividualResponsesLabel": "Individual Responses",
-    "@sortingModuleIndividualResponsesLabel": {
-        "description": "Sorting Module section - Individual responses label"
-    },
-    "sortingModuleSelectAtLeastOneClassForExport": "Please select at least one class to export",
-    "@sortingModuleSelectAtLeastOneClassForExport": {
-        "description": "Sorting Module section - Select at least one class for export message"
-    },
-    "sortingModuleAdditionalParametersLabel": "Additional Parameters",
-    "@sortingModuleAdditionalParametersLabel": {
-        "description": "Sorting Module section - Additional parameters label"
-    },
-    "sortingModuleSelectAllParameters": "Select All Parameters",
-    "@sortingModuleSelectAllParameters": {
-        "description": "Sorting Module section - Select all parameters label"
-    },
-    "sortingModuleClassDistributionResultsLabel": "Class Distribution Results",
-    "@sortingModuleClassDistributionResultsLabel": {
-        "description": "Sorting Module section - Class distribution results label"
-    },
-    "sortingModuleTotalStudentsLabel": "Total Students",
-    "@sortingModuleTotalStudentsLabel": {
-        "description": "Sorting Module section - Total students label"
-    },
-    "sortingModuleTotalClassesLabel": "Total Classes",
-    "@sortingModuleTotalClassesLabel": {
-        "description": "Sorting Module section - Total classes label"
-    },
-    "sortingModuleAverageStudentsPerClassLabel": "Average Students per Class",
-    "@sortingModuleAverageStudentsPerClassLabel": {
-        "description": "Sorting Module section - Average students per class label"
-    },
-    "sortingModulePreferencesSatisfiedLabel": "Preferences Satisfied",
-    "@sortingModulePreferencesSatisfiedLabel": {
-        "description": "Sorting Module section - Preferences satisfied label"
-    },
-    "sortingModuleStudentsWithAtLeastOnePreferenceSatisfiedLabel": "Students with at least one preference satisfied",
-    "@sortingModuleStudentsWithAtLeastOnePreferenceSatisfiedLabel": {
-        "description": "Sorting Module section - Students with at least one preference satisfied label"
-    },
-    "sortingModuleShowClassStatisticssLabel": "Show Class Statistics",
-    "@sortingModuleShowClassStatisticssLabel": {
-        "description": "Sorting Module section - Show class statistics label"
-    },
-    "sortingModuleNoPreferencesSelected": "No preferences selected",
-    "@sortingModuleNoPreferencesSelected": {
-        "description": "Sorting Module section - No preferences selected message"
-    },
-    "sortingModuleDragStudentsHerePlaceholder": "Drag students here to add them to the class",
-    "@sortingModuleDragStudentsHerePlaceholder": {
-        "description": "Sorting Module section - Drag students here placeholder"
-    },
-    "sortingModuleNoCalcResults": "No calculation results available",
-    "@sortingModuleNoCalcResults": {
-        "description": "Sorting Module section - No calculation results message"
-    },
-    "sortingModuleGoToCalculate": "Go to Calculate",
-    "@sortingModuleGoToCalculate": {
-        "description": "Sorting Module section - Go to calculate button text"
-    }
+    "userManagementAccountTypeLabelParent": "Elternteil",
+    "userManagementNoPermissiosnAssignedToGroup": "Keine Berechtigungen dieser Gruppe zugewiesen",
+    "userManagementNoMembersInGroup": "Keine Mitglieder in dieser Gruppe",
+    "userManagementAssignMembersLabel": "Mitglieder zuweisen",
+    "userManagementSelectUsersToAddToGroup": "Wählen Sie Benutzer aus, die dieser Gruppe hinzugefügt werden sollen",
+    "userManagementSelectedMembers": "Ausgewählte Mitglieder ({count})",
+    "userManagementSelectedPermissions": "Ausgewählte Berechtigungen ({count})",
+    "userManagementSelectGroupsToAssign": "Wählen Sie Gruppen aus, die diesem Benutzer zugewiesen werden sollen",
+    "userManagementRolesLabel": "Rollen",
+    "userManagementNoGroupsAssignedToUser": "Diesem Benutzer sind keine Gruppen zugewiesen",
+    "userManagementNoGroupsCreatedYet": "Noch keine Gruppen erstellt",
+    "userManagementContentManagementLabel": "Inhaltsverwaltung",
+    "userManagementMediaLabel": "Medien",
+    "userManagementAssignedPermissions": "Zugewiesene Berechtigungen",
+    "userManagementNoPermissionsFromGroups": "Keine Berechtigungen von Gruppen",
+    "userManagementNoDirectPermissionsAssigned": "Diesem Benutzer sind keine direkten Berechtigungen zugewiesen",
+    "userManagementAssignGroupsLabel": "Gruppen zuweisen",
+    "userManagementPermissionsFromGroups": "Berechtigungen aus Gruppen",
+    "userManagementNotificationsLabel": "Benachrichtigungen",
+    "userManagementUserManagementLabel": "Benutzerverwaltung",
+    "userManagementSurveysLabel": "Umfragen",
+    "sortingModuleAccessControlDescription": "Benutzer und Gruppen, die diese Umfrage bearbeiten können",
+    "sortingModuleRespondents": "Teilnehmer",
+    "sortingModuleRespondentsDescription": "Benutzer und Gruppen, die auf diese Umfrage antworten können",
+    "sortingModuleTotalResponsesLabel": "Gesamtzahl der Antworten",
+    "sortingSurvey": "{count, plural, zero {Sortierumfragen} one {Sortierumfrage} other {Sortierumfragen}}",
+    "sortingModulePreferences": "{count, plural, zero {Präferenzen} one {Präferenz} other {Präferenzen}}",
+    "sortingModuleParameters": "Sortierparameter",
+    "sortingModuleNoResponsesYet": "Noch keine Antworten",
+    "sortingModuleAskForBiologicalSex": "Nach dem biologischen Geschlecht der Teilnehmer fragen",
+    "sortingModuleAskForPreferences": "Teilnehmer nach bevorzugten Personen fragen",
+    "sortingModuleMaximumPreferencesLabel": "Maximale Präferenzen",
+    "sortingModuleMaximumPreferencesDescription": "Maximale Anzahl an Personen, die ausgewählt werden können",
+    "sortingModuleNoResponsesImportManuallyLabel": "Beginnen Sie damit, Antworten manuell hinzuzufügen oder aus einer Datei zu importieren",
+    "sortingModulePublishSortingSurveyNoResponsesLabel": "Sortierumfrage veröffentlichen, um mit der Sammlung von Antworten zu beginnen",
+    "sortingModuleParameterName": "Parametername",
+    "sortingModuleStrategy": "Strategie",
+    "sortingModuleStrategyDistribute": "Gleichmäßig verteilen",
+    "sortingModuleStrategyConcentrate": "In einer Klasse konzentrieren",
+    "sortingModuleTypeBinary": "Binär (Ja/Nein)",
+    "sortingModuleTypeCategorical": "Kategorisch (Text)",
+    "sortingModulePriorityLabel": "Priorität",
+    "sortingModulePriorityDescription": "Niedrigere Zahl bedeutet höhere Priorität (1-10)",
+    "sortingModuleOverview": "Übersicht",
+    "sortingModuleCalculate": "Berechnen",
+    "sortingModuleResults": "Ergebnisse",
+    "sortingModuleCalculating": "Wird berechnet...",
+    "sortingModuleResultsAvailable": "Ergebnisse verfügbar",
+    "sortingModuleVariables": "Variablen",
+    "sortingModuleProblemSize": "Problemgröße",
+    "sortingModuleNumOfStudents": "Schüler: {count}",
+    "sortingModuleNumOfClasses": "Klassen: {count}",
+    "sortingModuleNumOfParams": "Parameter: {count}",
+    "sortingModuleNumOfPreferences": "Präferenzen: {count}",
+    "sortingModuleMaxCalcTimeLabel": "Max. Berechnungszeit",
+    "sortingModuleMaxCalcTimeDescription": "Der Algorithmus versucht, die beste Lösung innerhalb dieses Zeitlimits zu finden. In den meisten Fällen wird er schneller eine Lösung finden.",
+    "sortingModuleTimeLimitLabel": "Zeitlimit",
+    "sortingModuleCalculateLoadingLabel": "Der Algorithmus versucht, die beste Lösung innerhalb dieses Zeitlimits zu finden. In den meisten Fällen wird er schneller eine Lösung finden.",
+    "sortingModuleClassConfigLabel": "Klassenkonfiguration",
+    "sortingModuleClassesLabel": "Klassen",
+    "sortingModuleSelectClassesToExportLabel": "Klassen zum Exportieren auswählen",
+    "sortingModuleSelectAllClasses": "Alle Klassen auswählen",
+    "sortingModuleDistributionSettingsLabel": "Verteilungseinstellungen",
+    "sortingModuleDistributeByBiologicalSexLabel": "Nach biologischem Geschlecht verteilen",
+    "sortingModuleDistributeByBiologicalSexDescription": "Versuch einer gleichmäßigen Verteilung von Männern/Frauen in jeder Klasse",
+    "sortingModuleCapacityInfoLabel": "Kapazitätsinformationen",
+    "sortingModuleClassNameLabel": "Klassenname",
+    "sortingModuleIncludeGender": "Geschlecht einschließen",
+    "sortingModuleSelectInfoToIncludeLabel": "Informationen auswählen, die einbezogen werden sollen",
+    "sortingModuleClassSizeLabel": "Klassengröße",
+    "sortingModuleNewClassNameLabel": "Neuer Klassenname",
+    "sortingModuleNewClassNameHint": "Leer lassen für automatische Nummerierung",
+    "sortingModuleTotalCapacity": "Gesamtkapazität: {count} Schüler",
+    "sortingModuleMinimumRequiredCapacity": "Mindestkapazität: {count} Schüler",
+    "sortingModuleWarningMinimumRequiredCapacity": "Warnung: Die Gesamtkapazität muss mindestens der Anzahl der Schüler entsprechen",
+    "sortingModuleCapacityRecommendation": "Empfehlung: Erwägen Sie, in jeder Klasse Platz für mindestens einen zusätzlichen Schüler für bessere Algorithmusflexibilität zu lassen.",
+    "sortingModuleParametersConfigurationTitle": "Parameterkonfiguration",
+    "sortingModuleParameterDisabledDescription": "Dieser Parameter ist deaktiviert und wird bei Berechnungen nicht verwendet",
+    "sortingModuleCloseSurveyBeforeCalculating": "Bitte schließen Sie die Umfrage, bevor Sie den Berechnungsprozess starten.",
+    "sortingModuleNoParamsDefined": "Keine Parameter definiert",
+    "sortingModuleAddManuallyLabel": "Manuell hinzufügen",
+    "sortingModuleResponses": "{count, plural, zero {Antworten} one {Antwort} other {Antworten}}",
+    "sortingModuleTotalNumOfPreferences": "Gesamtzahl der Präferenzen",
+    "sortingModuleMaxPreferencesPerUser": "(max. {count} pro Benutzer)",
+    "sortingModuleManualEntry": "Manuelle Eingabe",
+    "sortingModuleSelectUpToXPreferencesLabel": "Bis zu {count} Präferenzen auswählen",
+    "sortingModuleDuplicateNamesFound": "Doppelte Namen gefunden",
+    "sortingModuleUniqueValuesCount": "Eindeutige Werte: {count}",
+    "sortingModuleSelectInformationToIncludeLabel": "Informationen auswählen, die einbezogen werden sollen",
+    "sortingModuleNumOfStudentsForPdf": "({count} Schüler)",
+    "sortingModuleExportIncludeSummaryStatistics": "Zusammenfassende Statistiken einschließen",
+    "sortingModuleIncludeClassStatistics": "Klassenstatistiken einschließen",
+    "sortingModuleResponseStatisticsLabel": "Antwortstatistiken",
+    "sortingModuleParameterDistributionLabel": "Parameterverteilung",
+    "sortingModuleIndividualResponsesLabel": "Einzelne Antworten",
+    "sortingModuleSelectAtLeastOneClassForExport": "Bitte wählen Sie mindestens eine Klasse zum Exportieren aus",
+    "sortingModuleAdditionalParametersLabel": "Zusätzliche Parameter",
+    "sortingModuleSelectAllParameters": "Alle Parameter auswählen",
+    "sortingModuleClassDistributionResultsLabel": "Klassenverteilungsergebnisse",
+    "sortingModuleTotalStudentsLabel": "Gesamtzahl der Schüler",
+    "sortingModuleTotalClassesLabel": "Gesamtzahl der Klassen",
+    "sortingModuleAverageStudentsPerClassLabel": "Durchschnittliche Schüler pro Klasse",
+    "sortingModulePreferencesSatisfiedLabel": "Erfüllte Präferenzen",
+    "sortingModuleStudentsWithAtLeastOnePreferenceSatisfiedLabel": "Schüler mit mindestens einer erfüllten Präferenz",
+    "sortingModuleShowClassStatisticssLabel": "Klassenstatistiken anzeigen",
+    "sortingModuleNoPreferencesSelected": "Keine Präferenzen ausgewählt",
+    "sortingModuleDragStudentsHerePlaceholder": "Schüler hierher ziehen, um sie zur Klasse hinzuzufügen",
+    "sortingModuleNoCalcResults": "Keine Berechnungsergebnisse verfügbar",
+    "sortingModuleGoToCalculate": "Zur Berechnung gehen"
 }
