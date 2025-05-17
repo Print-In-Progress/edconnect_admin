@@ -339,7 +339,7 @@ class FirebaseAuthRepositoryImpl implements AuthRepository {
     try {
       await _authDataSource.signInWithEmailAndPassword(email, password);
     } catch (e) {
-      ErrorHandler.handle(e);
+      throw ErrorHandler.handle(e);
     }
   }
 

@@ -506,7 +506,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get navEvents => 'Veranstaltungen';
 
   @override
-  String get navUsers => 'Benutzer';
+  String get navUsers => 'Nutzerverwaltung';
 
   @override
   String get navComments => 'Kommentare';

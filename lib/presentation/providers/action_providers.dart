@@ -15,6 +15,7 @@ import 'package:edconnect_admin/domain/entities/registration_fields.dart';
 import 'package:edconnect_admin/domain/usecases/sorting_survey_use_case.dart';
 import 'package:edconnect_admin/domain/usecases/user_management_use_case.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/registration_request.dart';
 import '../../domain/providers/usecase_providers.dart';
@@ -77,30 +78,63 @@ class LoginNotifier extends StateNotifier<AsyncValue<void>> {
 
   LoginNotifier(this._signInUseCase, this._ref)
       : super(const AsyncValue.data(null));
-
   Future<void> login(String email, String password) async {
+    _ref.read(authErrorProvider.notifier).state = null;
     state = const AsyncValue.loading();
 
     try {
-      // Set auth state to authenticating
-      _ref.read(authStatusProvider.notifier).state = AuthStatus.authenticating;
+      _ref
+          .read(authStatusProvider.notifier)
+          .updateAuthStatus(AuthStatus.authenticating);
 
       await _signInUseCase.execute(email, password);
 
+      // Success - clear loading state
       state = const AsyncValue.data(null);
-      // Auth state will be automatically updated by the listener in AuthStateNotifier
-    } on DomainException catch (e) {
-      state = AsyncValue.error(e, StackTrace.current);
-      _ref.read(authStatusProvider.notifier).state = AuthStatus.unauthenticated;
     } catch (e, stack) {
-      state = AsyncValue.error(
-        DomainException(
-          code: ErrorCode.unexpected,
-          type: ExceptionType.unexpected,
-          originalError: e,
-        ),
-        stack,
-      );
+      // First set the error in the dedicated error provider
+      final l10n = _ref.read(localizationRepositoryProvider);
+
+      if (e is DomainException) {
+        // Check for specific error codes we want to handle specially
+        switch (e.code) {
+          case ErrorCode.wrongPassword:
+            _ref.read(authErrorProvider.notifier).state = AuthError(
+              code: 'wrong-password',
+              message: l10n.getErrorStrings()['errorInvalidPassword']!,
+              originalError: e,
+            );
+            break;
+          case ErrorCode.userNotFound:
+            _ref.read(authErrorProvider.notifier).state = AuthError(
+              code: 'user-not-found',
+              message: l10n.getErrorStrings()['errorUserNotFound']!,
+              originalError: e,
+            );
+            break;
+          default:
+            // For other domain exceptions or Firebase exceptions
+            if (e.originalError is FirebaseAuthException) {
+              _ref.read(authErrorProvider.notifier).state =
+                  AuthError.fromFirebaseException(
+                      e.originalError as FirebaseAuthException, l10n);
+            } else {
+              _ref.read(authErrorProvider.notifier).state = AuthError(
+                code: e.code.toString(),
+                message: l10n.getErrorStrings()['errorUnexpected']!,
+                originalError: e,
+              );
+            }
+        }
+      } else {
+        // Unknown or unexpected error
+        _ref.read(authErrorProvider.notifier).state =
+            AuthError.unexpected(e, l10n);
+      }
+      // Then set our own state to error
+      state = AsyncValue.error(e, stack);
+
+      // Finally reset the auth state
       _ref.read(authStatusProvider.notifier).state = AuthStatus.unauthenticated;
     }
   }

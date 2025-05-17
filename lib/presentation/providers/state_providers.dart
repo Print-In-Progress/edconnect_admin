@@ -1,4 +1,5 @@
 import 'package:edconnect_admin/core/interfaces/auth_repository.dart';
+import 'package:edconnect_admin/core/interfaces/localization_repository.dart';
 import 'package:edconnect_admin/core/interfaces/user_repository.dart';
 import 'package:edconnect_admin/domain/entities/group.dart';
 import 'package:edconnect_admin/domain/entities/sorting_survey.dart';
@@ -9,6 +10,7 @@ import 'package:edconnect_admin/domain/services/sorting_survey_sorting_service.d
 import 'package:edconnect_admin/domain/usecases/sorting_survey_use_case.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/app_user.dart';
@@ -48,6 +50,10 @@ class AuthStateNotifier extends StateNotifier<AuthStatus> {
     });
   }
 
+  void updateAuthStatus(AuthStatus status) {
+    state = status;
+  }
+
   Future<void> signOut() async {
     try {
       state = AuthStatus.loadingUserData;
@@ -67,6 +73,49 @@ final authStatusProvider =
     userRepository: ref.watch(userRepositoryProvider),
   );
 });
+
+/// Provider to hold authentication errors, separate from the auth state
+final authErrorProvider = StateProvider<AuthError?>((ref) => null);
+
+/// Represents authentication errors with user-friendly messages
+class AuthError {
+  final String code;
+  final String message;
+  final Object? originalError;
+
+  const AuthError({
+    required this.code,
+    required this.message,
+    this.originalError,
+  });
+
+  /// Factory to create error from Firebase exceptions
+  factory AuthError.fromFirebaseException(
+      FirebaseAuthException e, LocalizationRepository localizations) {
+    final localizedStrings = localizations.getErrorStrings();
+    return AuthError(
+      code: e.code,
+      message: switch (e.code) {
+        'wrong-password' => localizedStrings['errorInvalidPassword']!,
+        'user-not-found' => localizedStrings['errorUserNotFound']!,
+        'invalid-email' => localizedStrings['errorInvalidEmail']!,
+        'too-many-requests' => 'Too many attempts. Please try again later.',
+        _ => e.message ?? localizedStrings['errorUnexpected']!,
+      },
+      originalError: e,
+    );
+  }
+
+  /// Create a generic error
+  factory AuthError.unexpected(
+      Object error, LocalizationRepository localizations) {
+    return AuthError(
+      code: 'unexpected',
+      message: localizations.getErrorStrings()['errorUnexpected']!,
+      originalError: error,
+    );
+  }
+}
 
 // ---------------- APP LOCALE STATE  -----------------
 class LocaleNotifier extends StateNotifier<Locale> {

@@ -2,6 +2,7 @@ import 'package:edconnect_admin/core/models/app_user.dart';
 import 'package:edconnect_admin/presentation/pages/auth_pages/user_not_found.dart';
 import 'package:edconnect_admin/presentation/pages/auth_pages/verify_email_page.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
+import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../auth_pages/auth_page.dart';
@@ -17,6 +18,25 @@ class MainPage extends ConsumerWidget {
     final authStatus = ref.watch(authStatusProvider);
     final userState = ref.watch(currentUserProvider);
 
+    final authError = ref.watch(authErrorProvider);
+    if (authStatus == AuthStatus.authenticating) {
+      Future.delayed(const Duration(seconds: 10), () {
+        if (ref.read(authStatusProvider) == AuthStatus.authenticating) {
+          ref
+              .read(authStatusProvider.notifier)
+              .updateAuthStatus(AuthStatus.unauthenticated);
+        }
+      });
+    }
+
+    if (authError != null && context.mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          Toaster.error(context, authError.message);
+          ref.read(authErrorProvider.notifier).state = null;
+        }
+      });
+    }
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -33,7 +53,6 @@ class MainPage extends ConsumerWidget {
 
   Widget _buildMainContent(
       AuthStatus status, AsyncValue<AppUser?> userState, BuildContext context) {
-    // If authenticated, check if user document exists
     if (status == AuthStatus.authenticated) {
       return userState.when(
         data: (user) {

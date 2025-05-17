@@ -222,6 +222,28 @@ class LocalizationServiceImpl implements LocalizationRepository {
   }
 
   @override
+  Map<String, String> getErrorStrings() {
+    switch (_locale) {
+      case 'de':
+        return {
+          'errorUserNotFound': 'Nutzer nicht gefunden',
+          'errorInvalidEmail': 'Ungültige E-Mail-Adresse',
+          'errorInvalidPassword': 'Ungültiges Passwort',
+          'errorEmailAlreadyInUse': 'E-Mail-Adresse wird bereits verwendet',
+          'errorUnexpected': 'Unerwarteter Fehler aufgetreten',
+        };
+      default:
+        return {
+          'errorUserNotFound': 'User not found',
+          'errorInvalidEmail': 'Invalid email address',
+          'errorInvalidPassword': 'Invalid password',
+          'errorEmailAlreadyInUse': 'Email address already in use',
+          'errorUnexpected': 'An unexpected error occurred',
+        };
+    }
+  }
+
+  @override
   String formatParameterizedString(String key, Map<String, dynamic> params) {
     String template;
 

@@ -2,12 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:edconnect_admin/core/design_system/foundations.dart';
 import 'package:edconnect_admin/core/validation/validators/text_field_validator.dart';
 import 'package:edconnect_admin/presentation/providers/action_providers.dart';
+import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/widgets/common/buttons/base_button.dart';
 import 'package:edconnect_admin/presentation/widgets/common/cards/base_card.dart';
 import 'package:edconnect_admin/presentation/pages/auth_pages/forgot_password_page.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
 import 'package:edconnect_admin/presentation/widgets/common/input/base_input.dart';
-import 'package:edconnect_admin/presentation/widgets/common/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:edconnect_admin/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,20 +35,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Future<void> _handleLogin() async {
-    // Rely on the login notifier to handle auth stages
     if (_formKey.currentState!.validate()) {
-      try {
-        await ref.read(loginStateProvider.notifier).login(
-              _emailController.text,
-              _passwordController.text,
-            );
-      } catch (e) {
-        if (!mounted) return;
-        Toaster.error(
-          context,
-          e.toString(),
-        );
-      }
+      // Just call login - error handling is now centralized
+      await ref.read(loginStateProvider.notifier).login(
+            _emailController.text,
+            _passwordController.text,
+          );
     }
   }
 
@@ -59,21 +51,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 700;
 
+    ref.watch(authErrorProvider);
     // Calculate card width - more generous on small screens
     final cardWidth = isSmallScreen
         ? screenWidth * 0.95 // 95% of screen width on small screens
         : 600.0; // Fixed width on larger screens
     final l10n = AppLocalizations.of(context)!;
-    // Listen for errors
-    ref.listen<AsyncValue<void>>(loginStateProvider, (_, state) {
-      state.whenOrNull(
-        error: (error, _) => Toaster.error(
-          context,
-          AppLocalizations.of(context)!.errorUnexpected,
-          description: error.toString(),
-        ),
-      );
-    });
 
     return Scaffold(
         backgroundColor: theme.isDarkMode
