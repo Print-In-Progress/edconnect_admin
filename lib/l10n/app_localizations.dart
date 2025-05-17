@@ -137,6 +137,12 @@ abstract class AppLocalizations {
   /// **'Yes'**
   String get globalYes;
 
+  /// Global section - Sign in to your account label
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to your account'**
+  String get globalWelcomeLabelSignIn;
+
   /// Global section - No button text
   ///
   /// In en, this message translates to:
@@ -785,6 +791,12 @@ abstract class AppLocalizations {
   /// **'Terms of Service'**
   String get globalToS;
 
+  /// Global section - Additional information requested by your organization label
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Informaiton (Requested by your organization)'**
+  String get globalAdditionalInfoRequestedByYourOrg;
+
   /// Global section - Back button text
   ///
   /// In en, this message translates to:
@@ -874,6 +886,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Register'**
   String get authPagesRegisterButtonLabel;
+
+  /// Auth section - Account type label
+  ///
+  /// In en, this message translates to:
+  /// **'Account Type'**
+  String get authAccountTypeLabel;
+
+  /// Auth section - Account type placeholder text
+  ///
+  /// In en, this message translates to:
+  /// **'Select Account Type'**
+  String get authAccountTypePlaceholder;
 
   /// Auth section - Email verification message
   ///

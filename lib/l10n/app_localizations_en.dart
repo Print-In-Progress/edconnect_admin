@@ -32,6 +32,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get globalYes => 'Yes';
 
   @override
+  String get globalWelcomeLabelSignIn => 'Sign in to your account';
+
+  @override
   String get globalNo => 'No';
 
   @override
@@ -428,6 +431,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get globalToS => 'Terms of Service';
 
   @override
+  String get globalAdditionalInfoRequestedByYourOrg => 'Additional Informaiton (Requested by your organization)';
+
+  @override
   String get globalBack => 'Back';
 
   @override
@@ -471,6 +477,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authPagesRegisterButtonLabel => 'Register';
+
+  @override
+  String get authAccountTypeLabel => 'Account Type';
+
+  @override
+  String get authAccountTypePlaceholder => 'Select Account Type';
 
   @override
   String get authVerifyEmailTitle => 'Verify your email address';

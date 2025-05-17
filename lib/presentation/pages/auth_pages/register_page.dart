@@ -318,16 +318,23 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             SizedBox(height: Foundations.spacing.lg),
 
                             BaseSelect<String>(
-                              label: 'Account Type',
-                              hint: 'Select your account type',
+                              label: l10n.authAccountTypeLabel,
+                              hint: l10n.authAccountTypePlaceholder,
                               isRequired: true,
                               size: SelectSize.large,
                               options: [
                                 SelectOption(
-                                    value: 'student', label: 'Student'),
-                                SelectOption(value: 'parent', label: 'Parent'),
+                                    value: 'student',
+                                    label: l10n
+                                        .userManagementAccountTypeLabelStudent),
                                 SelectOption(
-                                    value: 'faculty', label: 'Faculty'),
+                                    value: 'parent',
+                                    label: l10n
+                                        .userManagementAccountTypeLabelParent),
+                                SelectOption(
+                                    value: 'faculty',
+                                    label: l10n
+                                        .userManagementAccountTypeLabelFacultyAndStaff),
                               ],
                               value: selectedAccountType,
                               onChanged: (value) {
@@ -390,6 +397,15 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                           'https://printinprogress.net/privacy');
                                     },
                                 ),
+                                TextSpan(
+                                  text: l10n.termsAndConditionsSuffix,
+                                  style: TextStyle(
+                                    fontSize: Foundations.typography.sm,
+                                    color: isDarkMode
+                                        ? Foundations.darkColors.textPrimary
+                                        : Foundations.colors.textPrimary,
+                                  ),
+                                ),
                               ])),
                             ),
                             // Additional registration fields
@@ -412,7 +428,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                   children: [
                                     SizedBox(height: Foundations.spacing.lg),
                                     Text(
-                                      'Additional Information (Requested by your organization)',
+                                      l10n.globalAdditionalInfoRequestedByYourOrg,
                                       style: TextStyle(
                                         fontSize: Foundations.typography.lg,
                                         fontWeight:

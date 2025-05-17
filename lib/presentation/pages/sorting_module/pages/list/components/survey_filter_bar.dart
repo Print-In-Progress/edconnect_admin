@@ -83,19 +83,26 @@ class SurveyFilterBar extends ConsumerWidget {
         switch (status) {
           case SortingSurveyStatus.draft:
             icon = Icons.edit_outlined;
-            break;
+            return SelectOption(
+              value: status,
+              label: l10n.globalDraft,
+              icon: icon,
+            );
           case SortingSurveyStatus.published:
             icon = Icons.public_outlined;
-            break;
+            return SelectOption(
+              value: status,
+              label: l10n.globalPublished,
+              icon: icon,
+            );
           case SortingSurveyStatus.closed:
             icon = Icons.lock_outlined;
-            break;
+            return SelectOption(
+              value: status,
+              label: l10n.globalClosed,
+              icon: icon,
+            );
         }
-        return SelectOption(
-          value: status,
-          label: status.name.toUpperCase(),
-          icon: icon,
-        );
       }),
     ];
   }

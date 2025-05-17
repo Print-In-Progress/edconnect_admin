@@ -34,6 +34,10 @@
     "@globalYes": {
         "description": "Global section - Yes button text"
     },
+    "globalWelcomeLabelSignIn": "Sign in to your account",
+    "@globalWelcomeLabelSignIn": {
+        "description": "Global section - Sign in to your account label"
+    },
     "globalNo": "No",
     "@globalNo": {
         "description": "Global section - No button text"
@@ -610,6 +614,10 @@
     "@globalToS": {
         "description": "Global section - Terms of Service text"
     },
+    "globalAdditionalInfoRequestedByYourOrg": "Additional Informaiton (Requested by your organization)",
+    "@globalAdditionalInfoRequestedByYourOrg": {
+        "description": "Global section - Additional information requested by your organization label"
+    },
     "globalBack": "Back",
     "@globalBack": {
         "description": "Global section - Back button text"
@@ -669,6 +677,14 @@
     "authPagesRegisterButtonLabel": "Register",
     "@authPagesRegisterButtonLabel": {
         "description": "Auth section - Register button text"
+    },
+    "authAccountTypeLabel": "Account Type",
+    "@authAccountTypeLabel": {
+        "description": "Auth section - Account type label"
+    },
+    "authAccountTypePlaceholder": "Select Account Type",
+    "@authAccountTypePlaceholder": {
+        "description": "Auth section - Account type placeholder text"
     },
     "authVerifyEmailTitle": "Verify your email address",
     "@authVerifyEmailTitle": {

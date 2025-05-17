@@ -63,7 +63,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final cardWidth = isSmallScreen
         ? screenWidth * 0.95 // 95% of screen width on small screens
         : 600.0; // Fixed width on larger screens
-
+    final l10n = AppLocalizations.of(context)!;
     // Listen for errors
     ref.listen<AsyncValue<void>>(loginStateProvider, (_, state) {
       state.whenOrNull(
@@ -136,7 +136,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                               // Subtitle
                               Text(
-                                "Sign in to access your account",
+                                l10n.globalWelcomeLabelSignIn,
                                 style: TextStyle(
                                   fontSize: Foundations.typography.lg,
                                   color: theme.isDarkMode

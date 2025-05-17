@@ -15,226 +15,229 @@ class AppLocalizationsDe extends AppLocalizations {
   String get globalOk => 'OK';
 
   @override
-  String get globalCancel => 'Cancel';
+  String get globalCancel => 'Abbrechen';
 
   @override
-  String get globalSave => 'Save';
+  String get globalSave => 'Speichern';
 
   @override
-  String get globalEdit => 'Edit';
+  String get globalEdit => 'Bearbeiten';
 
   @override
   String globalEditWithName(String name) {
-    return 'Edit $name';
+    return '$name bearbeiten';
   }
 
   @override
-  String get globalYes => 'Yes';
+  String get globalYes => 'Ja';
 
   @override
-  String get globalNo => 'No';
+  String get globalWelcomeLabelSignIn => 'Melde dich an um auf dein Account zuzugreifen';
 
   @override
-  String get globalAdd => 'Add';
+  String get globalNo => 'Nein';
+
+  @override
+  String get globalAdd => 'Hinzufügen';
 
   @override
   String globalUserLabel(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Users',
-      one: 'User',
+      other: 'Nutzer',
+      one: 'Nutzer',
     );
     return '$_temp0';
   }
 
   @override
   String globalAddX(String name) {
-    return 'Add $name';
+    return '$name hinzufügen';
   }
 
   @override
   String globalFromX(String name) {
-    return 'From $name';
+    return 'Von $name';
   }
 
   @override
-  String get globalFiltersLabel => 'Filters';
+  String get globalFiltersLabel => 'Filter';
 
   @override
-  String get globalFilterByGroup => 'Filter by group';
+  String get globalFilterByGroup => 'Nach Gruppen filtern';
 
   @override
-  String get globalRequiredLabel => 'Required';
+  String get globalRequiredLabel => 'Erforderlich';
 
   @override
-  String get globalNotRequiredLabel => 'Not Required';
+  String get globalNotRequiredLabel => 'Nicht erforderlich';
 
   @override
-  String get globalStatisticsLabel => 'Statistics';
+  String get globalStatisticsLabel => 'Statistiken';
 
   @override
-  String get globalOtherLabel => 'Other';
+  String get globalOtherLabel => 'Andere';
 
   @override
-  String get globalEnabledLabel => 'Enabled';
+  String get globalEnabledLabel => 'Aktiviert';
 
   @override
-  String get globalConfirm => 'Confirm';
+  String get globalConfirm => 'Bestätigen';
 
   @override
-  String get globalDelete => 'Delete';
+  String get globalDelete => 'Löschen';
 
   @override
-  String get globalActionsLabel => 'Actions';
+  String get globalActionsLabel => 'Aktionen';
 
   @override
-  String get globalViewAllLabel => 'View All';
+  String get globalViewAllLabel => 'Alle anzeigen';
 
   @override
   String globalSelectX(String name) {
-    return 'Select $name';
+    return '$name auswählen';
   }
 
   @override
-  String get globalDraft => 'Draft';
+  String get globalDraft => 'Entwurf';
 
   @override
-  String get globalPublished => 'Published';
+  String get globalPublished => 'Veröffentlicht';
 
   @override
-  String get globalClosed => 'Closed';
+  String get globalClosed => 'Geschlossen';
 
   @override
-  String get globalLoading => 'Loading...';
+  String get globalLoading => 'Wird geladen...';
 
   @override
-  String get globalReauthenticate => 'Re-authentification required';
+  String get globalReauthenticate => 'Erneute Authentifizierung erforderlich';
 
   @override
-  String get globalEditorsLabel => 'Editors';
+  String get globalEditorsLabel => 'Editoren';
 
   @override
   String globalDeleteConfirmationDialogWithName(String name) {
-    return 'Are you sure you want to delete this $name?';
+    return 'Möchten Sie diese $name wirklich löschen?';
   }
 
   @override
   String globalDeleteConfirmationDialogAllWithName(String name) {
-    return 'Are you sure you want to delete all $name?';
+    return 'Möchten Sie wirklich alle $name löschen?';
   }
 
   @override
-  String get globalYouHaveUnsavedChanges => 'You have unsaved changes';
+  String get globalYouHaveUnsavedChanges => 'Sie haben ungespeicherte Änderungen';
 
   @override
-  String get globaDiscard => 'Discard';
+  String get globaDiscard => 'Verwerfen';
 
   @override
-  String get globalDisabledLabel => 'Disabled';
+  String get globalDisabledLabel => 'Deaktiviert';
 
   @override
   String get globalStatusLabel => 'Status';
 
   @override
-  String get globalCreatedByLabel => 'Created by';
+  String get globalCreatedByLabel => 'Erstellt von';
 
   @override
-  String get globalCreatedAtLabel => 'Created at';
+  String get globalCreatedAtLabel => 'Erstellt am';
 
   @override
-  String get globalTitle => 'Title';
+  String get globalTitle => 'Titel';
 
   @override
-  String get globalTypeLabel => 'Type';
+  String get globalTypeLabel => 'Typ';
 
   @override
-  String get globalRetry => 'Retry';
+  String get globalRetry => 'Wiederholen';
 
   @override
-  String get globalNoGroupsSelected => 'No groups selected';
+  String get globalNoGroupsSelected => 'Keine Gruppen ausgewählt';
 
   @override
-  String get globalFeatureNotImplementedYet => 'Feature not implemented yet';
+  String get globalFeatureNotImplementedYet => 'Funktion noch nicht implementiert';
 
   @override
-  String get globalNoUsersSelected => 'No users selected';
+  String get globalNoUsersSelected => 'Keine Nutzer ausgewählt';
 
   @override
   String globalTitleWithPrefix(String prefix) {
-    return '$prefix Title';
+    return '$prefix Titel';
   }
 
   @override
-  String get globalDescription => 'Description';
+  String get globalDescription => 'Beschreibung';
 
   @override
   String get globalName => 'Name';
 
   @override
-  String get globalBiologicalSexLabel => 'Biological Sex';
+  String get globalBiologicalSexLabel => 'Geschlecht';
 
   @override
   String globalDescriptionWithPrefix(String prefix) {
-    return '$prefix Description';
+    return '$prefix Beschreibung';
   }
 
   @override
   String globalSupportedFormatsWithFormats(String formats) {
-    return 'Supported formats: $formats';
+    return 'Unterstützte Dateienformate: $formats';
   }
 
   @override
-  String get globalSelectFileToImport => 'Select file to import';
+  String get globalSelectFileToImport => 'Datei zum Importieren auswählen';
 
   @override
   String globalImportX(String name) {
-    return 'Import $name';
+    return '$name importieren';
   }
 
   @override
-  String get globalPreviewLabel => 'Preview';
+  String get globalPreviewLabel => 'Vorschau';
 
   @override
-  String get globalSelectPageSize => 'Select page size';
+  String get globalSelectPageSize => 'Seitengröße auswählen';
 
   @override
-  String get globalEdConnectRegistrationForm => 'edConnect Registration Form';
+  String get globalEdConnectRegistrationForm => 'edConnect Registrierungsformular';
 
   @override
-  String get globalPageSize => 'Page size';
+  String get globalPageSize => 'Seitengröße';
 
   @override
-  String get globalFormCryptographicallySigned => 'This form was cryptographically signed by the user using the edConnect System.';
+  String get globalFormCryptographicallySigned => 'Dieses Formular wurde kryptographisch vom Nutzer mit dem edConnect-System signiert.';
 
   @override
   String globalCreateButtonLabel(String prefix) {
-    return 'Create $prefix';
+    return '$prefix erstellen';
   }
 
   @override
   String globalLoadingWithName(String name) {
-    return 'Loading $name...';
+    return '$name wird geladen...';
   }
 
   @override
   String globalNotFoundWithName(String name) {
-    return '$name not found';
+    return '$name nicht gefunden';
   }
 
   @override
   String globalNoXFound(String name) {
-    return 'No $name found';
+    return 'Keine $name gefunden';
   }
 
   @override
   String globalExportX(String name) {
-    return 'Export $name';
+    return '$name exportieren';
   }
 
   @override
   String globalDeleteAllX(String name) {
-    return 'Delete All $name';
+    return 'Alle $name löschen';
   }
 
   @override
@@ -242,23 +245,23 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Groups',
-      one: 'Group',
+      other: 'Gruppen',
+      one: 'Gruppe',
     );
     return '$_temp0';
   }
 
   @override
-  String get globalFilterStatus => 'Filter by status';
+  String get globalFilterStatus => 'Nach Status filtern';
 
   @override
-  String get globalAdjustFilters => 'Adjust filters to see more results';
+  String get globalAdjustFilters => 'Filter anpassen, um mehr Ergebnisse zu sehen';
 
   @override
-  String get globalClearFilters => 'Clear filters';
+  String get globalClearFilters => 'Filter löschen';
 
   @override
-  String get globalSortBy => 'Sort by';
+  String get globalSortBy => 'Sortieren nach';
 
   @override
   String get globalFilterByNameAZ => 'Name A-Z';
@@ -267,108 +270,108 @@ class AppLocalizationsDe extends AppLocalizations {
   String get globalFilterByNameZA => 'Name Z-A';
 
   @override
-  String get globalFilterByNewestFirst => 'Newest first';
+  String get globalFilterByNewestFirst => 'Neueste zuerst';
 
   @override
-  String get globalFilterByOldestFirst => 'Oldest first';
+  String get globalFilterByOldestFirst => 'Älteste zuerst';
 
   @override
-  String get globalFilterByAlphabetical => 'Alphabetical';
+  String get globalFilterByAlphabetical => 'Alphabetisch';
 
   @override
-  String get globalSelectGroups => 'Select groups';
+  String get globalSelectGroups => 'Gruppen auswählen';
 
   @override
-  String get globalBasicInfo => 'Basic Information';
+  String get globalBasicInfo => 'Grundinformationen';
 
   @override
-  String get globalSelectUsers => 'Select Users';
+  String get globalSelectUsers => 'Benutzer auswählen';
 
   @override
-  String get globalSelectUser => 'Select User';
+  String get globalSelectUser => 'Benutzer auswählen';
 
   @override
-  String get globalSearch => 'Search';
+  String get globalSearch => 'Suchen';
 
   @override
   String globalXSelected(num number) {
-    return '$number selected';
+    return '$number ausgewählt';
   }
 
   @override
-  String get globalAllLabel => 'All';
+  String get globalAllLabel => 'Alle';
 
   @override
-  String get globalSaveChangesConfirmationDialog => 'Are you sure you want to save these changes?';
+  String get globalSaveChangesConfirmationDialog => 'Möchten Sie diese Änderungen wirklich speichern?';
 
   @override
-  String get globalAccessControlLabel => 'Access Control';
+  String get globalAccessControlLabel => 'Zugriffskontrolle';
 
   @override
   String globalSearchWithName(String name) {
-    return 'Search $name ...';
+    return '$name suchen...';
   }
 
   @override
   String globalCreatingX(String name) {
-    return 'Creating $name...';
+    return '$name wird erstellt...';
   }
 
   @override
-  String get globalExportOptions => 'Export Options';
+  String get globalExportOptions => 'Export-Optionen';
 
   @override
-  String get globalMaleLabel => 'Male';
+  String get globalMaleLabel => 'Männlich';
 
   @override
   String get globalDetailsLabel => 'Details';
 
   @override
-  String get globalFemaleLabel => 'Female';
+  String get globalFemaleLabel => 'Weiblich';
 
   @override
-  String get globalNonBinaryLabel => 'Non-binary';
+  String get globalNonBinaryLabel => 'Nicht-binär';
 
   @override
   String get globalMaleLegend => 'M';
 
   @override
-  String get globalFemaleLegend => 'F';
+  String get globalFemaleLegend => 'W';
 
   @override
   String get globalNonBinaryLegend => 'NB';
 
   @override
-  String get globalPublish => 'Publish';
+  String get globalPublish => 'Veröffentlichen';
 
   @override
-  String get globalClose => 'Close';
+  String get globalClose => 'Schließen';
 
   @override
-  String get globalEditorGroups => 'Editor Groups';
+  String get globalEditorGroups => 'Editor-Gruppen';
 
   @override
-  String get globalEditorUsers => 'Editor Users';
+  String get globalEditorUsers => 'Editor-Benutzer';
 
   @override
-  String get globalRespondentGroups => 'Respondent Groups';
+  String get globalRespondentGroups => 'Teilnehmer-Gruppen';
 
   @override
-  String get globalGroupName => 'Group Name';
+  String get globalGroupName => 'Gruppenname';
 
   @override
-  String get globalRespondentUsers => 'Respondent Users';
+  String get globalRespondentUsers => 'Teilnehmer-Benutzer';
 
   @override
-  String get globalClear => 'Clear';
+  String get globalClear => 'Löschen';
 
   @override
   String globalMintuesWithNumber(num number) {
     String _temp0 = intl.Intl.pluralLogic(
       number,
       locale: localeName,
-      other: 'minutes',
-      one: 'minute',
+      other: 'Minuten',
+      one: 'Minute',
     );
     return '$_temp0';
   }
@@ -378,417 +381,426 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       number,
       locale: localeName,
-      other: 'seconds',
-      one: 'second',
+      other: 'Sekunden',
+      one: 'Sekunde',
     );
     return '$_temp0';
   }
 
   @override
-  String get globalNoResults => 'No results found';
+  String get globalNoResults => 'Keine Ergebnisse gefunden';
 
   @override
-  String get globalLogout => 'Logout';
+  String get globalLogout => 'Abmelden';
 
   @override
-  String get globalDeleteAccount => 'Delete Account';
+  String get globalDeleteAccount => 'Konto löschen';
 
   @override
-  String get globalFirstNameTextFieldHintText => 'First Name';
+  String get globalFirstNameTextFieldHintText => 'Vorname';
 
   @override
-  String get globalLastNameTextFieldHintText => 'Last Name';
+  String get globalLastNameTextFieldHintText => 'Nachname';
 
   @override
-  String get globalEmailLabel => 'Email';
+  String get globalEmailLabel => 'E-Mail';
 
   @override
-  String get globalLegalNotice => 'Legal Notice';
+  String get globalLegalNotice => 'Rechtlicher Hinweis';
 
   @override
-  String get globalSubmit => 'Submit';
+  String get globalSubmit => 'Absenden';
 
   @override
-  String get globalDismiss => 'Dismiss';
+  String get globalDismiss => 'Verwerfen';
 
   @override
   String globalGreetingOne(String firstName) {
-    return 'Hi, $firstName!';
+    return 'Hallo, $firstName!';
   }
 
   @override
   String globalDeleteWithName(String name) {
-    return 'Delete $name';
+    return '$name löschen';
   }
 
   @override
-  String get globalNoResponsesMatchFilter => 'No responses match the current filter';
+  String get globalNoResponsesMatchFilter => 'Keine Antworten entsprechen dem aktuellen Filter';
 
   @override
-  String get globalToS => 'Terms of Service';
+  String get globalToS => 'AGBs';
 
   @override
-  String get globalBack => 'Back';
+  String get globalAdditionalInfoRequestedByYourOrg => 'Zusätzliche Informationen (von Ihrer Organisation angefordert)';
 
   @override
-  String get globalBackToLogin => 'Back to Login';
+  String get globalBack => 'Zurück';
 
   @override
-  String get authResetPassword => 'Reset Password';
+  String get globalBackToLogin => 'Zurück zum Login';
 
   @override
-  String get authLoginTitle => 'Login';
+  String get authResetPassword => 'Passwort zurücksetzen';
 
   @override
-  String get authSignDocument => 'Sign Document';
+  String get authLoginTitle => 'Anmelden';
 
   @override
-  String get authSignDocumentBody => 'I hereby confirm that by checking this box and submitting this form, I give my consent to digitally sign this document. I understand that my signature will be generated securely using cryptographic techniques to ensure the authenticity and integrity of the document. This signature is legally binding and I certify that the information provided is correct to the best of my knowledge and belief.';
+  String get authSignDocument => 'Dokument unterschreiben';
 
   @override
-  String get authDocumentSigned => 'Document Signed';
+  String get authSignDocumentBody => 'Ich bestätige hiermit, dass ich durch Ankreuzen dieses Kästchens und Absenden dieses Formulars meine Zustimmung zur digitalen Unterzeichnung dieses Dokuments gebe. Ich verstehe, dass meine Unterschrift sicher mit kryptografischen Techniken erstellt wird, um die Authentizität und Integrität des Dokuments zu gewährleisten. Diese Unterschrift ist rechtlich bindend, und ich bestätige, dass die angegebenen Informationen nach meinem besten Wissen und Gewissen korrekt sind.';
 
   @override
-  String get authPasswordLabel => 'Password';
+  String get authDocumentSigned => 'Dokument unterschrieben';
 
   @override
-  String get authForgotPassword => 'Forgot Password?';
+  String get authPasswordLabel => 'Passwort';
 
   @override
-  String get authResetPasswordSendEmail => 'Send Reset Password Email';
+  String get authForgotPassword => 'Passwort vergessen?';
 
   @override
-  String get authResetPasswordBody => 'Please enter your email address to receive a link to reset your password.';
+  String get authResetPasswordSendEmail => 'E-Mail senden';
 
   @override
-  String get authPagesRegisterConfirmPasswordTextFieldHintText => 'Confirm Password';
+  String get authResetPasswordBody => 'Bitte geben Sie Ihre E-Mail-Adresse ein, um einen Link zum Zurücksetzen Ihres Passworts zu erhalten.';
 
   @override
-  String get authPagesWelcomeLabelOne => 'Welcome!';
+  String get authPagesRegisterConfirmPasswordTextFieldHintText => 'Passwort bestätigen';
 
   @override
-  String get authPagesRegisterWelcomeLabelTwo => 'Create your account';
+  String get authPagesWelcomeLabelOne => 'Willkommen!';
 
   @override
-  String get authPagesRegisterButtonLabel => 'Register';
+  String get authPagesRegisterWelcomeLabelTwo => 'Erstellen Sie Ihr Konto';
 
   @override
-  String get authVerifyEmailTitle => 'Verify your email address';
+  String get authPagesRegisterButtonLabel => 'Registrieren';
 
   @override
-  String get authVerifyEmailBody => 'A verification link has been sent to your email address. Please check your inbox and click the link to verify your account.';
+  String get authAccountTypeLabel => 'Kontotyp';
 
   @override
-  String get authResendVerificationEmail => 'Resend Verification Email';
+  String get authAccountTypePlaceholder => 'Wählen Sie Ihren Kontotyp';
+
+  @override
+  String get authVerifyEmailTitle => 'E-Mail-Adresse bestätigen';
+
+  @override
+  String get authVerifyEmailBody => 'Ein Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet. Bitte prüfen Sie Ihren Posteingang und klicken Sie auf den Link, um Ihr Konto zu verifizieren.';
+
+  @override
+  String get authResendVerificationEmail => 'Bestätigungs-E-Mail erneut senden';
 
   @override
   String get navDashboard => 'Dashboard';
 
   @override
-  String get navHideSidebar => 'Hide Sidebar';
+  String get navHideSidebar => 'Seitenleiste ausblenden';
 
   @override
-  String get navArticles => 'Articles';
+  String get navArticles => 'Artikel';
 
   @override
-  String get navEvents => 'Events';
+  String get navEvents => 'Veranstaltungen';
 
   @override
-  String get navUsers => 'Users';
+  String get navUsers => 'Benutzer';
 
   @override
-  String get navComments => 'Comments';
+  String get navComments => 'Kommentare';
 
   @override
-  String get navDigitalLibrary => 'Digital Library';
+  String get navDigitalLibrary => 'Digitale Bibliothek';
 
   @override
-  String get navMedia => 'Media';
+  String get navMedia => 'Medien';
 
   @override
-  String get navPushNotifications => 'Push Notifications';
+  String get navPushNotifications => 'Push-Benachrichtigungen';
 
   @override
-  String get navAdminSettings => 'Admin Settings';
+  String get navAdminSettings => 'Admin-Einstellungen';
 
   @override
-  String get navSurveys => 'Surveys';
+  String get navSurveys => 'Umfragen';
 
   @override
-  String get navSurveySorter => 'Survey Sorter';
+  String get navSurveySorter => 'Sortiermodul';
 
   @override
-  String get navSettings => 'Settings';
+  String get navSettings => 'Einstellungen';
 
   @override
-  String get validationRequired => 'This field is required';
+  String get validationRequired => 'Dieses Feld ist erforderlich';
 
   @override
-  String get validationError => 'Validation error';
+  String get validationError => 'Validierungsfehler';
 
   @override
-  String get validationRequiredSnackbar => 'Please fill in all required fields';
+  String get validationRequiredSnackbar => 'Bitte füllen Sie alle erforderlichen Felder aus';
 
   @override
-  String get validationEmail => 'Please enter a valid email address';
+  String get validationEmail => 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
 
   @override
-  String get validationSignatureMissing => 'Signature is required';
+  String get validationSignatureMissing => 'Unterschrift ist erforderlich';
 
   @override
-  String get validationSignatureFailed => 'Signature validation failed';
+  String get validationSignatureFailed => 'Unterschriftsvalidierung fehlgeschlagen';
 
   @override
-  String get validationTextTooShort => 'Text is too short';
+  String get validationTextTooShort => 'Text ist zu kurz';
 
   @override
-  String get validationTextTooLong => 'Text is too long';
+  String get validationTextTooLong => 'Text ist zu lang';
 
   @override
-  String get termsAndConditionsPrefix => 'I agree to the ';
+  String get termsAndConditionsPrefix => 'Ich stimme den ';
 
   @override
-  String get termsAndConditionsLinkText => 'Terms & Conditions';
+  String get termsAndConditionsLinkText => 'Nutzungsbedingungen';
 
   @override
-  String get termsAndConditionsMiddle => ' and ';
+  String get termsAndConditionsMiddle => ' und der ';
 
   @override
-  String get privacyPolicyLinkText => 'Privacy Policy';
+  String get privacyPolicyLinkText => 'Datenschutzerklärung';
 
   @override
-  String get termsAndConditionsSuffix => '.';
+  String get termsAndConditionsSuffix => ' zu.';
 
   @override
-  String get errorAccessDenied => '403 - Access Denied';
+  String get errorAccessDenied => '403 - Zugriff verweigert';
 
   @override
   String errorUnexpectedWithError(String error) {
-    return 'Unexpected error: $error';
+    return 'Unerwarteter Fehler: $error';
   }
 
   @override
-  String get errorCalculationFailed => 'Failed to calculate classes. Please try again';
+  String get errorCalculationFailed => 'Berechnung der Klassen fehlgeschlagen. Bitte versuchen Sie es erneut';
 
   @override
-  String get errorInvalidCalculationParameters => 'Invalid calculation parameters. Please check your inputs.';
+  String get errorInvalidCalculationParameters => 'Ungültige Berechnungsparameter. Bitte überprüfen Sie Ihre Eingaben.';
 
   @override
-  String get errorCalculationTimeout => 'Calculation timed out. Try reducing complexity or increasing time limit.';
+  String get errorCalculationTimeout => 'Zeitüberschreitung bei der Berechnung. Versuchen Sie, die Komplexität zu reduzieren oder das Zeitlimit zu erhöhen.';
 
   @override
-  String get errorInsufficientClassCapacity => 'Total class capacity must be at least equal to the number of students';
+  String get errorInsufficientClassCapacity => 'Die Gesamtklassenkapazität muss mindestens der Anzahl der Schüler entsprechen';
 
   @override
-  String get errorCalculationServerError => 'Unable to reach calculation server. Please check your connection and try again.';
+  String get errorCalculationServerError => 'Berechnungsserver nicht erreichbar. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.';
 
   @override
-  String get errorAcceptToSAndPrivacyPolicy => 'You must accept the Terms & Conditions and Privacy Policy';
+  String get errorAcceptToSAndPrivacyPolicy => 'Sie müssen die Nutzungsbedingungen und die Datenschutzerklärung akzeptieren';
 
   @override
-  String get errorAccessDeniedMessage => 'You do not have permission to access this page.';
+  String get errorAccessDeniedMessage => 'Sie haben keine Berechtigung, auf diese Seite zuzugreifen.';
 
   @override
-  String get errorUnauthorized => 'Unauthorized Access';
+  String get errorUnauthorized => 'Unautorisierter Zugriff';
 
   @override
-  String get errorImgCouldNotBeFound => 'Image could not be found';
+  String get errorImgCouldNotBeFound => 'Bild konnte nicht gefunden werden';
 
   @override
-  String get errorNetwork => 'Network error, please try again';
+  String get errorNetwork => 'Netzwerkfehler, bitte versuchen Sie es erneut';
 
   @override
-  String get errorPagesRegisterAcceptToSAndPrivacyPolicy => 'Please accept the Terms & Conditions and Privacy Policy';
+  String get errorPagesRegisterAcceptToSAndPrivacyPolicy => 'Bitte akzeptieren Sie die Nutzungsbedingungen und die Datenschutzerklärung';
 
   @override
-  String get errorUnexpected => 'Unexpected error occurred';
+  String get errorUnexpected => 'Unerwarteter Fehler aufgetreten';
 
   @override
-  String get errorUserNotFound => 'User not found';
+  String get errorUserNotFound => '404 - Benutzer nicht gefunden';
 
   @override
-  String get errorSelectFile => 'Please select a file';
+  String get errorSelectFile => 'Bitte wählen Sie eine Datei aus';
 
   @override
-  String get errorSaveFailed => 'Save failed';
+  String get errorSaveFailed => 'Speichern fehlgeschlagen';
 
   @override
-  String get errorExportFailed => 'Export failed';
+  String get errorExportFailed => 'Export fehlgeschlagen';
 
   @override
   String errorLoadingX(String name) {
-    return 'Error loading $name';
+    return 'Fehler beim Laden von $name';
   }
 
   @override
-  String get errorUserNotFoundMessage => 'User not found. The user may have been deleted by an administrator or does not exist.';
+  String get errorUserNotFoundMessage => 'Benutzer nicht gefunden. Der Benutzer wurde möglicherweise von einem Administrator gelöscht oder existiert nicht.';
 
   @override
-  String get errorInvalidPassword => 'Invalid password';
+  String get errorInvalidPassword => 'Ungültiges Passwort';
 
   @override
-  String get errorPasswordMissingNumber => 'Password must contain at least one number';
+  String get errorPasswordMissingNumber => 'Das Passwort muss mindestens eine Zahl enthalten';
 
   @override
-  String get errorPasswordMissingSpecial => 'Password must contain at least one special character';
+  String get errorPasswordMissingSpecial => 'Das Passwort muss mindestens ein Sonderzeichen enthalten';
 
   @override
-  String get errorPasswordsDoNotMatch => 'Passwords do not match';
+  String get errorPasswordsDoNotMatch => 'Passwörter stimmen nicht überein';
 
   @override
-  String get errorEmailAlreadyInUse => 'Email already in use';
+  String get errorEmailAlreadyInUse => 'E-Mail wird bereits verwendet';
 
   @override
-  String get errorGroupNotFound => 'Group not found';
+  String get errorGroupNotFound => 'Gruppe nicht gefunden';
 
   @override
-  String get errorGroupUpdateFailed => 'Group update failed';
+  String get errorGroupUpdateFailed => 'Gruppenaktualisierung fehlgeschlagen';
 
   @override
-  String get errorGroupDeleteFailed => 'Group deletion failed';
+  String get errorGroupDeleteFailed => 'Gruppenlöschung fehlgeschlagen';
 
   @override
-  String get errorInvalidGroupOperation => 'Invalid group operation';
+  String get errorInvalidGroupOperation => 'Ungültige Gruppenoperation';
 
   @override
-  String get errorUserGroupUpdateFailed => 'User group update failed';
+  String get errorUserGroupUpdateFailed => 'Aktualisierung der Benutzergruppe fehlgeschlagen';
 
   @override
-  String get errorFileUploadFailed => 'File upload failed';
+  String get errorFileUploadFailed => 'Datei-Upload fehlgeschlagen';
 
   @override
-  String get errorFileDownloadFailed => 'File download failed';
+  String get errorFileDownloadFailed => 'Datei-Download fehlgeschlagen';
 
   @override
-  String get errorFileDeleteFailed => 'File deletion failed';
+  String get errorFileDeleteFailed => 'Dateilöschung fehlgeschlagen';
 
   @override
-  String get errorAuthAccountAlreadyExists => 'Auth account already exists';
+  String get errorAuthAccountAlreadyExists => 'Authentifizierungskonto existiert bereits';
 
   @override
-  String get errorFileNotFound => 'File not found';
+  String get errorFileNotFound => 'Datei nicht gefunden';
 
   @override
-  String get errorInvalidFileType => 'Invalid file type';
+  String get errorInvalidFileType => 'Ungültiger Dateityp';
 
   @override
-  String get errorFileTooLarge => 'File too large';
+  String get errorFileTooLarge => 'Datei zu groß';
 
   @override
   String errorCreateFailed(String name) {
-    return 'Failed to create $name';
+    return 'Fehler beim Erstellen von $name';
   }
 
   @override
-  String get errorFileListFailed => 'File list retrieval failed';
+  String get errorFileListFailed => 'Abrufen der Dateiliste fehlgeschlagen';
 
   @override
-  String get errorStorageOperationFailed => 'Storage operation failed';
+  String get errorStorageOperationFailed => 'Speicheroperation fehlgeschlagen';
 
   @override
-  String get successDefault => 'Success';
+  String get successDefault => 'Erfolg';
 
   @override
-  String get successClassesCalculated => 'Classes calculated successfully! Navigate to results page to view them.';
+  String get successClassesCalculated => 'Klassen erfolgreich berechnet! Gehen Sie zur Ergebnisseite, um sie anzuzeigen.';
 
   @override
-  String get successAccountCreated => 'Account created successfully!';
+  String get successAccountCreated => 'Konto erfolgreich erstellt!';
 
   @override
-  String get successRegistration => 'Registration successful!';
+  String get successRegistration => 'Registrierung erfolgreich!';
 
   @override
-  String get successEmailVerificationSent => 'Verification email sent successfully';
+  String get successEmailVerificationSent => 'Bestätigungs-E-Mail erfolgreich gesendet';
 
   @override
-  String get successPasswordChanged => 'Password changed successfully';
+  String get successPasswordChanged => 'Passwort erfolgreich geändert';
 
   @override
-  String get successResetPasswordEmailSent => 'Reset password email sent successfully';
+  String get successResetPasswordEmailSent => 'E-Mail zum Zurücksetzen des Passworts erfolgreich gesendet';
 
   @override
-  String get successEmailChanged => 'Email changed successfully';
+  String get successEmailChanged => 'E-Mail erfolgreich geändert';
 
   @override
-  String get successProfileUpdated => 'Profile updated successfully';
+  String get successProfileUpdated => 'Profil erfolgreich aktualisiert';
 
   @override
-  String get successDataSaved => 'Data saved successfully';
+  String get successDataSaved => 'Daten erfolgreich gespeichert';
 
   @override
   String successPublishedSuccessfullyWithName(String name) {
-    return '$name published successfully';
+    return '$name erfolgreich veröffentlicht';
   }
 
   @override
   String successClosedSuccessfullyWithName(String name) {
-    return '$name closed successfully';
+    return '$name erfolgreich geschlossen';
   }
 
   @override
-  String get successSettingsUpdated => 'Settings updated successfully';
+  String get successSettingsUpdated => 'Einstellungen erfolgreich aktualisiert';
 
   @override
-  String get successExport => 'Export successful';
+  String get successExport => 'Export erfolgreich';
 
   @override
   String successCreatedWithPrefix(String prefix) {
-    return '$prefix created successfully';
+    return '$prefix erfolgreich erstellt';
   }
 
   @override
   String successDeletedWithName(String name) {
-    return '$name deleted successfully';
+    return '$name erfolgreich gelöscht';
   }
 
   @override
   String successXAdded(String name) {
-    return '$name added successfully';
+    return '$name erfolgreich hinzugefügt';
   }
 
   @override
   String successXUpdated(String name) {
-    return '$name updated successfully';
+    return '$name erfolgreich aktualisiert';
   }
 
   @override
-  String get settingsLabel => 'Settings';
+  String get settingsLabel => 'Einstellungen';
 
   @override
-  String get settingsManageAccount => 'Manage Account';
+  String get settingsManageAccount => 'Konto verwalten';
 
   @override
-  String get settingsChangeName => 'Change Name';
+  String get settingsChangeName => 'Namen ändern';
 
   @override
-  String get settingsChangeEmail => 'Change Email';
+  String get settingsChangeEmail => 'E-Mail ändern';
 
   @override
-  String get settingsChangePassword => 'Change Password';
+  String get settingsChangePassword => 'Passwort ändern';
 
   @override
-  String get settingsUpdateRegistrationQuestionaire => 'Update Registration Questionnaire';
+  String get settingsUpdateRegistrationQuestionaire => 'Registrierungsfragebogen aktualisieren';
 
   @override
-  String get settingsAppearance => 'Appearance';
+  String get settingsAppearance => 'Erscheinungsbild';
 
   @override
-  String get settingsDarkMode => 'Dark Mode';
+  String get settingsDarkMode => 'Dunkler Modus';
 
   @override
-  String get settingsDeleteDialogBody => 'Are you sure you want to delete your account? This action cannot be undone.';
+  String get settingsDeleteDialogBody => 'Möchten Sie Ihr Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.';
 
   @override
-  String get settingsNewPassword => 'New Password';
+  String get settingsNewPassword => 'Neues Passwort';
 
   @override
-  String get mediaSelectorInsertImage => 'Insert Image';
+  String get mediaSelectorInsertImage => 'Bild einfügen';
 
   @override
-  String get mediaSelectorInsertVideo => 'Insert Video';
+  String get mediaSelectorInsertVideo => 'Video einfügen';
 
   @override
-  String get mediaSelectorInsertAudio => 'Insert Audio';
+  String get mediaSelectorInsertAudio => 'Audio einfügen';
 
   @override
   String get textEditorInsertLink => 'Insert Link';
@@ -923,119 +935,119 @@ class AppLocalizationsDe extends AppLocalizations {
   String get textEditorListStyleMenuItemLowercaseClassicalGreek => 'Greek';
 
   @override
-  String get userManagementGroupInformationLabel => 'Group Information';
+  String get userManagementGroupInformationLabel => 'Gruppeninformationen';
 
   @override
-  String get userManagementMembersLabel => 'Members';
+  String get userManagementMembersLabel => 'Mitglieder';
 
   @override
   String userManagementPermissionsLabel(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Permissions',
-      one: 'Permission',
-      zero: 'Permissions',
+      other: 'Berechtigungen',
+      one: 'Berechtigung',
+      zero: 'Berechtigungen',
     );
     return '$_temp0';
   }
 
   @override
-  String get userManagementFilterbyPermissions => 'Filter by Permissions';
+  String get userManagementFilterbyPermissions => 'Nach Berechtigungen filtern';
 
   @override
-  String get userManagementAccountTypeLabelFacultyAndStaff => 'Faculty & Staff';
+  String get userManagementAccountTypeLabelFacultyAndStaff => 'Lehrkräfte und Personal';
 
   @override
   String get userManagementAccountTypeLabelStudent => 'Student';
 
   @override
-  String get userManagementAccountTypeLabelParent => 'Parent';
+  String get userManagementAccountTypeLabelParent => 'Elternteil';
 
   @override
-  String get userManagementNoPermissiosnAssignedToGroup => 'No permissions assigned to this group';
+  String get userManagementNoPermissiosnAssignedToGroup => 'Keine Berechtigungen dieser Gruppe zugewiesen';
 
   @override
-  String get userManagementNoMembersInGroup => 'No members in this group';
+  String get userManagementNoMembersInGroup => 'Keine Mitglieder in dieser Gruppe';
 
   @override
-  String get userManagementAssignMembersLabel => 'Assign Members';
+  String get userManagementAssignMembersLabel => 'Mitglieder zuweisen';
 
   @override
-  String get userManagementSelectUsersToAddToGroup => 'Select users to add to this group';
+  String get userManagementSelectUsersToAddToGroup => 'Wählen Sie Benutzer aus, die dieser Gruppe hinzugefügt werden sollen';
 
   @override
   String userManagementSelectedMembers(num count) {
-    return 'Selected Members ($count)';
+    return 'Ausgewählte Mitglieder ($count)';
   }
 
   @override
   String userManagementSelectedPermissions(num count) {
-    return 'Selected Permissions ($count)';
+    return 'Ausgewählte Berechtigungen ($count)';
   }
 
   @override
-  String get userManagementSelectGroupsToAssign => 'Select groups to assign to this user';
+  String get userManagementSelectGroupsToAssign => 'Wählen Sie Gruppen aus, die diesem Benutzer zugewiesen werden sollen';
 
   @override
-  String get userManagementRolesLabel => 'Roles';
+  String get userManagementRolesLabel => 'Rollen';
 
   @override
-  String get userManagementNoGroupsAssignedToUser => 'No groups assigned to this user';
+  String get userManagementNoGroupsAssignedToUser => 'Diesem Benutzer sind keine Gruppen zugewiesen';
 
   @override
-  String get userManagementNoGroupsCreatedYet => 'No groups created yet';
+  String get userManagementNoGroupsCreatedYet => 'Noch keine Gruppen erstellt';
 
   @override
-  String get userManagementContentManagementLabel => 'Content Management';
+  String get userManagementContentManagementLabel => 'Inhaltsverwaltung';
 
   @override
-  String get userManagementMediaLabel => 'Media';
+  String get userManagementMediaLabel => 'Medien';
 
   @override
-  String get userManagementAssignedPermissions => 'Assigned Permissions';
+  String get userManagementAssignedPermissions => 'Zugewiesene Berechtigungen';
 
   @override
-  String get userManagementNoPermissionsFromGroups => 'No permissions from groups';
+  String get userManagementNoPermissionsFromGroups => 'Keine Berechtigungen von Gruppen';
 
   @override
-  String get userManagementNoDirectPermissionsAssigned => 'No direct permissions assigned to this user';
+  String get userManagementNoDirectPermissionsAssigned => 'Diesem Benutzer sind keine direkten Berechtigungen zugewiesen';
 
   @override
-  String get userManagementAssignGroupsLabel => 'Assign Groups';
+  String get userManagementAssignGroupsLabel => 'Gruppen zuweisen';
 
   @override
-  String get userManagementPermissionsFromGroups => 'Permissions from Groups';
+  String get userManagementPermissionsFromGroups => 'Berechtigungen aus Gruppen';
 
   @override
-  String get userManagementNotificationsLabel => 'Notifications';
+  String get userManagementNotificationsLabel => 'Benachrichtigungen';
 
   @override
-  String get userManagementUserManagementLabel => 'User Management';
+  String get userManagementUserManagementLabel => 'Benutzerverwaltung';
 
   @override
-  String get userManagementSurveysLabel => 'Surveys';
+  String get userManagementSurveysLabel => 'Umfragen';
 
   @override
-  String get sortingModuleAccessControlDescription => 'Users and groups that can edit this survey';
+  String get sortingModuleAccessControlDescription => 'Benutzer und Gruppen, die diese Umfrage bearbeiten können';
 
   @override
-  String get sortingModuleRespondents => 'Respondents';
+  String get sortingModuleRespondents => 'Teilnehmer';
 
   @override
-  String get sortingModuleRespondentsDescription => 'Users and groups that can respond to this survey';
+  String get sortingModuleRespondentsDescription => 'Benutzer und Gruppen, die auf diese Umfrage antworten können';
 
   @override
-  String get sortingModuleTotalResponsesLabel => 'Total Responses';
+  String get sortingModuleTotalResponsesLabel => 'Gesamtzahl der Antworten';
 
   @override
   String sortingSurvey(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Sorting Surveys',
-      one: 'Sorting Survey',
-      zero: 'Sorting Surveys',
+      other: 'Sortierumfragen',
+      one: 'Sortierumfrage',
+      zero: 'Sortierumfragen',
     );
     return '$_temp0';
   }
@@ -1045,285 +1057,285 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Preferences',
-      one: 'Preference',
-      zero: 'Preferences',
+      other: 'Präferenzen',
+      one: 'Präferenz',
+      zero: 'Präferenzen',
     );
     return '$_temp0';
   }
 
   @override
-  String get sortingModuleParameters => 'Sorting Parameters';
+  String get sortingModuleParameters => 'Sortierparameter';
 
   @override
-  String get sortingModuleNoResponsesYet => 'No responses yet';
+  String get sortingModuleNoResponsesYet => 'Noch keine Antworten';
 
   @override
-  String get sortingModuleAskForBiologicalSex => 'Ask respondents for their biological sex';
+  String get sortingModuleAskForBiologicalSex => 'Nach dem Geschlecht der Teilnehmer fragen';
 
   @override
-  String get sortingModuleAskForPreferences => 'Ask respondents to select preferred people';
+  String get sortingModuleAskForPreferences => 'Teilnehmer nach bevorzugten Personen fragen';
 
   @override
-  String get sortingModuleMaximumPreferencesLabel => 'Maximum Preferences';
+  String get sortingModuleMaximumPreferencesLabel => 'Maximale Präferenzen';
 
   @override
-  String get sortingModuleMaximumPreferencesDescription => 'Maximum number of people that can be selected';
+  String get sortingModuleMaximumPreferencesDescription => 'Maximale Anzahl an Personen, die ausgewählt werden können';
 
   @override
-  String get sortingModuleNoResponsesImportManuallyLabel => 'Start by adding responses manually or import from a file';
+  String get sortingModuleNoResponsesImportManuallyLabel => 'Beginnen Sie damit, Antworten manuell hinzuzufügen oder aus einer Datei zu importieren';
 
   @override
-  String get sortingModulePublishSortingSurveyNoResponsesLabel => 'Publish Sorting Survey to start collecting responses';
+  String get sortingModulePublishSortingSurveyNoResponsesLabel => 'Sortierumfrage veröffentlichen, um mit der Sammlung von Antworten zu beginnen';
 
   @override
-  String get sortingModuleParameterName => 'Parameter Name';
+  String get sortingModuleParameterName => 'Parametername';
 
   @override
-  String get sortingModuleStrategy => 'Strategy';
+  String get sortingModuleStrategy => 'Strategie';
 
   @override
-  String get sortingModuleStrategyDistribute => 'Distribute evenly';
+  String get sortingModuleStrategyDistribute => 'Gleichmäßig verteilen';
 
   @override
-  String get sortingModuleStrategyConcentrate => 'Concentrate in one class';
+  String get sortingModuleStrategyConcentrate => 'In einer Klasse konzentrieren';
 
   @override
-  String get sortingModuleTypeBinary => 'Binary (Yes/No)';
+  String get sortingModuleTypeBinary => 'Binär (Ja/Nein)';
 
   @override
-  String get sortingModuleTypeCategorical => 'Categorical (Text)';
+  String get sortingModuleTypeCategorical => 'Kategorisch (Text)';
 
   @override
-  String get sortingModulePriorityLabel => 'Priority';
+  String get sortingModulePriorityLabel => 'Priorität';
 
   @override
-  String get sortingModulePriorityDescription => 'Lower number means higher priority (1-10)';
+  String get sortingModulePriorityDescription => 'Niedrigere Zahl bedeutet höhere Priorität (1-10)';
 
   @override
-  String get sortingModuleOverview => 'Overview';
+  String get sortingModuleOverview => 'Übersicht';
 
   @override
-  String get sortingModuleCalculate => 'Calculate';
+  String get sortingModuleCalculate => 'Berechnen';
 
   @override
-  String get sortingModuleResults => 'Results';
+  String get sortingModuleResults => 'Ergebnisse';
 
   @override
-  String get sortingModuleCalculating => 'Calculating...';
+  String get sortingModuleCalculating => 'Wird berechnet...';
 
   @override
-  String get sortingModuleResultsAvailable => 'Results available';
+  String get sortingModuleResultsAvailable => 'Ergebnisse verfügbar';
 
   @override
-  String get sortingModuleVariables => 'Variables';
+  String get sortingModuleVariables => 'Variablen';
 
   @override
-  String get sortingModuleProblemSize => 'Problem Size';
+  String get sortingModuleProblemSize => 'Problemgröße';
 
   @override
   String sortingModuleNumOfStudents(num count) {
-    return 'Students: $count';
+    return 'Schüler: $count';
   }
 
   @override
   String sortingModuleNumOfClasses(num count) {
-    return 'Classes: $count';
+    return 'Klassen: $count';
   }
 
   @override
   String sortingModuleNumOfParams(num count) {
-    return 'Parameters: $count';
+    return 'Parameter: $count';
   }
 
   @override
   String sortingModuleNumOfPreferences(num count) {
-    return 'Preferences: $count';
+    return 'Präferenzen: $count';
   }
 
   @override
-  String get sortingModuleMaxCalcTimeLabel => 'Max Calculation Time';
+  String get sortingModuleMaxCalcTimeLabel => 'Max. Berechnungszeit';
 
   @override
-  String get sortingModuleMaxCalcTimeDescription => 'The algorithm will attempt to find the best solution within this time limit. In most cases, it will find a solution faster.';
+  String get sortingModuleMaxCalcTimeDescription => 'Der Algorithmus versucht, die beste Lösung innerhalb dieses Zeitlimits zu finden. In den meisten Fällen wird er schneller eine Lösung finden.';
 
   @override
-  String get sortingModuleTimeLimitLabel => 'Time Limit';
+  String get sortingModuleTimeLimitLabel => 'Zeitlimit';
 
   @override
-  String get sortingModuleCalculateLoadingLabel => 'The algorithm will attempt to find the best solution within this time limit. In most cases, it will find a solution faster.';
+  String get sortingModuleCalculateLoadingLabel => 'Der Algorithmus versucht, die beste Lösung innerhalb dieses Zeitlimits zu finden. In den meisten Fällen wird er schneller eine Lösung finden.';
 
   @override
-  String get sortingModuleClassConfigLabel => 'Class Configuration';
+  String get sortingModuleClassConfigLabel => 'Klassenkonfiguration';
 
   @override
-  String get sortingModuleClassesLabel => 'Classes';
+  String get sortingModuleClassesLabel => 'Klassen';
 
   @override
-  String get sortingModuleSelectClassesToExportLabel => 'Select classes to export';
+  String get sortingModuleSelectClassesToExportLabel => 'Klassen zum Exportieren auswählen';
 
   @override
-  String get sortingModuleSelectAllClasses => 'Select All Classes';
+  String get sortingModuleSelectAllClasses => 'Alle Klassen auswählen';
 
   @override
-  String get sortingModuleDistributionSettingsLabel => 'Distribution Settings';
+  String get sortingModuleDistributionSettingsLabel => 'Verteilungseinstellungen';
 
   @override
-  String get sortingModuleDistributeByBiologicalSexLabel => 'Distribute by Biological Sex';
+  String get sortingModuleDistributeByBiologicalSexLabel => 'Nach Geschlecht verteilen';
 
   @override
-  String get sortingModuleDistributeByBiologicalSexDescription => 'Attempt to achieve an even male/female distribution in each class';
+  String get sortingModuleDistributeByBiologicalSexDescription => 'Versuch einer gleichmäßigen Verteilung von Männern/Frauen in jeder Klasse';
 
   @override
-  String get sortingModuleCapacityInfoLabel => 'Capacity Information';
+  String get sortingModuleCapacityInfoLabel => 'Kapazitätsinformationen';
 
   @override
-  String get sortingModuleClassNameLabel => 'Class Name';
+  String get sortingModuleClassNameLabel => 'Klassenname';
 
   @override
-  String get sortingModuleIncludeGender => 'Include Gender';
+  String get sortingModuleIncludeGender => 'Geschlecht einschließen';
 
   @override
-  String get sortingModuleSelectInfoToIncludeLabel => 'Select information to include';
+  String get sortingModuleSelectInfoToIncludeLabel => 'Informationen auswählen, die einbezogen werden sollen';
 
   @override
-  String get sortingModuleClassSizeLabel => 'Class Size';
+  String get sortingModuleClassSizeLabel => 'Klassengröße';
 
   @override
-  String get sortingModuleNewClassNameLabel => 'New Class Name';
+  String get sortingModuleNewClassNameLabel => 'Neuer Klassenname';
 
   @override
-  String get sortingModuleNewClassNameHint => 'Leave empty for automatic numbering';
+  String get sortingModuleNewClassNameHint => 'Leer lassen für automatische Nummerierung';
 
   @override
   String sortingModuleTotalCapacity(num count) {
-    return 'Total Capacity: $count students';
+    return 'Gesamtkapazität: $count Schüler';
   }
 
   @override
   String sortingModuleMinimumRequiredCapacity(num count) {
-    return 'Minimum Required Capacity: $count students';
+    return 'Mindestkapazität: $count Schüler';
   }
 
   @override
-  String get sortingModuleWarningMinimumRequiredCapacity => 'Warning: Total Capacity must be at least equal to the number of students';
+  String get sortingModuleWarningMinimumRequiredCapacity => 'Warnung: Die Gesamtkapazität muss mindestens der Anzahl der Schüler entsprechen';
 
   @override
-  String get sortingModuleCapacityRecommendation => 'Recommendation: Consider leaving space for at least one additional student in each class for better alogrithm flexibility.';
+  String get sortingModuleCapacityRecommendation => 'Empfehlung: Erwägen Sie, in jeder Klasse Platz für mindestens einen zusätzlichen Schüler für bessere Algorithmusflexibilität zu lassen.';
 
   @override
-  String get sortingModuleParametersConfigurationTitle => 'Parameters Configuration';
+  String get sortingModuleParametersConfigurationTitle => 'Parameterkonfiguration';
 
   @override
-  String get sortingModuleParameterDisabledDescription => 'This parameter is disabled and will not be used in calculations';
+  String get sortingModuleParameterDisabledDescription => 'Dieser Parameter ist deaktiviert und wird bei Berechnungen nicht verwendet';
 
   @override
-  String get sortingModuleCloseSurveyBeforeCalculating => 'Please close the survey before starting the calculation process.';
+  String get sortingModuleCloseSurveyBeforeCalculating => 'Bitte schließen Sie die Umfrage, bevor Sie den Berechnungsprozess starten.';
 
   @override
-  String get sortingModuleNoParamsDefined => 'No parameters defined';
+  String get sortingModuleNoParamsDefined => 'Keine Parameter definiert';
 
   @override
-  String get sortingModuleAddManuallyLabel => 'Add Manually';
+  String get sortingModuleAddManuallyLabel => 'Manuell hinzufügen';
 
   @override
   String sortingModuleResponses(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Responses',
-      one: 'Response',
-      zero: 'Responses',
+      other: 'Antworten',
+      one: 'Antwort',
+      zero: 'Antworten',
     );
     return '$_temp0';
   }
 
   @override
-  String get sortingModuleTotalNumOfPreferences => 'Total Number of Preferences';
+  String get sortingModuleTotalNumOfPreferences => 'Gesamtzahl der Präferenzen';
 
   @override
   String sortingModuleMaxPreferencesPerUser(num count) {
-    return '(max $count per user)';
+    return '(max. $count pro Benutzer)';
   }
 
   @override
-  String get sortingModuleManualEntry => 'Manual Entry';
+  String get sortingModuleManualEntry => 'Manuelle Eingabe';
 
   @override
   String sortingModuleSelectUpToXPreferencesLabel(num count) {
-    return 'Select up to $count preferences';
+    return 'Bis zu $count Präferenzen auswählen';
   }
 
   @override
-  String get sortingModuleDuplicateNamesFound => 'Duplicate names found';
+  String get sortingModuleDuplicateNamesFound => 'Doppelte Namen gefunden';
 
   @override
   String sortingModuleUniqueValuesCount(num count) {
-    return 'Unique Values: $count';
+    return 'Eindeutige Werte: $count';
   }
 
   @override
-  String get sortingModuleSelectInformationToIncludeLabel => 'Select information to include';
+  String get sortingModuleSelectInformationToIncludeLabel => 'Informationen auswählen, die einbezogen werden sollen';
 
   @override
   String sortingModuleNumOfStudentsForPdf(num count) {
-    return '($count students)';
+    return '($count Schüler)';
   }
 
   @override
-  String get sortingModuleExportIncludeSummaryStatistics => 'Include Summary Statistics';
+  String get sortingModuleExportIncludeSummaryStatistics => 'Zusammenfassende Statistiken einschließen';
 
   @override
-  String get sortingModuleIncludeClassStatistics => 'Include Class Statistics';
+  String get sortingModuleIncludeClassStatistics => 'Klassenstatistiken einschließen';
 
   @override
-  String get sortingModuleResponseStatisticsLabel => 'Response Statistics';
+  String get sortingModuleResponseStatisticsLabel => 'Antwortstatistiken';
 
   @override
-  String get sortingModuleParameterDistributionLabel => 'Parameter Distribution';
+  String get sortingModuleParameterDistributionLabel => 'Parameterverteilung';
 
   @override
-  String get sortingModuleIndividualResponsesLabel => 'Individual Responses';
+  String get sortingModuleIndividualResponsesLabel => 'Einzelne Antworten';
 
   @override
-  String get sortingModuleSelectAtLeastOneClassForExport => 'Please select at least one class to export';
+  String get sortingModuleSelectAtLeastOneClassForExport => 'Bitte wählen Sie mindestens eine Klasse zum Exportieren aus';
 
   @override
-  String get sortingModuleAdditionalParametersLabel => 'Additional Parameters';
+  String get sortingModuleAdditionalParametersLabel => 'Zusätzliche Parameter';
 
   @override
-  String get sortingModuleSelectAllParameters => 'Select All Parameters';
+  String get sortingModuleSelectAllParameters => 'Alle Parameter auswählen';
 
   @override
-  String get sortingModuleClassDistributionResultsLabel => 'Class Distribution Results';
+  String get sortingModuleClassDistributionResultsLabel => 'Klassenverteilungsergebnisse';
 
   @override
-  String get sortingModuleTotalStudentsLabel => 'Total Students';
+  String get sortingModuleTotalStudentsLabel => 'Gesamtzahl der Schüler';
 
   @override
-  String get sortingModuleTotalClassesLabel => 'Total Classes';
+  String get sortingModuleTotalClassesLabel => 'Gesamtzahl der Klassen';
 
   @override
-  String get sortingModuleAverageStudentsPerClassLabel => 'Average Students per Class';
+  String get sortingModuleAverageStudentsPerClassLabel => 'Durchschnittliche Schüler pro Klasse';
 
   @override
-  String get sortingModulePreferencesSatisfiedLabel => 'Preferences Satisfied';
+  String get sortingModulePreferencesSatisfiedLabel => 'Erfüllte Präferenzen';
 
   @override
-  String get sortingModuleStudentsWithAtLeastOnePreferenceSatisfiedLabel => 'Students with at least one preference satisfied';
+  String get sortingModuleStudentsWithAtLeastOnePreferenceSatisfiedLabel => 'Schüler mit mindestens einer erfüllten Präferenz';
 
   @override
-  String get sortingModuleShowClassStatisticssLabel => 'Show Class Statistics';
+  String get sortingModuleShowClassStatisticssLabel => 'Klassenstatistiken anzeigen';
 
   @override
-  String get sortingModuleNoPreferencesSelected => 'No preferences selected';
+  String get sortingModuleNoPreferencesSelected => 'Keine Präferenzen ausgewählt';
 
   @override
-  String get sortingModuleDragStudentsHerePlaceholder => 'Drag students here to add them to the class';
+  String get sortingModuleDragStudentsHerePlaceholder => 'Schüler hierher ziehen, um sie zur Klasse hinzuzufügen';
 
   @override
-  String get sortingModuleNoCalcResults => 'No calculation results available';
+  String get sortingModuleNoCalcResults => 'Keine Berechnungsergebnisse verfügbar';
 
   @override
-  String get sortingModuleGoToCalculate => 'Go to Calculate';
+  String get sortingModuleGoToCalculate => 'Zur Berechnung gehen';
 }

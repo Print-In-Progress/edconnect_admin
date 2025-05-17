@@ -5,6 +5,8 @@ import 'package:edconnect_admin/core/interfaces/navigation_repository.dart';
 import 'package:edconnect_admin/core/interfaces/storage_repository.dart';
 import 'package:edconnect_admin/core/interfaces/user_repository.dart';
 import 'package:edconnect_admin/data/providers/repository_providers.dart';
+import 'package:edconnect_admin/data/repositories/localization_repository_impl.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // These providers expose only the interfaces
@@ -29,5 +31,8 @@ final storageRepositoryProvider = Provider<StorageRepository>((ref) {
 });
 
 final localizationRepositoryProvider = Provider<LocalizationRepository>((ref) {
-  return ref.watch(localizationRepositoryImplProvider);
+  final platformLocale = PlatformDispatcher.instance.locale;
+  final languageCode = platformLocale.languageCode;
+
+  return LocalizationServiceImpl(languageCode);
 });

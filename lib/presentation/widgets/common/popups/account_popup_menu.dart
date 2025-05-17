@@ -176,7 +176,7 @@ class AccountPopupMenu extends ConsumerWidget {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    SizedBox(height: 2),
+                                    const SizedBox(height: 2),
                                     Tooltip(
                                       message: user.email,
                                       textStyle: TextStyle(
@@ -305,6 +305,7 @@ class AccountPopupMenu extends ConsumerWidget {
 class _CustomPopupRoute<T> extends PopupRoute<T> {
   final WidgetBuilder builder;
   final RelativeRect position;
+  @override
   final Color barrierColor;
 
   _CustomPopupRoute({

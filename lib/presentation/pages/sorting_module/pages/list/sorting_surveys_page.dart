@@ -62,7 +62,7 @@ class SortingSurveysPage extends ConsumerWidget {
 
   Widget _buildSurveyList(List<SortingSurvey> surveys, WidgetRef ref) {
     return ListView.separated(
-      padding: EdgeInsets.all(Foundations.spacing.lg),
+      padding: EdgeInsets.all(Foundations.spacing.md),
       itemCount: surveys.length,
       separatorBuilder: (_, __) => SizedBox(height: Foundations.spacing.md),
       itemBuilder: (context, index) {

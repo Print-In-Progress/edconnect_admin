@@ -27,86 +27,85 @@ class SurveyCard extends ConsumerWidget {
 
     return BaseCard(
       variant: CardVariant.outlined,
+      padding: EdgeInsets.all(Foundations.spacing.xl),
+      margin: EdgeInsets.zero,
       isSelectable: true,
       onTap: () {
         ref.read(selectedSortingSurveyIdProvider.notifier).state = survey.id;
 
         AppRouter.toSortingSurveyDetails(context, surveyId: survey.id);
       },
-      child: Padding(
-        padding: EdgeInsets.all(Foundations.spacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    survey.title,
-                    style: TextStyle(
-                      fontSize: Foundations.typography.lg,
-                      fontWeight: Foundations.typography.semibold,
-                      color: theme.isDarkMode
-                          ? Foundations.darkColors.textPrimary
-                          : Foundations.colors.textPrimary,
-                    ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  survey.title,
+                  style: TextStyle(
+                    fontSize: Foundations.typography.lg,
+                    fontWeight: Foundations.typography.semibold,
+                    color: theme.isDarkMode
+                        ? Foundations.darkColors.textPrimary
+                        : Foundations.colors.textPrimary,
                   ),
                 ),
-                if (isCalculating)
-                  _buildCalculatingIndicator(l10n)
-                else if (hasResults)
-                  _buildResultsAvailableChip(l10n)
-                else
-                  _buildStatusChip(survey.status, l10n),
-              ],
-            ),
-            if (survey.description.isNotEmpty) ...[
-              SizedBox(height: Foundations.spacing.sm),
-              Text(
-                survey.description,
-                style: TextStyle(
-                  color: theme.isDarkMode
-                      ? Foundations.darkColors.textSecondary
-                      : Foundations.colors.textSecondary,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
+              if (isCalculating)
+                _buildCalculatingIndicator(l10n)
+              else if (hasResults)
+                _buildResultsAvailableChip(l10n)
+              else
+                _buildStatusChip(survey.status, l10n),
             ],
-            SizedBox(height: Foundations.spacing.lg),
-            Row(
-              children: [
-                Icon(
-                  Icons.person_outline,
-                  size: 16,
-                  color: Foundations.colors.textMuted,
-                ),
-                SizedBox(width: Foundations.spacing.xs),
-                Text(
-                  survey.creatorName,
-                  style: TextStyle(
-                    color: Foundations.colors.textMuted,
-                    fontSize: Foundations.typography.sm,
-                  ),
-                ),
-                const Spacer(),
-                Icon(
-                  Icons.calendar_today_outlined,
-                  size: 16,
-                  color: Foundations.colors.textMuted,
-                ),
-                SizedBox(width: Foundations.spacing.xs),
-                Text(
-                  DateFormat.yMd().format(survey.createdAt),
-                  style: TextStyle(
-                    color: Foundations.colors.textMuted,
-                    fontSize: Foundations.typography.sm,
-                  ),
-                ),
-              ],
+          ),
+          if (survey.description.isNotEmpty) ...[
+            SizedBox(height: Foundations.spacing.sm),
+            Text(
+              survey.description,
+              style: TextStyle(
+                color: theme.isDarkMode
+                    ? Foundations.darkColors.textSecondary
+                    : Foundations.colors.textSecondary,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
-        ),
+          SizedBox(height: Foundations.spacing.lg),
+          Row(
+            children: [
+              Icon(
+                Icons.person_outline,
+                size: 16,
+                color: Foundations.colors.textMuted,
+              ),
+              SizedBox(width: Foundations.spacing.xs),
+              Text(
+                survey.creatorName,
+                style: TextStyle(
+                  color: Foundations.colors.textMuted,
+                  fontSize: Foundations.typography.sm,
+                ),
+              ),
+              const Spacer(),
+              Icon(
+                Icons.calendar_today_outlined,
+                size: 16,
+                color: Foundations.colors.textMuted,
+              ),
+              SizedBox(width: Foundations.spacing.xs),
+              Text(
+                DateFormat.yMd(l10n.localeName).format(survey.createdAt),
+                style: TextStyle(
+                  color: Foundations.colors.textMuted,
+                  fontSize: Foundations.typography.sm,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

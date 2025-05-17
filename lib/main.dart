@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:edconnect_admin/core/constants/database_constants.dart';
+import 'package:edconnect_admin/core/providers/interface_providers.dart';
 import 'package:edconnect_admin/core/routing/app_routes.dart';
+import 'package:edconnect_admin/data/repositories/localization_repository_impl.dart';
 import 'package:edconnect_admin/presentation/pages/home_page/main_page.dart';
 import 'package:edconnect_admin/presentation/providers/state_providers.dart';
 import 'package:edconnect_admin/presentation/providers/theme_provider.dart';
@@ -31,21 +33,26 @@ class EdConnectAdmin extends ConsumerStatefulWidget {
 
 class _EdConnectAdminState extends ConsumerState<EdConnectAdmin> {
   @override
+  void initState() {
+    super.initState();
+
+    final platformLocale = PlatformDispatcher.instance.locale;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(appLocaleProvider.notifier).updateLocale(platformLocale);
+
+      final localizationService =
+          ref.read(localizationRepositoryProvider) as LocalizationServiceImpl;
+      localizationService.updateLocale(platformLocale.languageCode);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeData = ref.watch(themeDataProvider);
     final theme = ref.watch(appThemeProvider);
     return MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      locale: ref.watch(appLocaleProvider),
-      localeListResolutionCallback: (locales, supportedLocales) {
-        if (locales != null && locales.isNotEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ref.read(appLocaleProvider.notifier).updateLocale(locales.first);
-          });
-        }
-
-        return null;
-      },
       supportedLocales: AppLocalizations.supportedLocales,
       title: '$customerName Admin Panel',
       debugShowCheckedModeBanner: false,
